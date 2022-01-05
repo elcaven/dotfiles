@@ -1,6 +1,7 @@
 - defaults:
     link:
       relink: true
+      force: true
 
 - clean: ['~']
 
@@ -8,6 +9,7 @@
     ~/.config/qtile: qtile
     ~/.config/dunst: dunst
     ~/.config/rofi: rofi
+    ~/.config/kitty: kitty
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
