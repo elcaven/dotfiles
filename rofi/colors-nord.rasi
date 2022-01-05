@@ -1,0 +1,22 @@
+
+
+* {
+    xbg:    #2E3440E6;
+    xfg:    #FDFDFD;
+    x0 : #2E3440;
+    x1 : #3B4252;
+    x2 : #434C5E;
+    x3 : #4C566A;
+    x4 : #D8DEE9;
+    x5 : #E5E9F0;
+    x6 : #ECEFF4;
+    x7 : #ECEFF4;
+    x8 : #88C0D0;
+    x9 : #81A1C1;
+    x10 : #5E81AC;
+    x11 : #BF616A;
+    x12 : #D08770;
+    x13 : #EBCB8B;
+    x14 : #A3BE8C;
+    x15 : #B48EAD;
+}

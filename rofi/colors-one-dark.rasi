@@ -1,0 +1,22 @@
+* {
+    xbg:    #282c34cc;
+    xfg:    #FDFDFD;
+    x0:     #282c34;
+    x1:     #353b45;
+    x2:     #3e4451;
+    x3:     #545862;
+    x4:     #565c64;
+    // x5:     #abb2bf;
+    x5:     #56b6c2; //used for current window
+    x6:     #b6bdca;
+    x7:     #c8ccd4;
+    x8:     #e06c75;
+    // x9:     #d19a66;
+    x9:     #be5046; //used for border so we override it here
+    x10:    #e5c07b;
+    x11:    #98c379;
+    x12:    #56b6c2;
+    x13:    #61afef;
+    x14:    #c678dd;
+    x15:    #be5046;
+}
