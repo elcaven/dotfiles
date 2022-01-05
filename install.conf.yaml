@@ -4,9 +4,10 @@
 
 - clean: ['~']
 
-
 - link:
+    ~/.config/qtile: qtile
     ~/.config/dunst: dunst
+    ~/.config/rofi: rofi
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
