@@ -1,0 +1,268 @@
+#####################################################################################################
+# Imports
+#####################################################################################################
+import os
+import subprocess
+
+from typing import List  # noqa: F401
+
+from libqtile import bar, layout, widget, hook, qtile
+from libqtile.config import Click, Drag, Group, Key, Match, Screen, ScratchPad, DropDown
+from libqtile.lazy import lazy
+from libqtile.log_utils import logger
+
+from colorschemes import deep_ocean as colors
+
+
+#####################################################################################################
+# Hooks
+#####################################################################################################
+@hook.subscribe.startup_once
+def autostart():
+    home = os.path.expanduser('/home/simon/.config/qtile/autostart.sh')
+    subprocess.call([home])
+
+
+@hook.subscribe.screen_change
+def screen_change(event):
+    home = os.path.expanduser('/home/simon/.config/qtile/scripts/screen_change.sh')
+    subprocess.call([home])
+
+
+# @hook.subscribe.client_new
+# def bring_windows_to_front(window):
+# logger.warning(window.window.get_wm_class())
+
+#####################################################################################################
+# Key bindings
+#####################################################################################################
+mod = "mod4"
+alt_key = "mod1"
+terminal = "kitty"
+scr_locker = "betterlockscreen -l"
+
+keys = [
+    Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
+    Key([mod], "l", lazy.layout.right(), desc="Move focus to right"),
+    Key([mod], "j", lazy.group.next_window(), desc="Move focus down"),
+    Key([mod], "k", lazy.group.prev_window(), desc="Move focus up"),
+    Key([alt_key], "j", lazy.group.next_window(), desc="Move window focus to other window"),
+    Key([mod], "u", lazy.next_urgent()),
+
+    Key([mod, "shift"], "h", lazy.layout.shuffle_left(), desc="Move window to the left"),
+    Key([mod, "shift"], "l", lazy.layout.shuffle_right(), desc="Move window to the right"),
+    Key([mod, "shift"], "j", lazy.layout.shuffle_down(), desc="Move window down"),
+    Key([mod, "shift"], "k", lazy.layout.shuffle_up(), desc="Move window up"),
+
+    Key([mod, "control"], "h", lazy.layout.grow(), desc="Grow window to the left"),
+    Key([mod, "control"], "l", lazy.layout.shrink(), desc="Grow window to the right"),
+    Key([mod], "n", lazy.layout.normalize(), desc="Reset all window sizes"),
+    Key([mod], "o", lazy.layout.maximize(), desc="Reset all window sizes"),
+    Key([mod, "control"], "Return", lazy.layout.flip()),
+
+    Key([mod, "shift"], "Return", lazy.layout.toggle_split(), desc="Toggle between split and unsplit sides of stack"),
+    Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
+
+    Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
+    Key([mod], "w", lazy.window.kill(), desc="Kill focused window"),
+    Key([mod], "space", lazy.window.toggle_floating()),
+    Key([mod], "f", lazy.window.toggle_fullscreen()),
+    Key([mod, "control"], 'j', lazy.next_screen(), desc='Next monitor'),
+
+    Key([mod, "control"], "r", lazy.restart(), desc="Restart Qtile"),
+    Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
+    Key([mod], "r", lazy.spawn("rofi -show combi")),
+    Key([mod], "p", lazy.spawn("dmenu_run")),
+    Key([mod], "q", lazy.spawn("rofi -show power-menu -modi power-menu:rofi-power-menu -lines 6")),
+
+    Key([], "XF86MonBrightnessDown", lazy.spawn("sudo ybacklight -dec 5")),
+    Key([], "XF86MonBrightnessUp", lazy.spawn("sudo ybacklight -inc 5")),
+
+    Key([], "Print", lazy.spawn("flameshot gui")),
+    Key([mod], "d", lazy.spawn("emacs")),
+    Key([mod], "a", lazy.spawn("emacs /home/simon/.config/qtile/config.py")),
+    Key([mod], "z", lazy.group['scratchpad'].dropdown_toggle('term')),
+    Key([mod], "p", lazy.group['scratchpad'].dropdown_toggle('insomnia')),
+    Key([mod], "n", lazy.group['scratchpad'].dropdown_toggle('boostnote')),
+    # Key([mod], "b", lazy.group['scratchpad'].dropdown_toggle('browser')),
+    Key([alt_key], "l", lazy.spawn(scr_locker)),
+    Key([mod], "b", lazy.hide_show_bar("top")),
+    # Key(["control", "shift"], "h", lazy.spawn("/home/simon/.local/bin/clipmenu-rofi"))
+
+    # Dunst
+    Key(["control"], "space", lazy.spawn("dunstctl close")),
+    Key(["control", "shift"], "space", lazy.spawn("dunstctl close-all"))
+]
+
+#####################################################################################################
+# Groups
+#####################################################################################################
+groups = [
+    Group(name='1', layout='monadtall'),
+    Group(name='2', layout='max',
+          matches=[Match(wm_class='jetbrains-idea'), Match(wm_class='jetbrains-toolbox')]),
+    Group(name='3', layout='monadtall'),
+    Group(name='4', layout='monadtall'),
+    Group(name='5', layout='monadtall'),
+    Group(name='6', layout='monadtall'),
+    Group(name='7', layout='monadtall'),
+    Group(name='8', layout='max', matches=[
+        Match(wm_class='slack'),
+        Match(wm_class='microsoft teams - preview'),
+        Match(wm_class='hexchat'),
+        Match(wm_class='discord')]),
+    Group(name='9', layout='max', matches=[Match(wm_class="evolution")]),
+]
+
+for i in groups:
+    keys.extend([
+        Key([mod], i.name, lazy.group[i.name].toscreen(),
+            desc="Switch to group {}".format(i.name)),
+        Key([mod, "shift"], i.name, lazy.window.togroup(i.name, switch_group=True),
+            desc="Switch to & move focused window to group {}".format(i.name)),
+    ])
+
+# Append scratchpad after setting up group keybinds
+groups.append(ScratchPad("scratchpad", [
+    DropDown("term", "kitty", opacity=1, height=0.4, x=0, width=0.998, on_focus_lost_hide=True),
+    DropDown("insomnia", "insomnia", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
+    DropDown("boostnote", "boostnote", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
+    # DropDown("browser", "qutebrowser", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True)
+]))
+
+#####################################################################################################
+# Theming
+#####################################################################################################
+
+
+layout_border = dict(
+    border_width=2,
+    border_focus=colors.border_focus,
+    border_normal=colors.border_normal,
+)
+
+layout_theme = {
+    **layout_border,
+    "margin": 7,
+}
+
+#####################################################################################################
+# Layouts
+#####################################################################################################
+layouts = [
+    layout.Max(**layout_theme),
+    layout.MonadTall(**layout_theme, single_border_width=0, single_margin=0, ratio=0.6),
+    layout.MonadWide(**layout_theme, single_border_width=0, single_margin=0, ratio=0.6),
+]
+
+#####################################################################################################
+# Bar
+#####################################################################################################
+widget_defaults = dict(
+    font="JuliaMono Bold", fontsize=11, background=colors.background
+)
+extension_defaults = widget_defaults.copy()
+delimiter_widget = widget.Sep(
+    padding=10,
+    linewidth=2,
+    size_percent=70,
+    foreground=colors.alternate_foreground)
+
+screens = [
+    Screen(
+        top=bar.Bar(
+            [
+                widget.Spacer(length=5),
+                widget.GroupBox(
+                    highlight_method="line",
+                    urgent_alert_method="text",
+                    urgent_text=colors.groupbox_urgent,
+                    block_highlight_text_color="#ffffff",
+                    this_current_screen_border=colors.groupbox_current_screen_border,
+                    this_screen_border=colors.groupbox_screen_border,
+                    other_screen_border=colors.groupbox_other_screen_border,
+                    other_current_screen_border=colors.groupbox_current_screen_border,
+                    highlight_color=colors.highlight_color,
+                    inactive=colors.groupbox_inactive,
+                    borderwidth=2,
+                    margin_x=2,
+                    margin_y=4,
+                    padding_x=4,
+                    disable_drag=True,
+                    hide_unused=False,
+                    font="JuliaMono SemiBold"
+                ),
+                widget.Spacer(length=5),
+                widget.WindowCount(fmt="[{}]", padding=0, foreground=colors.widget_accent_foreground),
+                widget.CurrentLayout(fmt="[{}]", padding=0, foreground=colors.widget_accent_foreground),
+                widget.Spacer(length=3),
+                widget.WindowName(for_current_screen=True),
+                widget.Spacer(length=8),
+                delimiter_widget,
+                widget.TextBox(fmt="CPU", foreground=colors.widget_accent_foreground, padding=4, font="JuliaMono ExtraBold"),
+                widget.CPU(format="{load_percent}%", padding=0),
+                widget.Spacer(length=3),
+                delimiter_widget,
+                widget.TextBox(fmt="MEM", foreground=colors.widget_accent_foreground, padding=4, font="JuliaMono ExtraBold"),
+                widget.Memory(format="{MemUsed:.0f}Mb", padding=0),
+                widget.Spacer(length=3),
+                delimiter_widget,
+                widget.Spacer(length=3),
+                widget.Clock(format="%a %d %b, %H:%M", padding=0),
+                widget.Spacer(length=3),
+                delimiter_widget,
+                widget.Systray(padding=2, background=colors.background),
+                widget.Spacer(length=10),
+            ],
+            23,
+            opacity=1.0,
+        ),
+    ),
+]
+
+#####################################################################################################
+# Configurations
+#####################################################################################################
+# Drag floating layouts.
+mouse = [
+    Drag([mod], "Button1", lazy.window.set_position_floating(), start=lazy.window.get_position()),
+    Drag([mod], "Button3", lazy.window.set_size_floating(), start=lazy.window.get_size()),
+    Click([mod], "Button2", lazy.window.bring_to_front())
+]
+
+dgroups_key_binder = None
+dgroups_app_rules = []  # type: List
+bring_front_click = False
+cursor_warp = False
+floating_layout = layout.Floating(
+    **layout_border,
+    float_rules=[
+        # Run the utility of `xprop` to see the wm class and name of an X client.
+        *layout.Floating.default_float_rules,
+        Match(wm_class='confirmreset'),  # gitk
+        Match(wm_class='makebranch'),  # gitk
+        Match(wm_class='maketag'),  # gitk
+        Match(wm_class='ssh-askpass'),  # ssh-askpass
+        Match(title='branchdialog'),  # gitk
+        Match(title='pinentry'),  # GPG key password entry
+        Match(title='Reminders'),  # Evolution reminders
+        Match(wm_class='copyq')
+    ])
+auto_fullscreen = True
+focus_on_window_activation = "focus"
+reconfigure_screens = True
+follow_mouse_focus = True
+
+# If things like steam games want to auto-minimize themselves when losing
+# focus, should we respect this or not?
+auto_minimize = True
+
+# XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
+# string besides java UI toolkits; you can see several discussions on the
+# mailing lists, GitHub issues, and other WM documentation that suggest setting
+# this string if your java app doesn't work correctly. We may as well just lie
+# and say that we're a working one by default.
+#
+# We choose LG3D to maximize irony: it is a 3D non-reparenting WM written in
+# java that happens to be on java's whitelist.
+wmname = "LG3D"
