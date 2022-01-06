@@ -90,7 +90,7 @@ keys = [
 
     Key([], "Print", lazy.spawn("flameshot gui")),
     Key([mod], "d", lazy.spawn("emacs")),
-    Key([mod], "a", lazy.spawn("emacs /home/simon/.config/qtile/config.py")),
+    Key([mod], "a", lazy.spawn("emacs /home/simon/projects/personal/dotfiles")),
     Key([mod], "e", lazy.spawn("kitty -e ranger")),
     Key([mod], "z", lazy.group['scratchpad'].dropdown_toggle('term')),
     Key([mod], "p", lazy.group['scratchpad'].dropdown_toggle('insomnia')),
