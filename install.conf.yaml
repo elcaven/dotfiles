@@ -11,6 +11,7 @@
     ~/.config/rofi: rofi
     ~/.config/kitty: kitty
     ~/.doom.d: doom-emacs
+    ~/.config/starship.toml: starship/starship.toml
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]

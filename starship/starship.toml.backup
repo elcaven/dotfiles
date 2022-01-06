@@ -1,0 +1,81 @@
+add_newline = true
+
+[character]
+#success_symbol = "[❯](white)[❯](cyan)[❯](bold green)" # prompt fit for kitty terminal
+#error_symbol = "[❯](red)[❯](red)[❯](red)" # prompt fit for kitty terminal
+success_symbol = "[](bold white)[](bold cyan)[](bold green)" # prompt fit for alacritty terminal
+error_symbol = "[](bold red)[](bold red)[](bold red)"
+
+[status]
+disabled = false
+format = "[$symbol $status]($style) "
+
+[aws]
+symbol = "  "
+
+[conda]
+symbol = " "
+
+[dart]
+symbol = " "
+
+[directory]
+read_only = " "
+
+[docker_context]
+symbol = " "
+
+[elixir]
+symbol = " "
+
+[elm]
+symbol = " "
+
+[git_branch]
+symbol = " "
+
+[golang]
+symbol = " "
+
+[hg_branch]
+symbol = " "
+
+[java]
+symbol = " "
+
+[julia]
+symbol = " "
+
+[memory_usage]
+symbol = " "
+
+[nim]
+symbol = " "
+
+[nix_shell]
+symbol = " "
+
+[package]
+disabled = true
+symbol = " "
+
+[perl]
+symbol = " "
+
+[php]
+symbol = " "
+
+[python]
+symbol = " "
+
+[ruby]
+symbol = " "
+
+[rust]
+symbol = " "
+
+[scala]
+symbol = " "
+
+[swift]
+symbol = "ﯣ "

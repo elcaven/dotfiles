@@ -1,0 +1,55 @@
+add_newline = true
+
+[character]
+#success_symbol = "[❯](white)[❯](cyan)[❯](bold green)" # prompt fit for kitty terminal
+#error_symbol = "[❯](red)[❯](red)[❯](red)" # prompt fit for kitty terminal
+success_symbol = "[](white)[](cyan)[](green)" # prompt fit for alacritty terminal
+error_symbol = "[](red)[](red)[](red)"
+
+[status]
+disabled = false
+format = "[$symbol $status]($style) "
+
+[git_branch]
+format = "[$branch]($style)"
+style = "purple"
+
+[git_status]
+format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)"
+style = "cyan"
+conflicted = "​"
+untracked = "​"
+modified = "​"
+staged = "​"
+renamed = "​"
+deleted = "​"
+stashed = ""
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+style = "purple"
+
+[directory]
+read_only = " ro"
+
+[docker_context]
+disabled = true
+symbol = "docker "
+
+[java]
+disabled = true
+symbol = "java "
+
+[kotlin]
+symbol = "kt "
+
+[nodejs]
+symbol = "nodejs "
+
+[package]
+disabled = true
+symbol = "pkg "
+
+[python]
+disabled = true
+symbol = "py "
