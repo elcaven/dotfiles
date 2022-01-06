@@ -16,7 +16,7 @@ color13 = "#ffcb6b"
 color14 = "#c3e88d"
 color15 = "#B48EAD"
 
-border_focus = color8
+border_focus = color6
 border_normal = color1
 
 foreground = '#ffffff'
@@ -28,7 +28,7 @@ alternate_background = color1
 highlight_color = ['0f111a', '44475a']
 
 groupbox_urgent = color12
-groupbox_current_screen_border = color8
+groupbox_current_screen_border = color6
 groupbox_screen_border = color9
 groupbox_other_screen_border = color9
 groupbox_other_current_screen_border = color7
