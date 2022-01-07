@@ -12,6 +12,7 @@
     ~/.config/kitty: kitty
     ~/.doom.d: doom-emacs
     ~/.config/starship.toml: starship/starship.toml
+    ~/.config/fish: fish
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
