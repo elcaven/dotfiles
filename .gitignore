@@ -1,3 +1,10 @@
+# Intellij
+.idea/
+*.iml
+*.iws
+**/out/
+project/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
