@@ -13,6 +13,7 @@
     ~/.doom.d: doom-emacs
     ~/.config/starship.toml: starship/starship.toml
     ~/.config/fish: fish
+    ~/.themes: gtk-themes
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
