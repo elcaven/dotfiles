@@ -173,10 +173,7 @@ layouts = [
 widget_defaults = dict(
     font="JetBrainsMono Nerd Font Mono Bold", fontsize=11, background=colors.background
 )
-widget_defaults_2 = dict(
-    font="JetBrainsMono Nerd Font Mono Bold", fontsize=11
-)
-extension_defaults = widget_defaults_2.copy()
+extension_defaults = widget_defaults.copy()
 
 delimiter_widget = widget.Sep(
     padding=10,
