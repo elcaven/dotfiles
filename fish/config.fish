@@ -24,7 +24,9 @@ alias bat="bat --theme=Dracula"
 alias vim="nvim"
 alias vi="nvim"
 alias code="vscodium"
+
 alias update="yay -Syu --devel"
+alias cleanup="yay -Yc"
 
 # Functions
 function kdebug --description="Start kubernetes debug pod"
