@@ -14,6 +14,7 @@
     ~/.config/starship.toml: starship/starship.toml
     ~/.config/fish: fish
     ~/.themes: gtk-themes
+    ~/.config/nvim: nvim
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
