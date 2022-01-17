@@ -94,7 +94,7 @@ keys = [
     Key([mod], "e", lazy.spawn("kitty -e ranger")),
     Key([mod], "z", lazy.group['scratchpad'].dropdown_toggle('term')),
     Key([mod], "p", lazy.group['scratchpad'].dropdown_toggle('insomnia')),
-    Key([mod], "n", lazy.group['scratchpad'].dropdown_toggle('boostnote')),
+    # Key([mod], "n", lazy.group['scratchpad'].dropdown_toggle('boostnote')),
     # Key([mod], "b", lazy.group['scratchpad'].dropdown_toggle('browser')),
     Key([alt_key], "l", lazy.spawn(scr_locker)),
     Key([mod], "b", lazy.hide_show_bar("top")),
@@ -139,7 +139,7 @@ for i in groups:
 groups.append(ScratchPad("scratchpad", [
     DropDown("term", "kitty", opacity=1, height=0.4, x=0, width=0.998, on_focus_lost_hide=True),
     DropDown("insomnia", "insomnia", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
-    DropDown("boostnote", "boostnote", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
+    #DropDown("boostnote", "boostnote", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
 ]))
 
 ####################################################################################################
