@@ -6,7 +6,7 @@ import subprocess
 
 from typing import List  # noqa: F401
 
-from libqtile import bar, layout, hook, qtile
+from libqtile import bar, layout, hook
 from qtile_extras import widget
 from libqtile.config import Click, Drag, Group, Key, Match, Screen, ScratchPad, DropDown
 from libqtile.lazy import lazy
@@ -111,7 +111,7 @@ keys = [
 ####################################################################################################
 groups = [
     Group(name='1', layout='monadtall'),
-    Group(name='2', layout='max', matches=[
+    Group(name='2', layout='stack', matches=[
         Match(wm_class='jetbrains-idea'),
         Match(wm_class='jetbrains-toolbox')]),
     Group(name='3', layout='monadtall'),
@@ -119,13 +119,13 @@ groups = [
     Group(name='5', layout='monadtall'),
     Group(name='6', layout='monadtall'),
     Group(name='7', layout='monadtall'),
-    Group(name='8', layout='max', matches=[
+    Group(name='8', layout='stack', matches=[
         Match(wm_class='slack'),
         Match(wm_class='teams-for-linux'),
         Match(wm_class='microsoft teams - preview'),
         Match(wm_class='hexchat'),
         Match(wm_class='discord')]),
-    Group(name='9', layout='max', matches=[Match(wm_class="evolution")]),
+    Group(name='9', layout='stack', matches=[Match(wm_class="evolution")]),
 ]
 
 for i in groups:
@@ -156,16 +156,17 @@ layout_border = dict(
 
 layout_theme = {
     **layout_border,
-    "margin": 5,
+    "margin": 7,
 }
 
 ####################################################################################################
 # Layouts
 ####################################################################################################
 layouts = [
-    layout.Max(**layout_theme),
-    layout.MonadTall(**layout_theme, single_border_width=0, single_margin=0, ratio=0.6),
-    layout.MonadWide(**layout_theme, single_border_width=0, single_margin=0, ratio=0.6),
+    #layout.Max(**layout_theme),
+    layout.Stack(margin=7, num_stacks=1, border_width=0),
+    layout.MonadTall(**layout_theme, single_border_width=0, single_margin=7, ratio=0.6),
+    layout.MonadWide(**layout_theme, single_border_width=0, single_margin=7, ratio=0.6),
 ]
 
 ####################################################################################################
