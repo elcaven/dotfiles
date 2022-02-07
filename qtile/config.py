@@ -6,27 +6,26 @@ import subprocess
 
 from typing import List  # noqa: F401
 
-from libqtile import bar, layout, hook
-from qtile_extras import widget
+from libqtile import bar, layout, hook, widget
 from libqtile.config import Click, Drag, Group, Key, Match, Screen, ScratchPad, DropDown
 from libqtile.lazy import lazy
 from libqtile.log_utils import logger
 
 from colorschemes import deep_ocean as colors
-from qtile_extras.widget.decorations import RectDecoration
-
 
 ####################################################################################################
 # Hooks
 ####################################################################################################
 @hook.subscribe.startup_once
 def autostart():
+    logger.info("Startup hook called")
     home = os.path.expanduser('/home/simon/.config/qtile/autostart.sh')
     subprocess.call([home])
 
 
 @hook.subscribe.screen_change
 def screen_change(event):
+    logger.info("Screen change hook called")
     home = os.path.expanduser('/home/simon/.config/qtile/scripts/screen_change.sh')
     subprocess.call([home])
 
@@ -91,7 +90,7 @@ keys = [
 
     Key([], "Print", lazy.spawn("flameshot gui")),
     Key([mod], "d", lazy.spawn("emacs")),
-    Key([mod], "a", lazy.spawn("emacs /home/simon/projects/personal/dotfiles")),
+    Key([mod], "a", lazy.spawn("kitty -e lvim /home/simon/projects/personal/dotfiles/qtile/config.py")),
     Key([mod], "e", lazy.spawn("kitty -e ranger")),
     Key([mod], "z", lazy.group['scratchpad'].dropdown_toggle('term')),
     Key([mod], "p", lazy.group['scratchpad'].dropdown_toggle('insomnia')),
@@ -123,6 +122,7 @@ groups = [
         Match(wm_class='slack'),
         Match(wm_class='teams-for-linux'),
         Match(wm_class='microsoft teams - preview'),
+        Match(wm_class='microsoft teams - insiders'),
         Match(wm_class='hexchat'),
         Match(wm_class='discord')]),
     Group(name='9', layout='stack', matches=[Match(wm_class="evolution")]),
@@ -183,46 +183,6 @@ delimiter_widget = widget.Sep(
     size_percent=70,
     foreground=colors.alternate_foreground
 )
-decor = {
-    "decorations": [
-        RectDecoration(colour=colors.alternate_background, radius=3, filled=True, padding=4, margin=5)
-    ]
-}
-
-rectDecorationBar = bar.Bar(
-    [
-        widget.Spacer(length=3),
-        widget.GroupBox(**decor,
-            spacing=4, padding=2, margin_x=7,
-            highlight_method="block",
-            borderwidth=1,
-            urgent_alert_method="text",
-            urgent_text=colors.groupbox_urgent,
-            block_highlight_text_color=colors.block_highlight_text_color,
-            this_current_screen_border=colors.groupbox_current_screen_border,
-            this_screen_border=colors.groupbox_screen_border,
-            other_screen_border=colors.groupbox_other_screen_border,
-            other_current_screen_border=colors.groupbox_other_current_screen_border,
-            highlight_color=colors.highlight_color,
-            inactive=colors.groupbox_inactive,
-            disable_drag=True,
-            hide_unused=False,
-            font="JuliaMono SemiBold"
-        ),
-        widget.CurrentLayout(**decor, padding=10, foreground=colors.widget_current_layout),
-        widget.Spacer(length=3),
-        widget.WindowCount(fmt="[{}]", padding=0, foreground=colors.widget_window_count),
-        widget.WindowName(),
-        widget.Spacer(length=3),
-        widget.CPU(**decor, format="cpu:{load_percent}%", padding=10, foreground=colors.cpu_color),
-        widget.Memory(**decor, format="mem:{MemUsed:.0f}Mb", padding=10, foreground=colors.mem_color),
-        widget.Clock(**decor, format="%a %d %b, %H:%M", padding=10, foreground=colors.date_color),
-        widget.Spacer(length=3),
-        widget.Systray(padding=2, padding_x=5, background=colors.background),
-        widget.Spacer(length=5),
-    ],
-    27
-)
 
 simpleBar = bar.Bar(
     [
@@ -253,14 +213,15 @@ simpleBar = bar.Bar(
         widget.Spacer(length=3),
         widget.WindowName(for_current_screen=True),
         widget.Spacer(length=8),
-        #delimiter_widget,
-        widget.CPU(format="cpu:{load_percent}%", padding=8, foreground=colors.cpu_color),
-        #delimiter_widget,
-        widget.Memory(format="mem:{MemUsed:.0f}Mb", padding=8, foreground=colors.mem_color),
-        #delimiter_widget,
-        widget.Clock(format="%a %d %b, %H:%M", padding=8, foreground=colors.date_color),
-        widget.Spacer(length=3),
-        #delimiter_widget,
+        widget.TextBox(text='cpu', padding=5, foreground=colors.cpu_color),
+        widget.CPU(format="{load_percent}%", padding=0),
+        widget.Spacer(length=12),
+        widget.TextBox(text='mem', padding=5, foreground=colors.mem_color),
+        widget.Memory(format="{MemUsed:.0f}Mb", padding=0),
+        widget.Spacer(length=20),
+        #widget.Clock(format="%a ", padding=0, margin_y=0, foreground=colors.date_color),
+        widget.Clock(format="%a %d %b, %H:%M", padding=0, margin_y=0, foreground=colors.foreground, font="JetBrainsMono Nerd Font Mono ExtraBold"),
+        widget.Spacer(length=10),
         widget.Systray(padding=2, background=colors.background),
         widget.Spacer(length=10),
     ],
