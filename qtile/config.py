@@ -1,6 +1,5 @@
-####################################################################################################
-# Imports
-####################################################################################################
+# vim:fileencoding=utf-8:ft=python:foldmethod=marker
+#: Imports {{{
 import os
 import subprocess
 
@@ -30,10 +29,9 @@ from libqtile.widget.systray import Systray
 from libqtile.widget.sep import Sep
 
 from colorschemes import deep_ocean as colors
+#: }}}
 
-####################################################################################################
-# Hooks
-####################################################################################################
+#: Hooks {{{
 @hook.subscribe.startup_once
 def autostart():
     logger.info("Startup hook called")
@@ -46,11 +44,9 @@ def screen_change(event):
     logger.info("Screen change hook called", event)
     home = os.path.expanduser('/home/simon/.config/qtile/scripts/screen_change.sh')
     subprocess.call([home])
+#: }}}
 
-
-####################################################################################################
-# Functions
-####################################################################################################
+#: Functions {{{
 @lazy.function
 def float_to_front(qtile):
     logger.info("Bring floating windows to front")
@@ -58,10 +54,9 @@ def float_to_front(qtile):
         for window in group.windows:
             if window.floating:
                 window.cmd_bring_to_front()
+#: }}}
 
-####################################################################################################
-# Key bindings
-####################################################################################################
+#: Key bindings {{{
 mod = "mod4"
 alt_key = "mod1"
 terminal = "kitty"
@@ -112,20 +107,16 @@ keys = [
     Key([mod], "e", lazy.spawn("kitty -e ranger")),
     Key([mod], "z", lazy.group['scratchpad'].dropdown_toggle('term')),
     Key([mod], "p", lazy.group['scratchpad'].dropdown_toggle('insomnia')),
-    # Key([mod], "n", lazy.group['scratchpad'].dropdown_toggle('boostnote')),
-    # Key([mod], "b", lazy.group['scratchpad'].dropdown_toggle('browser')),
     Key([alt_key], "l", lazy.spawn(scr_locker)),
     Key([mod], "b", lazy.hide_show_bar("top")),
-    # Key(["control", "shift"], "h", lazy.spawn("/home/simon/.local/bin/clipmenu-rofi"))
 
     # Dunst
     Key(["control"], "space", lazy.spawn("dunstctl close")),
     Key(["control", "shift"], "space", lazy.spawn("dunstctl close-all"))
 ]
+#: }}}
 
-####################################################################################################
-# Groups
-####################################################################################################
+#: Groups {{{
 groups = [
     Group(name='1', layout='monadtall'),
     Group(name='2', layout='stack', matches=[
@@ -158,14 +149,10 @@ for i in groups:
 groups.append(ScratchPad("scratchpad", [
     DropDown("term", "kitty", opacity=1, height=0.4, x=0, width=0.998, on_focus_lost_hide=True),
     DropDown("insomnia", "insomnia", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
-    #DropDown("boostnote", "boostnote", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
 ]))
+#: }}}
 
-####################################################################################################
-# Theming
-####################################################################################################
-
-
+#: Theming {{{
 layout_border = dict(
     border_width=2,
     border_focus=colors.border_focus,
@@ -176,20 +163,18 @@ layout_theme = {
     **layout_border,
     "margin": 7,
 }
+#: }}}
 
-####################################################################################################
-# Layouts
-####################################################################################################
+#: Layouts {{{
 layouts = [
     #layout.Max(**layout_theme),
     Stack(margin=7, num_stacks=1, border_width=0),
     MonadTall(**layout_theme, single_border_width=0, single_margin=7, ratio=0.6),
     MonadWide(**layout_theme, single_border_width=0, single_margin=7, ratio=0.6),
 ]
+#: }}}
 
-####################################################################################################
-# Bar
-####################################################################################################
+#: Bar {{{
 widget_defaults = dict(
     font="JetBrainsMono Nerd Font Mono Bold", fontsize=11, background=colors.background
 )
@@ -249,11 +234,9 @@ simpleBar = bar.Bar(
 screens = [
     Screen(top=simpleBar)
 ]
+#: }}}
 
-
-####################################################################################################
-# Configurations
-####################################################################################################
+#: Configurations {{{
 # Drag floating layouts.
 mouse = [
     Drag([mod], "Button1", lazy.window.set_position_floating(), start=lazy.window.get_position()),
@@ -268,7 +251,6 @@ cursor_warp = False
 floating_layout = Floating(
     **layout_border,
     float_rules=[
-        # Run the utility of `xprop` to see the wm class and name of an X client.
         *Floating.default_float_rules,
         Match(wm_class='confirmreset'),  # gitk
         Match(wm_class='makebranch'),  # gitk
@@ -283,17 +265,6 @@ auto_fullscreen = True
 focus_on_window_activation = "focus"
 reconfigure_screens = True
 follow_mouse_focus = True
-
-# If things like steam games want to auto-minimize themselves when losing
-# focus, should we respect this or not?
 auto_minimize = True
-
-# XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
-# string besides java UI toolkits; you can see several discussions on the
-# mailing lists, GitHub issues, and other WM documentation that suggest setting
-# this string if your java app doesn't work correctly. We may as well just lie
-# and say that we're a working one by default.
-#
-# We choose LG3D to maximize irony: it is a 3D non-reparenting WM written in
-# java that happens to be on java's whitelist.
 wmname = "LG3D"
+#: }}}
