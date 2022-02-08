@@ -6,10 +6,28 @@ import subprocess
 
 from typing import List  # noqa: F401
 
-from libqtile import bar, layout, hook, widget
+from libqtile import bar, hook
 from libqtile.config import Click, Drag, Group, Key, Match, Screen, ScratchPad, DropDown
 from libqtile.lazy import lazy
 from libqtile.log_utils import logger
+
+# Layout imports
+from libqtile.layout.stack import Stack
+from libqtile.layout.floating import Floating
+from libqtile.layout.xmonad import MonadTall, MonadWide
+
+# Widget imports
+from libqtile.widget.cpu import CPU
+from libqtile.widget.memory import Memory
+from libqtile.widget.spacer import Spacer
+from libqtile.widget.textbox import TextBox
+from libqtile.widget.groupbox import GroupBox
+from libqtile.widget.window_count import WindowCount
+from libqtile.widget.currentlayout import CurrentLayout
+from libqtile.widget.windowname import WindowName
+from libqtile.widget.clock import Clock
+from libqtile.widget.systray import Systray
+from libqtile.widget.sep import Sep
 
 from colorschemes import deep_ocean as colors
 
@@ -25,7 +43,7 @@ def autostart():
 
 @hook.subscribe.screen_change
 def screen_change(event):
-    logger.info("Screen change hook called")
+    logger.info("Screen change hook called", event)
     home = os.path.expanduser('/home/simon/.config/qtile/scripts/screen_change.sh')
     subprocess.call([home])
 
@@ -164,9 +182,9 @@ layout_theme = {
 ####################################################################################################
 layouts = [
     #layout.Max(**layout_theme),
-    layout.Stack(margin=7, num_stacks=1, border_width=0),
-    layout.MonadTall(**layout_theme, single_border_width=0, single_margin=7, ratio=0.6),
-    layout.MonadWide(**layout_theme, single_border_width=0, single_margin=7, ratio=0.6),
+    Stack(margin=7, num_stacks=1, border_width=0),
+    MonadTall(**layout_theme, single_border_width=0, single_margin=7, ratio=0.6),
+    MonadWide(**layout_theme, single_border_width=0, single_margin=7, ratio=0.6),
 ]
 
 ####################################################################################################
@@ -177,7 +195,7 @@ widget_defaults = dict(
 )
 extension_defaults = widget_defaults.copy()
 
-delimiter_widget = widget.Sep(
+delimiter_widget = Sep(
     padding=10,
     linewidth=2,
     size_percent=70,
@@ -186,8 +204,8 @@ delimiter_widget = widget.Sep(
 
 simpleBar = bar.Bar(
     [
-        widget.Spacer(length=5),
-        widget.GroupBox(
+        Spacer(length=5),
+        GroupBox(
             highlight_method="line",
             urgent_alert_method="text",
             urgent_text=colors.groupbox_urgent,
@@ -207,23 +225,23 @@ simpleBar = bar.Bar(
             hide_unused=False,
             font="JuliaMono SemiBold"
         ),
-        widget.Spacer(length=5),
-        widget.WindowCount(fmt="[{}]", padding=0, foreground=colors.widget_current_layout),
-        widget.CurrentLayout(fmt="[{}]", padding=0, foreground=colors.widget_window_count),
-        widget.Spacer(length=3),
-        widget.WindowName(for_current_screen=True),
-        widget.Spacer(length=8),
-        widget.TextBox(text='cpu', padding=5, foreground=colors.cpu_color),
-        widget.CPU(format="{load_percent}%", padding=0),
-        widget.Spacer(length=12),
-        widget.TextBox(text='mem', padding=5, foreground=colors.mem_color),
-        widget.Memory(format="{MemUsed:.0f}Mb", padding=0),
-        widget.Spacer(length=20),
-        #widget.Clock(format="%a ", padding=0, margin_y=0, foreground=colors.date_color),
-        widget.Clock(format="%a %d %b, %H:%M", padding=0, margin_y=0, foreground=colors.foreground, font="JetBrainsMono Nerd Font Mono ExtraBold"),
-        widget.Spacer(length=10),
-        widget.Systray(padding=2, background=colors.background),
-        widget.Spacer(length=10),
+        Spacer(length=5),
+        WindowCount(fmt="[{}]", padding=0, foreground=colors.widget_current_layout),
+        CurrentLayout(fmt="[{}]", padding=0, foreground=colors.widget_window_count),
+        Spacer(length=3),
+        WindowName(for_current_screen=True),
+        Spacer(length=8),
+        TextBox(text='cpu', padding=5, foreground=colors.cpu_color),
+        CPU(format="{load_percent}%", padding=0),
+        Spacer(length=12),
+        TextBox(text='mem', padding=5, foreground=colors.mem_color),
+        Memory(format="{MemUsed:.0f}Mb", padding=0),
+        Spacer(length=12),
+        TextBox(text='dt', padding=5, foreground=colors.date_color),
+        Clock(format="%a %d %b, %H:%M", padding=0, margin_y=0),
+        Spacer(length=10),
+        Systray(padding=2, background=colors.background),
+        Spacer(length=10),
     ],
     23,
 )
@@ -247,11 +265,11 @@ dgroups_key_binder = None
 dgroups_app_rules = []  # type: List
 bring_front_click = False
 cursor_warp = False
-floating_layout = layout.Floating(
+floating_layout = Floating(
     **layout_border,
     float_rules=[
         # Run the utility of `xprop` to see the wm class and name of an X client.
-        *layout.Floating.default_float_rules,
+        *Floating.default_float_rules,
         Match(wm_class='confirmreset'),  # gitk
         Match(wm_class='makebranch'),  # gitk
         Match(wm_class='maketag'),  # gitk
