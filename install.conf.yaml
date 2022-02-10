@@ -16,6 +16,7 @@
     ~/.themes: gtk-themes
     ~/.config/nvim: nvim
     ~/.config/picom.conf: picom/picom.conf
+    ~/.config/lvim/config.lua: lvim/config.lua
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
