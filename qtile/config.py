@@ -38,7 +38,6 @@ def autostart():
     home = os.path.expanduser('/home/simon/.config/qtile/autostart.sh')
     subprocess.call([home])
 
-
 @hook.subscribe.screen_change
 def screen_change(event):
     logger.info("Screen change hook called", event)
@@ -95,7 +94,6 @@ keys = [
     Key([mod, "control", "shift"], "r", lazy.restart(), desc="Restart Qtile"),
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key([mod], "r", lazy.spawn("rofi -show combi")),
-    Key([mod], "p", lazy.spawn("dmenu_run")),
     Key([mod], "q", lazy.spawn("rofi -show power-menu -modi power-menu:rofi-power-menu -lines 6")),
 
     Key([], "XF86MonBrightnessDown", lazy.spawn("sudo ybacklight -dec 1")),
@@ -152,7 +150,7 @@ groups.append(ScratchPad("scratchpad", [
 ]))
 #: }}}
 
-#: Theming {{{
+#: Layouts {{{
 layout_border = dict(
     border_width=2,
     border_focus=colors.border_focus,
@@ -163,9 +161,7 @@ layout_theme = {
     **layout_border,
     "margin": 7,
 }
-#: }}}
 
-#: Layouts {{{
 layouts = [
     #layout.Max(**layout_theme),
     Stack(margin=7, num_stacks=1, border_width=0),
