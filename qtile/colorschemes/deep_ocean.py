@@ -42,5 +42,5 @@ widget_window_count = color7
 
 block_highlight_text_color = color1
 cpu_color = color12
-mem_color = color14
-date_color = color13
+mem_color = color13
+date_color = color14
