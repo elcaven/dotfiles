@@ -176,4 +176,4 @@ textbox-prompt-colon {
     str:        ":";
     text-color: inherit;
 }
-@import "colors-deep-ocean.rasi"
+@import "colors-dracula.rasi"

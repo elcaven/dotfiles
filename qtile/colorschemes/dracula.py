@@ -20,25 +20,25 @@ border_normal = color1
 
 foreground = '#ffffff'
 alternate_foreground = color1
-background = "#191a21"
+background = "#1d1f27"
 alternate_background = color2
 
 highlight_color = ['44475a', '44475a']
 
 groupbox_urgent = color12
 groupbox_current_screen_border = color8
-groupbox_screen_border = color9
-groupbox_other_screen_border = color9
+groupbox_screen_border = color15
+groupbox_other_screen_border = color15
 groupbox_other_current_screen_border = color7
 groupbox_inactive = color1
 
 widget_accent_foreground = color8
 widget_accent_background = color9
 
-widget_current_layout = color7
-widget_window_count = color7
+widget_current_layout = color8
+widget_window_count = color8
 
 block_highlight_text_color = color1
 cpu_color = color13
 mem_color = color14
-date_color = color8
+date_color = color7

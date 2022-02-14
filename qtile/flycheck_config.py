@@ -1,51 +1,38 @@
-# vim:fileencoding=utf-8:ft=python:foldmethod=marker
-#: Imports {{{
+####################################################################################################
+# Imports
+####################################################################################################
 import os
 import subprocess
 
 from typing import List  # noqa: F401
 
-from libqtile import bar, hook
+from libqtile import bar, layout, hook, widget
 from libqtile.config import Click, Drag, Group, Key, Match, Screen, ScratchPad, DropDown
 from libqtile.lazy import lazy
 from libqtile.log_utils import logger
 
-# Layout imports
-from libqtile.layout.stack import Stack
-from libqtile.layout.floating import Floating
-from libqtile.layout.xmonad import MonadTall, MonadWide
+from colorschemes import deep_ocean as colors
 
-# Widget imports
-from libqtile.widget.cpu import CPU
-from libqtile.widget.memory import Memory
-from libqtile.widget.spacer import Spacer
-from libqtile.widget.textbox import TextBox
-from libqtile.widget.groupbox import GroupBox
-from libqtile.widget.window_count import WindowCount
-from libqtile.widget.currentlayout import CurrentLayout
-from libqtile.widget.windowname import WindowName
-from libqtile.widget.clock import Clock
-from libqtile.widget.systray import Systray
-from libqtile.widget.sep import Sep
-
-from colorschemes import dracula as colors
-#: }}}
-
-#: Hooks {{{
+####################################################################################################
+# Hooks
+####################################################################################################
 @hook.subscribe.startup_once
 def autostart():
     logger.info("Startup hook called")
     home = os.path.expanduser('/home/simon/.config/qtile/autostart.sh')
     subprocess.call([home])
 
+
 @hook.subscribe.screen_change
 def screen_change(event):
-    logger.info("Screen change hook called", event)
+    logger.info("Screen change hook called")
     home = os.path.expanduser('/home/simon/.config/qtile/scripts/screen_change.sh')
     subprocess.call([home])
-#: }}}
 
-#: Functions {{{
+
+####################################################################################################
+# Functions
+####################################################################################################
 @lazy.function
 def float_to_front(qtile):
     logger.info("Bring floating windows to front")
@@ -53,9 +40,10 @@ def float_to_front(qtile):
         for window in group.windows:
             if window.floating:
                 window.cmd_bring_to_front()
-#: }}}
 
-#: Key bindings {{{
+####################################################################################################
+# Key bindings
+####################################################################################################
 mod = "mod4"
 alt_key = "mod1"
 terminal = "kitty"
@@ -94,6 +82,7 @@ keys = [
     Key([mod, "control", "shift"], "r", lazy.restart(), desc="Restart Qtile"),
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key([mod], "r", lazy.spawn("rofi -show combi")),
+    Key([mod], "p", lazy.spawn("dmenu_run")),
     Key([mod], "q", lazy.spawn("rofi -show power-menu -modi power-menu:rofi-power-menu -lines 6")),
 
     Key([], "XF86MonBrightnessDown", lazy.spawn("sudo ybacklight -dec 1")),
@@ -101,20 +90,24 @@ keys = [
 
     Key([], "Print", lazy.spawn("flameshot gui")),
     Key([mod], "d", lazy.spawn("emacs")),
-    Key([mod], "a", lazy.spawn("kitty -e lvim /home/simon/projects/personal/dotfiles/qtile/config.py")),
+    Key([mod], "a", lazy.spawn("kitty -e nvim /home/simon/projects/personal/dotfiles/qtile/config.py")),
     Key([mod], "e", lazy.spawn("kitty -e ranger")),
     Key([mod], "z", lazy.group['scratchpad'].dropdown_toggle('term')),
     Key([mod], "p", lazy.group['scratchpad'].dropdown_toggle('insomnia')),
+    # Key([mod], "n", lazy.group['scratchpad'].dropdown_toggle('boostnote')),
+    # Key([mod], "b", lazy.group['scratchpad'].dropdown_toggle('browser')),
     Key([alt_key], "l", lazy.spawn(scr_locker)),
     Key([mod], "b", lazy.hide_show_bar("top")),
+    # Key(["control", "shift"], "h", lazy.spawn("/home/simon/.local/bin/clipmenu-rofi"))
 
     # Dunst
     Key(["control"], "space", lazy.spawn("dunstctl close")),
     Key(["control", "shift"], "space", lazy.spawn("dunstctl close-all"))
 ]
-#: }}}
 
-#: Groups {{{
+####################################################################################################
+# Groups
+####################################################################################################
 groups = [
     Group(name='1', layout='monadtall'),
     Group(name='2', layout='stack', matches=[
@@ -147,10 +140,14 @@ for i in groups:
 groups.append(ScratchPad("scratchpad", [
     DropDown("term", "kitty", opacity=1, height=0.4, x=0, width=0.998, on_focus_lost_hide=True),
     DropDown("insomnia", "insomnia", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
+    #DropDown("boostnote", "boostnote", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
 ]))
-#: }}}
 
-#: Layouts {{{
+####################################################################################################
+# Theming
+####################################################################################################
+
+
 layout_border = dict(
     border_width=2,
     border_focus=colors.border_focus,
@@ -162,21 +159,25 @@ layout_theme = {
     "margin": 7,
 }
 
+####################################################################################################
+# Layouts
+####################################################################################################
 layouts = [
     #layout.Max(**layout_theme),
-    Stack(margin=7, num_stacks=1, border_width=0),
-    MonadTall(**layout_theme, single_border_width=0, single_margin=7, ratio=0.6),
-    MonadWide(**layout_theme, single_border_width=0, single_margin=7, ratio=0.6),
+    layout.Stack(margin=7, num_stacks=1, border_width=0),
+    layout.MonadTall(**layout_theme, single_border_width=0, single_margin=7, ratio=0.6),
+    layout.MonadWide(**layout_theme, single_border_width=0, single_margin=7, ratio=0.6),
 ]
-#: }}}
 
-#: Bar {{{
+####################################################################################################
+# Bar
+####################################################################################################
 widget_defaults = dict(
     font="JetBrainsMono Nerd Font Mono Bold", fontsize=11, background=colors.background
 )
 extension_defaults = widget_defaults.copy()
 
-delimiter_widget = Sep(
+delimiter_widget = widget.Sep(
     padding=10,
     linewidth=2,
     size_percent=70,
@@ -185,8 +186,8 @@ delimiter_widget = Sep(
 
 simpleBar = bar.Bar(
     [
-        Spacer(length=5),
-        GroupBox(
+        widget.Spacer(length=5),
+        widget.GroupBox(
             highlight_method="line",
             urgent_alert_method="text",
             urgent_text=colors.groupbox_urgent,
@@ -206,23 +207,23 @@ simpleBar = bar.Bar(
             hide_unused=False,
             font="JuliaMono SemiBold"
         ),
-        Spacer(length=5),
-        WindowCount(fmt="[{}]", padding=0, foreground=colors.widget_current_layout),
-        CurrentLayout(fmt="[{}]", padding=0, foreground=colors.widget_window_count),
-        Spacer(length=3),
-        WindowName(for_current_screen=True),
-        Spacer(length=8),
-        TextBox(text='cpu', padding=5, foreground=colors.cpu_color),
-        CPU(format="{load_percent}%", padding=0),
-        Spacer(length=12),
-        TextBox(text='mem', padding=5, foreground=colors.mem_color),
-        Memory(format="{MemUsed:.0f}Mb", padding=0),
-        Spacer(length=12),
-        TextBox(text='dt', padding=5, foreground=colors.date_color),
-        Clock(format="%a %d %b, %H:%M", padding=0, margin_y=0),
-        Spacer(length=10),
-        Systray(padding=2, background=colors.background),
-        Spacer(length=10),
+        widget.Spacer(length=5),
+        widget.WindowCount(fmt="[{}]", padding=0, foreground=colors.widget_current_layout),
+        widget.CurrentLayout(fmt="[{}]", padding=0, foreground=colors.widget_window_count),
+        widget.Spacer(length=3),
+        widget.WindowName(for_current_screen=True),
+        widget.Spacer(length=8),
+        widget.TextBox(text='cpu', padding=5, foreground=colors.cpu_color),
+        widget.CPU(format="{load_percent}%", padding=0),
+        widget.Spacer(length=12),
+        widget.TextBox(text='mem', padding=5, foreground=colors.mem_color),
+        widget.Memory(format="{MemUsed:.0f}Mb", padding=0),
+        widget.Spacer(length=12),
+        widget.TextBox(text='dt', padding=5, foreground=colors.date_color),
+        widget.Clock(format="%a %d %b, %H:%M", padding=0, margin_y=0),
+        widget.Spacer(length=10),
+        widget.Systray(padding=2, background=colors.background),
+        widget.Spacer(length=10),
     ],
     23,
 )
@@ -230,9 +231,11 @@ simpleBar = bar.Bar(
 screens = [
     Screen(top=simpleBar)
 ]
-#: }}}
 
-#: Configurations {{{
+
+####################################################################################################
+# Configurations
+####################################################################################################
 # Drag floating layouts.
 mouse = [
     Drag([mod], "Button1", lazy.window.set_position_floating(), start=lazy.window.get_position()),
@@ -244,10 +247,11 @@ dgroups_key_binder = None
 dgroups_app_rules = []  # type: List
 bring_front_click = False
 cursor_warp = False
-floating_layout = Floating(
+floating_layout = layout.Floating(
     **layout_border,
     float_rules=[
-        *Floating.default_float_rules,
+        # Run the utility of `xprop` to see the wm class and name of an X client.
+        *layout.Floating.default_float_rules,
         Match(wm_class='confirmreset'),  # gitk
         Match(wm_class='makebranch'),  # gitk
         Match(wm_class='maketag'),  # gitk
@@ -261,6 +265,17 @@ auto_fullscreen = True
 focus_on_window_activation = "focus"
 reconfigure_screens = True
 follow_mouse_focus = True
+
+# If things like steam games want to auto-minimize themselves when losing
+# focus, should we respect this or not?
 auto_minimize = True
+
+# XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
+# string besides java UI toolkits; you can see several discussions on the
+# mailing lists, GitHub issues, and other WM documentation that suggest setting
+# this string if your java app doesn't work correctly. We may as well just lie
+# and say that we're a working one by default.
+#
+# We choose LG3D to maximize irony: it is a 3D non-reparenting WM written in
+# java that happens to be on java's whitelist.
 wmname = "LG3D"
-#: }}}

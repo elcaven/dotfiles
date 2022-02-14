@@ -11,7 +11,7 @@ an executable
 -- general
 lvim.log.level = "warn"
 lvim.format_on_save = true
-lvim.colorscheme = "material"
+lvim.colorscheme = "dracula"
 lvim.transparent_window = true
 
 vim.opt.relativenumber = true
@@ -142,7 +142,8 @@ lvim.builtin.treesitter.highlight.enabled = true
 -- Additional Plugins
 lvim.plugins = {
   {"ap/vim-css-color"},
-  {'marko-cerovac/material.nvim'}
+  {'marko-cerovac/material.nvim'},
+  {'Mofiqul/dracula.nvim'}
 }
 -- lvim.plugins = {
 --     {"folke/tokyonight.nvim"},
