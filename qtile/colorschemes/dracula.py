@@ -27,8 +27,8 @@ highlight_color = ['44475a', '44475a']
 
 groupbox_urgent = color12
 groupbox_current_screen_border = color8
-groupbox_screen_border = color15
-groupbox_other_screen_border = color15
+groupbox_screen_border = color9
+groupbox_other_screen_border = color9
 groupbox_other_current_screen_border = color7
 groupbox_inactive = color1
 
