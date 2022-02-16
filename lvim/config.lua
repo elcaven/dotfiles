@@ -141,9 +141,9 @@ lvim.builtin.treesitter.highlight.enabled = true
 
 -- Additional Plugins
 lvim.plugins = {
-  {"ap/vim-css-color"},
   {'marko-cerovac/material.nvim'},
-  {'Mofiqul/dracula.nvim'}
+  {'Mofiqul/dracula.nvim'},
+  {'khaveesh/vim-fish-syntax'}
 }
 -- lvim.plugins = {
 --     {"folke/tokyonight.nvim"},
