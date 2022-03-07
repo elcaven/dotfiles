@@ -15,7 +15,7 @@ color13 = "#f1fa8c"
 color14 = "#50fa7b"
 color15 = "#B48EAD"
 
-border_focus = color8
+border_focus = color7
 border_normal = color1
 
 foreground = '#ffffff'

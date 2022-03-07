@@ -2,6 +2,7 @@
 #: Imports {{{
 import os
 import subprocess
+import psutil
 
 from typing import List  # noqa: F401
 
@@ -28,7 +29,7 @@ from libqtile.widget.clock import Clock
 from libqtile.widget.systray import Systray
 from libqtile.widget.sep import Sep
 
-from colorschemes import dracula as colors
+from colorschemes import catppuccin as colors
 #: }}}
 
 #: Hooks {{{
@@ -43,6 +44,26 @@ def screen_change(event):
     logger.info("Screen change hook called", event)
     home = os.path.expanduser('/home/simon/.config/qtile/scripts/screen_change.sh')
     subprocess.call([home])
+
+@hook.subscribe.client_new
+def swallow(window):
+    pid = window.window.get_net_wm_pid()
+    ppid = psutil.Process(pid).ppid()
+    cpids = {c.window.get_net_wm_pid(): wid for wid, c in window.qtile.windows_map.items()}
+    for i in range(5):
+        if not ppid:
+            return
+        if ppid in cpids:
+            parent = window.qtile.windows_map.get(cpids[ppid])
+            parent.minimized = True
+            window.parent = parent
+            return
+        ppid = psutil.Process(ppid).ppid()
+
+@hook.subscribe.client_killed
+def unswallow(window):
+    if hasattr(window, 'parent'):
+        window.parent.minimized = False
 #: }}}
 
 #: Functions {{{
@@ -101,10 +122,12 @@ keys = [
 
     Key([], "Print", lazy.spawn("flameshot gui")),
     Key([mod], "d", lazy.spawn("emacs")),
+    Key([mod], "n", lazy.spawn("kitty -e lvim")),
     Key([mod], "a", lazy.spawn("kitty -e lvim /home/simon/projects/personal/dotfiles/qtile/config.py")),
     Key([mod], "e", lazy.spawn("kitty -e ranger")),
     Key([mod], "z", lazy.group['scratchpad'].dropdown_toggle('term')),
     Key([mod], "p", lazy.group['scratchpad'].dropdown_toggle('insomnia')),
+    Key([mod], "o", lazy.group['scratchpad'].dropdown_toggle('browser')),
     Key([alt_key], "l", lazy.spawn(scr_locker)),
     Key([mod], "b", lazy.hide_show_bar("top")),
 
@@ -147,6 +170,7 @@ for i in groups:
 groups.append(ScratchPad("scratchpad", [
     DropDown("term", "kitty", opacity=1, height=0.4, x=0, width=0.998, on_focus_lost_hide=True),
     DropDown("insomnia", "insomnia", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
+    DropDown("browser", "qutebrowser", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
 ]))
 #: }}}
 
@@ -181,6 +205,36 @@ delimiter_widget = Sep(
     linewidth=2,
     size_percent=70,
     foreground=colors.alternate_foreground
+)
+
+transparentBar = bar.Bar(
+    [
+        Spacer(length=5),
+        GroupBox(
+            highlight_method="line",
+            urgent_alert_method="text",
+            urgent_text=colors.groupbox_urgent,
+            block_highlight_text_color="#ffffff",
+            this_current_screen_border=colors.groupbox_current_screen_border,
+            this_screen_border=colors.groupbox_screen_border,
+            other_screen_border=colors.groupbox_other_screen_border,
+            other_current_screen_border=colors.groupbox_current_screen_border,
+            highlight_color=colors.highlight_color,
+            inactive=colors.groupbox_inactive,
+            borderwidth=2,
+            margin_x=2,
+            margin_y=4,
+            padding_x=1,
+            spacing=4,
+            disable_drag=True,
+            hide_unused=False,
+            font="JuliaMono SemiBold"
+        ),
+        Spacer(length=5),
+
+    ],
+    23,
+    background="#00000000"
 )
 
 simpleBar = bar.Bar(

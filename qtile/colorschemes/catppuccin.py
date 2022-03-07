@@ -38,7 +38,7 @@ groupbox_current_screen_border = sky
 groupbox_screen_border = gray1
 groupbox_other_screen_border = gray1
 groupbox_other_current_screen_border = pink
-groupbox_inactive = black2
+groupbox_inactive = black3
 
 widget_accent_foreground = sky
 widget_accent_background = gray1
