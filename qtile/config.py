@@ -17,17 +17,18 @@ from libqtile.layout.floating import Floating
 from libqtile.layout.xmonad import MonadTall, MonadWide
 
 # Widget imports
-from libqtile.widget.cpu import CPU
-from libqtile.widget.memory import Memory
-from libqtile.widget.spacer import Spacer
-from libqtile.widget.textbox import TextBox
-from libqtile.widget.groupbox import GroupBox
-from libqtile.widget.window_count import WindowCount
-from libqtile.widget.currentlayout import CurrentLayout
-from libqtile.widget.windowname import WindowName
-from libqtile.widget.clock import Clock
-from libqtile.widget.systray import Systray
-from libqtile.widget.sep import Sep
+from qtile_extras.widget import CPU
+from qtile_extras.widget import Memory
+from qtile_extras.widget import Spacer
+from qtile_extras.widget import TextBox
+from qtile_extras.widget import GroupBox
+from qtile_extras.widget import WindowCount
+from qtile_extras.widget import CurrentLayout
+from qtile_extras.widget import WindowName
+from qtile_extras.widget import Clock
+from qtile_extras.widget import Systray
+from qtile_extras.widget import Sep
+from qtile_extras.widget.decorations import RectDecoration
 
 from colorschemes import catppuccin as colors
 #: }}}
@@ -207,7 +208,28 @@ delimiter_widget = Sep(
     foreground=colors.alternate_foreground
 )
 
-transparentBar = bar.Bar(
+layout_decor = {
+    "decorations": [
+        RectDecoration(colour=colors.widget_current_layout, radius=3, filled=True, padding=4, margin=5)
+    ],
+}
+cpu_decor = {
+    "decorations": [
+        RectDecoration(colour=colors.cpu_color, radius=3, filled=True, padding=4, margin=5)
+    ],
+}
+mem_decor = {
+    "decorations": [
+        RectDecoration(colour=colors.mem_color, radius=3, filled=True, padding=4, margin=5)
+    ],
+}
+date_decor = {
+    "decorations": [
+        RectDecoration(colour=colors.date_color, radius=3, filled=True, padding=4, margin=5)
+    ],
+}
+
+decorationBar = bar.Bar(
     [
         Spacer(length=5),
         GroupBox(
@@ -230,11 +252,23 @@ transparentBar = bar.Bar(
             hide_unused=False,
             font="JuliaMono SemiBold"
         ),
+        Spacer(length=2),
+        CurrentLayout(**layout_decor, fmt="{}", padding=10, foreground=colors.black0),
+        Spacer(length=2),
+        WindowCount(fmt="[{}]", foreground=colors.widget_current_layout, padding=0),
+        Spacer(length=3),
+        WindowName(for_current_screen=True, padding=0),
+        Spacer(length=8),
+        CPU(**cpu_decor, format="cpu {load_percent}%", padding=10, foreground=colors.black0),
         Spacer(length=5),
-
+        Memory(**mem_decor, format="mem {MemUsed:.0f}Mb", padding=10, foreground=colors.black0),
+        Spacer(length=5),
+        Clock(**date_decor, format="%a %d %b, %H:%M", padding=10, foreground=colors.black0),
+        Spacer(length=5),
+        Systray(padding=2, background=colors.background),
+        Spacer(length=10),
     ],
-    23,
-    background="#00000000"
+    25
 )
 
 simpleBar = bar.Bar(
@@ -282,7 +316,7 @@ simpleBar = bar.Bar(
 )
 
 screens = [
-    Screen(top=simpleBar)
+    Screen(top=decorationBar)
 ]
 #: }}}
 

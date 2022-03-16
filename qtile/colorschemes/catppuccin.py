@@ -22,7 +22,7 @@ gray2 = "#C3BAC6"
 white = "#D9E0EE"
 
 
-border_focus = mauve
+border_focus = peach
 border_normal = black3
 
 foreground = '#ffffff'
@@ -33,8 +33,8 @@ alternate_background = black2
 #highlight_color = ['44475a', '44475a']
 highlight_color = ['0f111a', '44475a']
 
-groupbox_urgent = maroon
-groupbox_current_screen_border = sky
+groupbox_urgent = red
+groupbox_current_screen_border = mauve
 groupbox_screen_border = gray1
 groupbox_other_screen_border = gray1
 groupbox_other_current_screen_border = pink
@@ -47,6 +47,6 @@ widget_current_layout = pink
 widget_window_count = pink
 
 block_highlight_text_color = gray0
-cpu_color = flamingo
+cpu_color = peach
 mem_color = green
-date_color = yellow
+date_color = maroon
