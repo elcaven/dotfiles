@@ -91,4 +91,6 @@ set EDITOR nvim
 set SUDO_EDITOR nvim
 export SUDO_EDITOR=nvim
 
+source /home/simon/.config/fish/tools/fubectl.fish
+
 starship init fish | source

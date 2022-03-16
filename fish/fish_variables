@@ -1,15 +1,16 @@
 # This file contains fish universal variable definitions.
 # VERSION: 3.0
+SETUVAR --export FZF_DEFAULT_OPTS:\x2d\x2dcolor\x3dfg\x3a\x23ffffff\x2cbg\x3a\x23161320\x2chl\x3a\x2396cdfb\x0a\x20\x2d\x2dcolor\x3dfg\x2b\x3a\x23ffffff\x2cbg\x2b\x3a\x23575268\x2chl\x2b\x3a\x2389dceb\x0a\x20\x2d\x2dcolor\x3dinfo\x3a\x23fae3b0\x2cprompt\x3a\x23ddb6f2\x2cpointer\x3a\x23f2cdcd\x0a\x20\x2d\x2dcolor\x3dmarker\x3a\x23abe9b3\x2cspinner\x3a\x23f2cdcd\x2cheader\x3a\x23b5e8e0
 SETUVAR ZO_CMD:zo
 SETUVAR Z_CMD:z
 SETUVAR Z_DATA:/home/simon/\x2elocal/share/z/data
 SETUVAR Z_DATA_DIR:/home/simon/\x2elocal/share/z
 SETUVAR Z_EXCLUDE:\x5e/home/simon\x24
 SETUVAR __fish_initialized:3100
-SETUVAR _fisher_dracula_2F_fish_files:/home/simon/\x2econfig/fish/conf\x2ed/dracula\x2efish
+SETUVAR _fisher_catppuccin_2F_fish_files:/home/simon/\x2econfig/fish/conf\x2ed/catppuccin\x2efish
 SETUVAR _fisher_evanlucas_2F_fish_2D_kubectl_2D_completions_files:/home/simon/\x2econfig/fish/completions/kubectl\x2efish
 SETUVAR _fisher_jethrokuan_2F_z_files:/home/simon/\x2econfig/fish/functions/__z\x2efish\x1e/home/simon/\x2econfig/fish/functions/__z_add\x2efish\x1e/home/simon/\x2econfig/fish/functions/__z_clean\x2efish\x1e/home/simon/\x2econfig/fish/functions/__z_complete\x2efish\x1e/home/simon/\x2econfig/fish/conf\x2ed/z\x2efish
-SETUVAR _fisher_plugins:reitzig/sdkman\x2dfor\x2dfish\x40v1\x2e4\x2e0\x1eevanlucas/fish\x2dkubectl\x2dcompletions\x1ejethrokuan/z\x1edracula/fish
+SETUVAR _fisher_plugins:reitzig/sdkman\x2dfor\x2dfish\x40v1\x2e4\x2e0\x1eevanlucas/fish\x2dkubectl\x2dcompletions\x1ejethrokuan/z\x1ecatppuccin/fish
 SETUVAR _fisher_reitzig_2F_sdkman_2D_for_2D_fish_40_v1_2E_34_2E_30__files:/home/simon/\x2econfig/fish/functions/sdk\x2efish\x1e/home/simon/\x2econfig/fish/conf\x2ed/sdk\x2efish\x1e/home/simon/\x2econfig/fish/completions/sdk\x2efish
 SETUVAR fish_color_autosuggestion:4c566a
 SETUVAR fish_color_cancel:\x2dr
