@@ -124,7 +124,7 @@ osd.unhilight.bg: flat solid
 osd.unhilight.bg.color: #161320
 
 osd.button.unpressed.bg: flat border
-osd.button.unpressed.bg.color: #302d41
+osd.button.unpressed.bg.color: #1E1E2E
 #osd.button.unpressed.*.border.color: #e5e5e5
 
 osd.button.pressed.bg: flat border
@@ -146,9 +146,9 @@ menu.title.text.font:shadow=n
 
 
 # Everything else
-border.width: 4
+border.width: 3
 padding.width: 8
-padding.height: 4
+padding.height: 3
 window.handle.width: 0
 window.client.padding.width: 0
 window.label.text.justify: center
