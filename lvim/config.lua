@@ -11,7 +11,7 @@ an executable
 -- general
 lvim.log.level = "warn"
 lvim.format_on_save = true
-lvim.colorscheme = "dracula"
+lvim.colorscheme = "catppuccin"
 lvim.transparent_window = true
 
 vim.opt.relativenumber = true
@@ -141,9 +141,10 @@ lvim.builtin.treesitter.highlight.enabled = true
 
 -- Additional Plugins
 lvim.plugins = {
-  {'marko-cerovac/material.nvim'},
-  {'Mofiqul/dracula.nvim'},
-  {'khaveesh/vim-fish-syntax'}
+  { 'marko-cerovac/material.nvim' },
+  { 'Mofiqul/dracula.nvim' },
+  { 'khaveesh/vim-fish-syntax' },
+  { 'catppuccin/nvim', as = 'catppuccin' }
 }
 -- lvim.plugins = {
 --     {"folke/tokyonight.nvim"},
@@ -156,4 +157,5 @@ lvim.plugins = {
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
 -- lvim.autocommands.custom_groups = {
 --   { "BufWinEnter", "*.lua", "setlocal ts=8 sw=8" },
+-- }
 -- }
