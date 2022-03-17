@@ -26,7 +26,7 @@ border_focus = peach
 border_normal = black3
 
 foreground = '#ffffff'
-alternate_foreground = black4
+alternate_foreground = black0
 background = black0
 alternate_background = black2
 

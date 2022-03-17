@@ -209,24 +209,16 @@ delimiter_widget = Sep(
 )
 
 layout_decor = {
-    "decorations": [
-        RectDecoration(colour=colors.widget_current_layout, radius=3, filled=True, padding=4, margin=5)
-    ],
+    "decorations": [RectDecoration(colour=colors.widget_current_layout, radius=3, filled=True, padding=4, margin=5)],
 }
 cpu_decor = {
-    "decorations": [
-        RectDecoration(colour=colors.cpu_color, radius=3, filled=True, padding=4, margin=5)
-    ],
+    "decorations": [RectDecoration(colour=colors.cpu_color, radius=3, filled=True, padding=4, margin=5)],
 }
 mem_decor = {
-    "decorations": [
-        RectDecoration(colour=colors.mem_color, radius=3, filled=True, padding=4, margin=5)
-    ],
+    "decorations": [RectDecoration(colour=colors.mem_color, radius=3, filled=True, padding=4, margin=5)],
 }
 date_decor = {
-    "decorations": [
-        RectDecoration(colour=colors.date_color, radius=3, filled=True, padding=4, margin=5)
-    ],
+    "decorations": [RectDecoration(colour=colors.date_color, radius=3, filled=True, padding=4, margin=5)],
 }
 
 decorationBar = bar.Bar(
@@ -252,18 +244,18 @@ decorationBar = bar.Bar(
             hide_unused=False,
             font="JuliaMono SemiBold"
         ),
-        Spacer(length=2),
-        CurrentLayout(**layout_decor, fmt="{}", padding=10, foreground=colors.black0),
+        Spacer(length=5),
+        CurrentLayout(**layout_decor, fmt="{}", padding=10, foreground=colors.alternate_foreground),
         Spacer(length=2),
         WindowCount(fmt="[{}]", foreground=colors.widget_current_layout, padding=0),
         Spacer(length=3),
         WindowName(for_current_screen=True, padding=0),
         Spacer(length=8),
-        CPU(**cpu_decor, format="cpu {load_percent}%", padding=10, foreground=colors.black0),
+        CPU(**cpu_decor, format="cpu {load_percent}%", padding=10, foreground=colors.alternate_foreground),
         Spacer(length=5),
-        Memory(**mem_decor, format="mem {MemUsed:.0f}Mb", padding=10, foreground=colors.black0),
+        Memory(**mem_decor, format="mem {MemUsed:.0f}Mb", padding=10, foreground=colors.alternate_foreground),
         Spacer(length=5),
-        Clock(**date_decor, format="%a %d %b, %H:%M", padding=10, foreground=colors.black0),
+        Clock(**date_decor, format="%a %d %b, %H:%M", padding=10, foreground=colors.alternate_foreground),
         Spacer(length=5),
         Systray(padding=2, background=colors.background),
         Spacer(length=10),
