@@ -139,6 +139,18 @@ lvim.builtin.treesitter.highlight.enabled = true
 --   },
 -- }
 
+-- Settings for catppuccin theme
+local catppuccin = require('catppuccin')
+catppuccin.setup({
+  styles = {
+   comments = "NONE",
+   functions = "bold",
+   keywords = "bold",
+   strings = "NONE",
+   variables = "bold",
+  }
+})
+
 -- Additional Plugins
 lvim.plugins = {
   { 'marko-cerovac/material.nvim' },
