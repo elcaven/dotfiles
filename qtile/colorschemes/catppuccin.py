@@ -34,7 +34,7 @@ alternate_background = black2
 highlight_color = ['0f111a', '44475a']
 
 groupbox_urgent = red
-groupbox_current_screen_border = mauve
+groupbox_current_screen_border = peach
 groupbox_screen_border = gray1
 groupbox_other_screen_border = gray1
 groupbox_other_current_screen_border = pink
