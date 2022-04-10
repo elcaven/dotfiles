@@ -28,7 +28,7 @@ border_normal = black3
 foreground = '#ffffff'
 alternate_foreground = black0
 background = black0
-alternate_background = black2
+alternate_background = black3
 
 #highlight_color = ['44475a', '44475a']
 highlight_color = ['0f111a', '44475a']
@@ -50,3 +50,7 @@ block_highlight_text_color = gray0
 cpu_color = peach
 mem_color = green
 date_color = maroon
+
+window_resize_chord_color = yellow
+window_move_chord_color = green
+

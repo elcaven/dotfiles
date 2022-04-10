@@ -13,7 +13,7 @@ run "blueman-applet"
 run "clipit -n"
 run "copyq"
 run "cbatticon"
-run "trackball"
+trackball
 run "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
 autorandr --change
 nitrogen --restore

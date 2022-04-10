@@ -7,7 +7,7 @@ import psutil
 from typing import List  # noqa: F401
 
 from libqtile import bar, hook
-from libqtile.config import Click, Drag, Group, Key, Match, Screen, ScratchPad, DropDown
+from libqtile.config import Click, Drag, Group, Key, KeyChord, Match, Screen, ScratchPad, DropDown
 from libqtile.lazy import lazy
 from libqtile.log_utils import logger
 
@@ -27,7 +27,7 @@ from qtile_extras.widget import CurrentLayout
 from qtile_extras.widget import WindowName
 from qtile_extras.widget import Clock
 from qtile_extras.widget import Systray
-from qtile_extras.widget import Sep
+from qtile_extras.widget import Chord
 from qtile_extras.widget.decorations import RectDecoration
 
 from colorschemes import catppuccin as colors
@@ -83,6 +83,10 @@ alt_key = "mod1"
 terminal = "kitty"
 scr_locker = "betterlockscreen -l"
 
+# Chord names
+window_resize = "window resize"
+window_move = "window move"
+
 keys = [
     Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
     Key([mod], "l", lazy.layout.right(), desc="Move focus to right"),
@@ -112,7 +116,7 @@ keys = [
     Key([mod], "f", lazy.window.toggle_fullscreen()),
     Key([mod, "control"], 'j', lazy.next_screen(), desc='Next monitor'),
 
-    Key([mod, "control"], "r", lazy.reload_config(), desc="Restart Qtile"),
+    Key([mod, "control"], "r", lazy.reload_config(), desc="Reload Qtile config"),
     Key([mod, "control", "shift"], "r", lazy.restart(), desc="Restart Qtile"),
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key([mod], "r", lazy.spawn("rofi -show combi")),
@@ -134,7 +138,23 @@ keys = [
 
     # Dunst
     Key(["control"], "space", lazy.spawn("dunstctl close")),
-    Key(["control", "shift"], "space", lazy.spawn("dunstctl close-all"))
+    Key(["control", "shift"], "space", lazy.spawn("dunstctl close-all")),
+
+    # Chords
+    KeyChord([mod], "i", [
+        Key([], "l", lazy.layout.grow()),
+        Key([], "h", lazy.layout.shrink()),
+        Key([], "n", lazy.layout.normalize()),
+        Key([], "m", lazy.layout.maximize())],
+        mode=window_resize
+    ),
+    KeyChord([mod], "s", [
+        Key([], "h", lazy.layout.shuffle_left()),
+        Key([], "l", lazy.layout.shuffle_right()),
+        Key([], "j", lazy.layout.shuffle_down()),
+        Key([], "k", lazy.layout.shuffle_up())],
+        mode=window_move
+    ),
 ]
 #: }}}
 
@@ -201,40 +221,46 @@ widget_defaults = dict(
 )
 extension_defaults = widget_defaults.copy()
 
-delimiter_widget = Sep(
-    padding=10,
-    linewidth=2,
-    size_percent=70,
-    foreground=colors.alternate_foreground
-)
-
 decor = {
     "decorations": [RectDecoration(radius=4, filled=True, padding=4, margin=5, use_widget_background=True)],
 }
+blockDecor = {
+    "decorations": [RectDecoration(radius=0, filled=True, padding_y=3, use_widget_background=True)],
+}
+
+groupBoxWidget = GroupBox(
+    highlight_method="line",
+    urgent_alert_method="text",
+    urgent_text=colors.groupbox_urgent,
+    block_highlight_text_color="#ffffff",
+    this_current_screen_border=colors.groupbox_current_screen_border,
+    this_screen_border=colors.groupbox_screen_border,
+    other_screen_border=colors.groupbox_other_screen_border,
+    other_current_screen_border=colors.groupbox_current_screen_border,
+    highlight_color=colors.highlight_color,
+    inactive=colors.groupbox_inactive,
+    borderwidth=2, margin_x=2, margin_y=4, padding_x=1,
+    spacing=4,
+    disable_drag=True,
+    hide_unused=False,
+    font="JuliaMono SemiBold"
+)
+
+chordWidget = Chord(
+    font="JetBrainsMono Nerd Font Mono ExtraBold", fontsize=11,
+    background=colors.background,
+    margin=5, padding=4, fmt="",
+    chords_colors={
+        '': (colors.background, 'ffffff'),
+        window_resize: (colors.window_resize_chord_color, 'ffffff'),
+        window_move: (colors.window_move_chord_color, 'ffffff'),
+    }
+)
 
 decorationBar = bar.Bar(
     [
         Spacer(length=5),
-        GroupBox(
-            highlight_method="line",
-            urgent_alert_method="text",
-            urgent_text=colors.groupbox_urgent,
-            block_highlight_text_color="#ffffff",
-            this_current_screen_border=colors.groupbox_current_screen_border,
-            this_screen_border=colors.groupbox_screen_border,
-            other_screen_border=colors.groupbox_other_screen_border,
-            other_current_screen_border=colors.groupbox_current_screen_border,
-            highlight_color=colors.highlight_color,
-            inactive=colors.groupbox_inactive,
-            borderwidth=2,
-            margin_x=2,
-            margin_y=4,
-            padding_x=1,
-            spacing=4,
-            disable_drag=True,
-            hide_unused=False,
-            font="JuliaMono SemiBold"
-        ),
+        groupBoxWidget,
         Spacer(length=5),
         CurrentLayout(**decor, fmt="{}", padding=10, foreground=colors.alternate_foreground, background=colors.widget_current_layout),
         Spacer(length=5),
@@ -254,29 +280,36 @@ decorationBar = bar.Bar(
     25
 )
 
+blocksBar = bar.Bar(
+    [
+        chordWidget,
+        Spacer(length=5),
+        groupBoxWidget,
+        Spacer(length=5),
+        WindowCount(**blockDecor, fmt="{}", padding=5, foreground=colors.alternate_foreground, background = colors.widget_current_layout),
+        CurrentLayout(**blockDecor, fmt="{}", padding=10, foreground=colors.foreground, background=colors.alternate_background),
+        Spacer(length=8),
+        WindowName(for_current_screen=True, padding=0),
+        Spacer(length=8),
+        TextBox(**blockDecor, fmt="", foreground=colors.alternate_foreground, background=colors.cpu_color, margin=0),
+        CPU(**blockDecor, format="{load_percent}%", padding=10, foreground=colors.foreground, background=colors.alternate_background),
+        Spacer(length=7),
+        TextBox(**blockDecor, fmt="", foreground=colors.alternate_foreground, background=colors.mem_color, margin=0),
+        Memory(**blockDecor, format="{MemUsed:.0f}Mb", padding=10, foreground=colors.foreground, background=colors.alternate_background),
+        Spacer(length=7),
+        TextBox(**blockDecor, fmt="", foreground=colors.alternate_foreground, background=colors.date_color, margin=0),
+        Clock(**blockDecor, format="%a %d %b, %H:%M", padding=10, foreground=colors.foreground, background=colors.alternate_background),
+        Spacer(length=5),
+        Systray(padding=2, background=colors.background),
+        Spacer(length=10),
+    ],
+    23
+)
+
 simpleBar = bar.Bar(
     [
         Spacer(length=5),
-        GroupBox(
-            highlight_method="line",
-            urgent_alert_method="text",
-            urgent_text=colors.groupbox_urgent,
-            block_highlight_text_color="#ffffff",
-            this_current_screen_border=colors.groupbox_current_screen_border,
-            this_screen_border=colors.groupbox_screen_border,
-            other_screen_border=colors.groupbox_other_screen_border,
-            other_current_screen_border=colors.groupbox_current_screen_border,
-            highlight_color=colors.highlight_color,
-            inactive=colors.groupbox_inactive,
-            borderwidth=2,
-            margin_x=2,
-            margin_y=4,
-            padding_x=1,
-            spacing=4,
-            disable_drag=True,
-            hide_unused=False,
-            font="JuliaMono SemiBold"
-        ),
+        groupBoxWidget,
         Spacer(length=5),
         WindowCount(fmt="[{}]", padding=0, foreground=colors.widget_current_layout),
         CurrentLayout(fmt="[{}]", padding=0, foreground=colors.widget_window_count),
@@ -291,7 +324,7 @@ simpleBar = bar.Bar(
         Spacer(length=12),
         TextBox(text='dt', padding=5, foreground=colors.date_color),
         Clock(format="%a %d %b, %H:%M", padding=0, margin_y=0),
-        Spacer(length=10),
+        Spacer(length=12),
         Systray(padding=2, background=colors.background),
         Spacer(length=10),
     ],
@@ -299,7 +332,7 @@ simpleBar = bar.Bar(
 )
 
 screens = [
-    Screen(top=decorationBar)
+    Screen(top=blocksBar)
 ]
 #: }}}
 
