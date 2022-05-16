@@ -1,9 +1,7 @@
 add_newline = true
 
 [character]
-#success_symbol = "[❯](white)[❯](cyan)[❯](bold green)" # prompt fit for kitty terminal
-#error_symbol = "[❯](red)[❯](red)[❯](red)" # prompt fit for kitty terminal
-success_symbol = "[](white)[](cyan)[](green)" # prompt fit for alacritty terminal
+success_symbol = "[](white)[](cyan)[](green)"
 error_symbol = "[](red)[](red)[](red)"
 
 [status]
