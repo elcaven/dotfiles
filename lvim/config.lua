@@ -14,7 +14,6 @@ lvim.colorscheme = "catppuccin"
 lvim.transparent_window = true
 
 vim.opt.relativenumber = true
-vim.g.material_style = "deep ocean"
 
 -- keymappings [view all the defaults by pressing <leader>Lk]
 lvim.leader = "space"
@@ -58,7 +57,6 @@ catppuccin.setup({
 
 -- Additional Plugins
 lvim.plugins = {
-  { 'marko-cerovac/material.nvim' },
   { 'Mofiqul/dracula.nvim' },
   { 'khaveesh/vim-fish-syntax' },
   { 'catppuccin/nvim', as = 'catppuccin' }
