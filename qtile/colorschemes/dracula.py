@@ -42,3 +42,7 @@ block_highlight_text_color = color1
 cpu_color = color13
 mem_color = color14
 date_color = color7
+
+window_resize_chord_color = color13
+window_move_chord_color = color9
+spawn_chord_color = color7
