@@ -1,4 +1,4 @@
-# Fish implementation of https://github.com/kubermatic/fubectl
+# Contains fish implementation of https://github.com/kubermatic/fubectl
 
 alias _kctl_tty="kubectl"
 alias _inline_fzf="fzf --multi --ansi -i -1 --height=50% --reverse -0 --header-lines=1 --inline-info --border"
@@ -30,12 +30,20 @@ function kget --argument kind --description "Get kubernetes resource, 'kind' par
   end
 end
 
-function kfor --description "Port forward a container port from cluster, usage: kfor LOCAL_PORT:CONTAINER_PORT" 
+function kfor_pod --description "Port forward a container port from cluster, usage: kfor LOCAL_PORT:CONTAINER_PORT" 
   set port $argv
   [ -z "$port" ] && printf "kfor: missing argument.\nUsage: kfor LOCAL_PORT:CONTAINER_PORT\n" && return 255
   set arg_pair (kubectl get po --all-namespaces | _inline_fzf | awk '{print $1, $2}' | string split -n " ")
   [ -z "$arg_pair" ] && printf "kfor: no pods found. no forwarding.\n" && return
   _kctl_tty port-forward -n $arg_pair $port
+end
+
+function kfor --description "Port forward a deployment port from cluster, usage: kfor LOCAL_PORT:CONTAINER_PORT" 
+  set port $argv
+  [ -z "$port" ] && printf "kfor: missing argument.\nUsage: kfor LOCAL_PORT:CONTAINER_PORT\n" && return 255
+  set arg_pair (kubectl get deployment --all-namespaces | _inline_fzf | awk '{print $1, $2}' | string split -n " ")
+  [ -z "$arg_pair" ] && printf "kfor: no pods found. no forwarding.\n" && return
+  _kctl_tty port-forward -n $arg_pair[1] deployment/$arg_pair[2] $port
 end
 
 function kex --argument cmd --description "Execute command in container, usage kex CMD [ARGS]"
@@ -51,4 +59,26 @@ function kwns --description "Watch pods in a namespace"
   set ns (kubectl get ns | _inline_fzf | awk '{print $1}')
   [ -z "$ns" ] && printf "kcns: no namespace selected/found.\n" && return
   watch kubectl get pod -n $ns
+end
+
+function ktail --description "Tail logs of deployment"
+  set arg_pair (kubectl get deployment --all-namespaces | _inline_fzf | awk '{print $1, $2}' | string split -n " ")
+  [ -z "$arg_pair" ] && printf "klogs: no deployments found. no tailing.\n" && return 255
+  kubetail -n $arg_pair[1] -l app=$arg_pair[2]
+end
+
+function kwatch --description="Watch kubernetes pods"
+	if [ -n "$argv" ]
+		watch "kubectl -n digital get pods| grep '$argv'"
+	else
+		watch "kubectl -n digital get pods"
+	end
+end
+
+function ktop
+	if [ -n "$argv" ]
+		watch "kubectl -n digital top pods | grep '$argv'"
+	else
+		watch "kubectl -n digital top pods"
+	end
 end
