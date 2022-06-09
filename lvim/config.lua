@@ -59,5 +59,18 @@ catppuccin.setup({
 lvim.plugins = {
   { 'Mofiqul/dracula.nvim' },
   { 'khaveesh/vim-fish-syntax' },
-  { 'catppuccin/nvim', as = 'catppuccin' }
+  { 'catppuccin/nvim', as = 'catppuccin' },
+  { 'elkowar/yuck.vim'}
 }
+
+-- lua lsp setup
+local opts = {
+  settings = {
+    Lua = {
+      diagnostics = {
+        globals = { 'awesome', 'tag', 'screen', 'client' }
+      }
+    }
+  }
+}
+require("lvim.lsp.manager").setup("sumneko_lua", opts)
