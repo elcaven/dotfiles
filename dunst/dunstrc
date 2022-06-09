@@ -313,8 +313,7 @@
     foreground = "#ffffff"
     frame_color = "#bf2e2e"
     timeout = 0
-    Icon for notifications with critical urgency, uncomment to enable
-    icon = /path/to/icon
+    icon = /usr/share/icons/Papirus-Dark/16x16/status/package-broken.svg
 ##############################################################################
 
 # Every section that isn't one of the above is interpreted as a rules to
