@@ -63,13 +63,19 @@ end
 
 function ktail --description "Tail logs of deployment"
   set arg_pair (kubectl get deployment --all-namespaces | _inline_fzf | awk '{print $1, $2}' | string split -n " ")
-  [ -z "$arg_pair" ] && printf "klogs: no deployments found. no tailing.\n" && return 255
+  [ -z "$arg_pair" ] && printf "ktails: no deployments found. no tailing.\n" && return 255
   kubetail -n $arg_pair[1] -l app=$arg_pair[2]
+end
+
+function klogs --description "Tail logs of container"
+  set arg_pair (kubectl get pod --all-namespaces | _inline_fzf | awk '{print $1, $2}' | string split -n " ")
+  [ -z "$arg_pair" ] && printf "klogs: no deployments found. no tailing.\n" && return 255
+  kubectl logs -f -n $arg_pair[1] $arg_pair[2] 
 end
 
 function kwatch --description="Watch kubernetes pods"
 	if [ -n "$argv" ]
-		watch "kubectl -n digital get pods| grep '$argv'"
+		watch "kubectl -n digital get pods | grep '$argv'"
 	else
 		watch "kubectl -n digital get pods"
 	end

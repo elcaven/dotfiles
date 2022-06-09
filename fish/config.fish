@@ -9,12 +9,15 @@ alias helm_2.13.1="docker run -it --rm -v ~/.kube/config:/root/.kube/config -v ~
 alias helm_2.15.2="docker run -it --rm -v ~/.kube/config:/root/.kube/config -v ~/.helm:/root/.helm alpine/helm:2.15.2"
 alias helm_2.17.0="docker run -it --rm -v ~/.kube/config:/root/.kube/config -v ~/.helm:/root/.helm alpine/helm:2.17.0"
 
-alias kdev-context="az aks get-credentials --resource-group ada-dev-rg --name ada-dev-aks02 --admin"
-alias kacc-context="az aks get-credentials --resource-group ada-acc-rg --name ada-acc-aks02 --admin"
-alias kprod-context="az aks get-credentials --resource-group ada-prod-rg --name ada-prod-aks02 && kubelogin convert-kubeconfig -l azurecli"
+alias kdev-context-authenticate="az aks get-credentials --resource-group ada-dev-rg --name ada-dev-aks02 --admin"
+alias kacc-context-authenticate="az aks get-credentials --resource-group ada-acc-rg --name ada-acc-aks02 --admin"
+alias kprd-context-authenticate="az aks get-credentials --resource-group ada-prod-rg --name ada-prod-aks02 && kubelogin convert-kubeconfig -l azurecli"
+
+alias kdev-context="kubectx ada-dev-aks02-admin"
+alias kacc-context="kubectx ada-acc-aks02-admin"
+alias kprd-context="kubectx ada-prod-aks02"
 
 alias kcontext="kubectl config current-context"
-alias kproxy="kubectl proxy --port 8002"
 alias klogs="kubectl logs -f -n digital"
 alias kdashboard="k9s -n digital"
 
@@ -38,6 +41,10 @@ function sudo
 	end
 end
 
+function base64Decode
+  command echo $argv | base64 --decode
+end
+
 # Exports
 set PATH $PATH /home/simon/bin
 set PATH $PATH /home/simon/.local/bin
@@ -45,11 +52,12 @@ set PATH $PATH /home/simon/.emacs.d/bin
 set PATH $PATH /home/simon/.jenv/bin
 set PATH $PATH /home/simon/.yarn/bin
 set PATH $PATH /home/simon/.config/yarn/global/node_modules/.bin
+set PATH $PATH /home/simon/.cargo/bin
 
 set _Z_SRC /usr/share/z/z.sh
 set CM_SELECTIONS clipboard
 set TERM kitty
-set QT_QPA_PLATFORMTHEME gtk2
+set QT_QPA_PLATFORMTHEME qt5ct
 set EDITOR nvim
 set SUDO_EDITOR nvim
 export SUDO_EDITOR=nvim
