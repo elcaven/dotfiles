@@ -7,7 +7,7 @@ import nerdfonts as nf
 
 from typing import List  # noqa: F401
 
-from libqtile import bar, hook, widget
+from libqtile import qtile, bar, hook, widget
 from libqtile.config import Click, Drag, Group, Key, KeyChord, Match, Screen, ScratchPad, DropDown
 from libqtile.lazy import lazy
 from libqtile.log_utils import logger
@@ -30,6 +30,7 @@ from qtile_extras.widget import Clock
 from qtile_extras.widget import Systray
 from qtile_extras.widget import Chord
 from qtile_extras.widget import GenPollText
+from qtile_extras.widget import WidgetBox
 from qtile_extras.widget.decorations import RectDecoration
 
 from qtile_extras.popup.toolkit import (
@@ -43,7 +44,7 @@ from colorschemes import catppuccin as colors
 @hook.subscribe.startup_once
 def autostart():
     logger.info("Startup hook called")
-    home = os.path.expanduser('/home/simon/.config/qtile/autostart.sh')
+    home = os.path.expanduser('/home/simon/.config/qtile/scripts/autostart.sh')
     subprocess.Popen([home])
 
 @hook.subscribe.screen_change
@@ -81,6 +82,14 @@ def float_to_front(qtile):
         for window in group.windows:
             if window.floating:
                 window.cmd_bring_to_front()
+
+@lazy.function
+def focus_next_screen(qtile):
+    lazy.next_screen()
+    group = qtile.current_group
+    if group.current_window is not None:
+        win = group.current_window
+        win.window.warp_pointer(win.width // 2, win.height // 2)
 
 def get_notification_status():
     status = subprocess.check_output(['dunstctl', 'is-paused']).decode('utf-8').strip()
@@ -147,15 +156,6 @@ keys = [
     Key([mod], "k", lazy.group.prev_window(), desc="Move focus to previous window"),
     Key([mod], "u", lazy.next_urgent()),
     Key([mod, "shift"], "f", float_to_front),
-
-    #Key([mod, "shift"], "h", lazy.layout.shuffle_left(), desc="Move window to the left"),
-    #Key([mod, "shift"], "l", lazy.layout.shuffle_right(), desc="Move window to the right"),
-    #Key([mod, "shift"], "j", lazy.layout.shuffle_down(), desc="Move window down"),
-    #Key([mod, "shift"], "k", lazy.layout.shuffle_up(), desc="Move window up"),
-
-    #Key([mod, "control"], "h", lazy.layout.grow(), desc="Grow window to the left"),
-    #Key([mod, "control"], "l", lazy.layout.shrink(), desc="Grow window to the right"),
-    #Key([mod], "o", lazy.layout.maximize(), desc="Reset all window sizes"),
     Key([mod, "control"], "Return", lazy.layout.flip()),
 
     Key([mod, "shift"], "Return", lazy.layout.toggle_split(), desc="Toggle between split and unsplit sides of stack"),
@@ -286,9 +286,6 @@ widget_defaults = dict(
 )
 extension_defaults = widget_defaults.copy()
 
-decor = {
-    "decorations": [RectDecoration(radius=4, filled=True, padding=4, margin=5, use_widget_background=True)],
-}
 blockDecor = {
     "decorations": [RectDecoration(radius=0, filled=True, padding_y=3, use_widget_background=True)],
 }
@@ -306,7 +303,7 @@ groupBoxWidget = GroupBox(
     inactive=colors.groupbox_inactive,
     borderwidth=2, margin_x=2, margin_y=4, padding_x=1, spacing=4,
     disable_drag=True, hide_unused=False,
-    font="JuliaMono SemiBold"
+    font="JetBrainsMono Bold"
 )
 
 chordWidget = Chord(
@@ -323,11 +320,24 @@ chordWidget = Chord(
     }
 )
 
+doNotDisturbIcon = GenPollText(
+    func=get_notification_status, 
+    update_interval=0.1, 
+    mouse_callbacks={"Button1": toggle_notification_status},
+    fontsize=21, padding=2, margin=0)
+
+systrayWidgetBox = WidgetBox(
+    widgets = [
+        Systray(padding=2, background=colors.background),
+        doNotDisturbIcon
+    ],
+    font = "JetBrainsMonoExtraBold Nerd Font Mono",
+    close_button_location = "right", text_open = "[-]", text_closed = "[+]")
     
 blocksBar = bar.Bar(
     [
         chordWidget,
-        Spacer(length=5),
+        Spacer(length=1),
         groupBoxWidget,
         Spacer(length=5),
         WindowCount(**blockDecor, fmt="{}", padding=5, foreground=colors.alternate_foreground, background = colors.widget_current_layout),
@@ -345,6 +355,7 @@ blocksBar = bar.Bar(
         Clock(**blockDecor, format="%a %d %b, %H:%M", padding=10, foreground=colors.foreground, background=colors.alternate_background),
         Spacer(length=5),
         Systray(padding=2, background=colors.background),
+        doNotDisturbIcon,
         Spacer(length=10),
     ],
     23
@@ -369,12 +380,10 @@ simpleBar = bar.Bar(
         Spacer(length=12),
         TextBox(text='dt', padding=5, foreground=colors.date_color),
         Clock(format="%a %d %b, %H:%M", padding=0, margin_y=0),
-        Spacer(length=12),
-        Systray(padding=2, background=colors.background),
-        GenPollText(
-            func=get_notification_status, update_interval=0.1, 
-            mouse_callbacks={"Button1": toggle_notification_status},
-            fontsize=21, padding=4),
+        Spacer(length=8),
+        #Systray(padding=0, background=colors.background),
+        systrayWidgetBox,
+        #doNotDisturbIcon,
         Spacer(length=10),
     ],
     23,
