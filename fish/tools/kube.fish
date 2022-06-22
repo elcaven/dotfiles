@@ -30,6 +30,13 @@ function kget --argument kind --description "Get kubernetes resource, 'kind' par
   end
 end
 
+function kedit --argument kind --description "Edit kubernetes resource, 'kind' parameter defaults to ingress"
+  set -q kind[1]; or set kind "ingress"
+  set arg_pair (kubectl get "$kind" --all-namespaces | _inline_fzf | awk '{print $1, $2}' | string split -n " ")
+  [ -z "$arg_pair" ] && printf "kedit: no resources found.\n" && return
+  KUBE_EDITOR="lvim" kubectl edit $kind -n $arg_pair[1] $arg_pair[2]
+end
+
 function kfor_pod --description "Port forward a container port from cluster, usage: kfor LOCAL_PORT:CONTAINER_PORT" 
   set port $argv
   [ -z "$port" ] && printf "kfor: missing argument.\nUsage: kfor LOCAL_PORT:CONTAINER_PORT\n" && return 255

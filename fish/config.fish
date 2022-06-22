@@ -1,10 +1,13 @@
+# vim:fileencoding=utf-8:ft=fish:foldmethod=marker
+#: Configuration {{{
 #suppress welcome message
 set fish_greeting
 
 # fix for lsd not using correct colours
 ls > /dev/null
+#: }}}
 
-# Aliases
+#: Aliases {{{
 alias helm_2.13.1="docker run -it --rm -v ~/.kube/config:/root/.kube/config -v ~/.helm:/root/.helm alpine/helm:2.13.1"
 alias helm_2.15.2="docker run -it --rm -v ~/.kube/config:/root/.kube/config -v ~/.helm:/root/.helm alpine/helm:2.15.2"
 alias helm_2.17.0="docker run -it --rm -v ~/.kube/config:/root/.kube/config -v ~/.helm:/root/.helm alpine/helm:2.17.0"
@@ -16,6 +19,7 @@ alias kprd-context-authenticate="az aks get-credentials --resource-group ada-pro
 alias kdev-context="kubectx ada-dev-aks02-admin"
 alias kacc-context="kubectx ada-acc-aks02-admin"
 alias kprd-context="kubectx ada-prod-aks02"
+alias kminikube-context="kubectx minikube"
 
 alias kcontext="kubectl config current-context"
 alias klogs="kubectl logs -f -n digital"
@@ -31,8 +35,9 @@ alias code="vscodium"
 
 alias update="yay -Syu --devel"
 alias cleanup="yay -Yc"
+#: }}}
 
-# Functions
+#: Functions {{{
 function sudo
 	if test "$argv" = !!
 	   	eval command sudo $history[1]
@@ -41,11 +46,16 @@ function sudo
 	end
 end
 
-function base64Decode
+function base64Decode --description "Decode base64 input"
   command echo $argv | base64 --decode
 end
 
-# Exports
+function base64Encode --description "Encode input to base64"
+  command echo $argv | base64 
+end
+#: }}}
+
+#: Exports and path {{{
 set PATH $PATH /home/simon/bin
 set PATH $PATH /home/simon/.local/bin
 set PATH $PATH /home/simon/.emacs.d/bin
@@ -60,8 +70,12 @@ set TERM kitty
 set QT_QPA_PLATFORMTHEME qt5ct
 set EDITOR nvim
 set SUDO_EDITOR nvim
+set KUBE_EDITOR lvim
 export SUDO_EDITOR=nvim
+#: }}}
 
+#: Sources {{{
 source /home/simon/.config/fish/tools/kube.fish
 
 starship init fish | source
+#: }}}
