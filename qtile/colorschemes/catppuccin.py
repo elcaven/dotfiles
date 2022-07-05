@@ -38,18 +38,22 @@ groupbox_current_screen_border = peach
 groupbox_screen_border = gray1
 groupbox_other_screen_border = gray1
 groupbox_other_current_screen_border = pink
-groupbox_inactive = black3
+groupbox_inactive = black4
 
 widget_accent_foreground = sky
 widget_accent_background = gray1
 
-widget_current_layout = pink
-widget_window_count = pink
+widget_current_layout = teal
+widget_window_count = red
 
 block_highlight_text_color = gray0
 cpu_color = peach
 mem_color = green
-date_color = maroon
+date_color = mauve
+date_color_alternate = yellow
+notification_color = teal
+window_title_color = foreground
+dashboard_color = maroon
 
 window_resize_chord_color = yellow
 window_move_chord_color = green

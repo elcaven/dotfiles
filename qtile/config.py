@@ -7,8 +7,8 @@ import nerdfonts as nf
 
 from typing import List  # noqa: F401
 
-from libqtile import qtile, bar, hook, widget
-from libqtile.config import Click, Drag, Group, Key, KeyChord, Match, Screen, ScratchPad, DropDown
+from libqtile import bar, hook, qtile
+from libqtile.config import Click, Drag, Group, Key, KeyChord, Match, ScratchPad, DropDown, Screen
 from libqtile.lazy import lazy
 from libqtile.log_utils import logger
 
@@ -18,26 +18,22 @@ from libqtile.layout.floating import Floating
 from libqtile.layout.xmonad import MonadTall, MonadWide
 
 # Widget imports
-from qtile_extras.widget import CPU
-from qtile_extras.widget import Memory
-from qtile_extras.widget import Spacer
-from qtile_extras.widget import TextBox
-from qtile_extras.widget import GroupBox
-from qtile_extras.widget import WindowCount
-from qtile_extras.widget import CurrentLayout
-from qtile_extras.widget import WindowName
-from qtile_extras.widget import Clock
-from qtile_extras.widget import Systray
-from qtile_extras.widget import Chord
-from qtile_extras.widget import GenPollText
-from qtile_extras.widget import WidgetBox
-from qtile_extras.widget.decorations import RectDecoration
-
-from qtile_extras.popup.toolkit import (
-    PopupRelativeLayout, PopupImage, PopupText, PopupWidget
+from qtile_extras.widget import (
+    CPU, Memory, Spacer, TextBox, GroupBox, WindowCount, CurrentLayout, CurrentLayoutIcon, WindowName, Clock, Systray, Chord, GenPollText, WidgetBox, Sep, Net
 )
+from qtile_extras.widget.decorations import RectDecoration, BorderDecoration
 
 from colorschemes import catppuccin as colors
+#: }}}
+
+#: Variables {{{
+mod = "mod4"
+alt_key = "mod1"
+terminal = "kitty"
+scr_locker = "betterlockscreen -l"
+window_resize = "window resize"
+window_move = "window move"
+spawn="spawn"
 #: }}}
 
 #: Hooks {{{
@@ -49,7 +45,7 @@ def autostart():
 
 @hook.subscribe.screen_change
 def screen_change(event):
-    logger.info("Screen change hook called", event)
+    #logger.info("Screen change hook called %s", event)
     home = os.path.expanduser('/home/simon/.config/qtile/scripts/screen_change.sh')
     subprocess.call([home])
 
@@ -101,54 +97,12 @@ def get_notification_status():
 def toggle_notification_status():
     subprocess.call(['dunstctl', 'set-paused', 'toggle'])
 
-def show_graphs(qtile):
-    controls = [
-        PopupWidget(
-            widget=widget.CPUGraph(),
-            width=0.45,
-            height=0.45,
-            pos_x=0.05,
-            pos_y=0.05
-        ),
-        PopupWidget(
-            widget=widget.NetGraph(),
-            width=0.45,
-            height=0.45,
-            pos_x=0.5,
-            pos_y=0.05
-        ),
-        PopupWidget(
-            widget=widget.MemoryGraph(),
-            width=0.9,
-            height=0.45,
-            pos_x=0.05,
-            pos_y=0.5
-        )
-    ]
-
-    layout = PopupRelativeLayout(
-        qtile,
-        width=1000,
-        height=200,
-        controls=controls,
-        background="00000060",
-        initial_focus=None,
-        close_on_click=False
-    )
-    layout.show(centered=True)
+def open_left_dashboard():
+    home = os.path.expanduser('/home/simon/.config/qtile/scripts/eww_left.sh')
+    subprocess.call([home])
 #: }}}
 
 #: Key bindings {{{
-mod = "mod4"
-alt_key = "mod1"
-terminal = "kitty"
-scr_locker = "betterlockscreen -l"
-
-# Chord names
-window_resize = "window resize"
-window_move = "window move"
-spawn="spawn"
-
 keys = [
     Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
     Key([mod], "l", lazy.layout.right(), desc="Move focus to right"),
@@ -173,16 +127,18 @@ keys = [
     Key([mod], "r", lazy.spawn("rofi -show combi")),
     Key([mod], "q", lazy.spawn("rofi -show power-menu -modi power-menu:rofi-power-menu -lines 6")),
 
-    Key([], "XF86MonBrightnessDown", lazy.spawn("sudo ybacklight -dec 1")),
-    Key([], "XF86MonBrightnessUp", lazy.spawn("sudo ybacklight -inc 1")),
+    Key([], "XF86MonBrightnessDown", lazy.spawn("sudo ybacklight -dec 3")),
+    Key([], "XF86MonBrightnessUp", lazy.spawn("sudo ybacklight -inc 3")),
 
     Key([], "Print", lazy.spawn("flameshot gui")),
+    Key([alt_key], "l", lazy.spawn(scr_locker)),
+    Key([mod], "b", lazy.hide_show_bar("top")),
+    Key([mod], "n", lazy.spawn("/home/simon/.config/qtile/scripts/eww_left.sh")),
+
+    # ScratchPads
     Key([mod], "z", lazy.group['scratchpad'].dropdown_toggle('term')),
     Key([mod], "p", lazy.group['scratchpad'].dropdown_toggle('insomnia')),
     Key([mod], "o", lazy.group['scratchpad'].dropdown_toggle('browser')),
-    Key([alt_key], "l", lazy.spawn(scr_locker)),
-    Key([mod], "b", lazy.hide_show_bar("top")),
-    Key([mod, "shift"], "q", lazy.function(show_graphs)),
 
     # Dunst
     Key(["control"], "space", lazy.spawn("dunstctl close")),
@@ -251,6 +207,281 @@ groups.append(ScratchPad("scratchpad", [
 ]))
 #: }}}
 
+#: Widgets {{{
+# widget_defaults = dict(
+#     font="JetBrainsMonoExtraBold Nerd Font Mono",
+#     fontsize=11, 
+#     background=colors.background
+# )
+
+widget_defaults = dict(
+    font="JetBrainsMonoExtraBold Nerd Font Mono",
+    fontsize=11,
+    padding=3,
+    background=colors.background,
+    decorations=[
+        BorderDecoration(
+            colour=colors.background,
+            border_width=[5, 0, 4, 0],
+        )
+    ],
+)
+extension_defaults = widget_defaults.copy()
+
+group_box_settings = {
+    "padding": 2,
+    "borderwidth": 2,
+    "active": colors.foreground,
+    "inactive": colors.groupbox_inactive,
+    "disable_drag": True,
+    "rounded": True,
+    "highlight_color": colors.highlight_color,
+    "block_highlight_text_color": colors.highlight_color,
+    "highlight_method": "block",
+    "block_highlight_text_color": colors.alternate_foreground,
+    "urgent_alert_method": "text",
+    "urgent_text": colors.groupbox_urgent,
+    "this_current_screen_border": colors.groupbox_current_screen_border,
+    "this_screen_border": colors.groupbox_screen_border,
+    "other_current_screen_border": colors.groupbox_other_current_screen_border,
+    "other_screen_border": colors.groupbox_other_screen_border,
+    "foreground": colors.foreground,
+    "background": colors.alternate_background,
+    "urgent_border": colors.groupbox_urgent,
+    "spacing": 4,
+}
+
+
+blockDecor = {
+    "decorations": [RectDecoration(radius=0, filled=True, padding_y=3, use_widget_background=True)], }
+
+groupBoxWidget = GroupBox(
+    highlight_method="line",
+    urgent_alert_method="text",
+    urgent_text=colors.groupbox_urgent,
+    block_highlight_text_color="#ffffff",
+    this_current_screen_border=colors.groupbox_current_screen_border,
+    this_screen_border=colors.groupbox_screen_border,
+    other_screen_border=colors.groupbox_other_screen_border,
+    other_current_screen_border=colors.groupbox_current_screen_border,
+    highlight_color=colors.highlight_color,
+    inactive=colors.groupbox_inactive,
+    borderwidth=2, margin_x=2, margin_y=4, padding_x=1, spacing=4,
+    disable_drag=True, hide_unused=False,
+    font="JetBrainsMono Bold"
+)
+
+chordWidget = Chord(
+    font="JetBrainsMonoExtraBold Nerd Font Mono",
+    fontsize=11,
+    width=7,
+    background=colors.background,
+    margin=0, padding=0, fmt="",
+    chords_colors={
+        '': (colors.background, 'ffffff'),
+        window_resize: (colors.window_resize_chord_color, 'ffffff'),
+        window_move: (colors.window_move_chord_color, 'ffffff'),
+        spawn: (colors.spawn_chord_color, 'ffffff'),
+    },
+    decorations=[
+        BorderDecoration(
+            colour=colors.background,
+            border_width=[0, 0, 0, 0],
+        )
+    ],
+)
+
+doNotDisturbIcon = GenPollText(
+    func=get_notification_status, 
+    update_interval=0.1, 
+    foreground=colors.notification_color,
+    background=colors.alternate_background,
+    mouse_callbacks={"Button1": toggle_notification_status},
+    fontsize=21, padding=2, margin=0)
+
+systrayWidgetBox = WidgetBox(
+    widgets = [
+        Systray(padding=2, background=colors.background),
+        # doNotDisturbIcon
+    ],
+    font = "JetBrainsMonoExtraBold Nerd Font Mono", fontsize=18,
+    close_button_location = "right", text_open = "", text_closed = "")
+
+roundedLeftSide = TextBox(
+    text="",
+    foreground=colors.alternate_background,
+    fontsize=19,
+    padding=0,
+)
+roundedRightSide = TextBox(
+    text="",
+    foreground=colors.alternate_background,
+    fontsize=19,
+    padding=0,
+)
+#: }}}
+
+#: Bars {{{
+#: Nebula {{{
+# inspired by https://gitlab.com/Barbaross/Nebula
+nebula = bar.Bar(
+    [
+        chordWidget,
+        TextBox(
+            text="",
+            foreground=colors.widget_accent_foreground,
+            font="Font Awesome 6 Free Solid",
+            fontsize=20,
+            # padding=10,
+            mouse_callbacks={"Button1": open_left_dashboard}
+        ),
+        Spacer(length=5),
+        roundedLeftSide,
+        GroupBox(**group_box_settings),
+        roundedRightSide,
+        Spacer(length=5),
+        roundedLeftSide,
+        CurrentLayoutIcon(
+            custom_icon_paths=[os.path.expanduser("~/.config/qtile/icons")],
+            foreground=colors.widget_current_layout,
+            background=colors.alternate_background,
+            padding=0, scale=0.5,
+        ),
+        WindowCount(            
+            background=colors.alternate_background,
+            foreground = colors.foreground
+        ),
+        roundedRightSide,
+        
+        Spacer(length=5),
+        Spacer(),
+        TextBox(
+            text=" ",
+            foreground=colors.lavender,
+            background=colors.background,
+            # fontsize=38,
+            font="Font Awesome 6 Free Solid",
+        ),
+        WindowName(
+            background=colors.background,
+            foreground=colors.window_title_color,
+            width=bar.CALCULATED,
+            empty_group_string="Desktop",
+            max_chars=130,
+            # mouse_callbacks={"Button2": kill_window},
+        ),
+        Spacer(),
+        systrayWidgetBox,
+        Spacer(length=10),
+        roundedLeftSide,
+        TextBox(
+            text=" ",
+            font="Font Awesome 6 Free Solid",
+            foreground=colors.date_color,  # fontsize=38
+            background=colors.alternate_background,
+        ),
+        Clock(
+            format="%a, %b %d",
+            background=colors.alternate_background,
+            foreground=colors.foreground,
+        ),
+        roundedRightSide,
+        Spacer(length=5),
+        roundedLeftSide,
+        TextBox(
+            text=" ",
+            font="Font Awesome 6 Free Solid",
+            foreground=colors.date_color_alternate,
+            background=colors.alternate_background,
+        ),
+        Clock(
+            format="%I:%M %p",
+            foreground=colors.foreground,
+            background=colors.alternate_background,
+        ),
+        roundedRightSide,
+        Spacer(length=5),
+        roundedLeftSide,
+        doNotDisturbIcon,
+        roundedRightSide,
+        Spacer(length=10)
+        #TextBox(
+        #    text="⏻",
+        #    foreground=colors.red,
+        #    font="Font Awesome 6 Free Solid",
+        #    fontsize=20,
+        #    padding=10,
+        #    # mouse_callbacks={"Button1": open_powermenu},
+        #),
+    ],
+    33,
+    margin=[0, 0, 0, 0],
+    #border_width=[0, 0, 3, 0],
+    #border_color="#0000000",
+)
+#: }}}
+
+#: Centered {{{
+centeredBar = bar.Bar(
+    [
+        chordWidget,
+        Spacer(length=2),
+        groupBoxWidget,
+        Spacer(length=12),
+        CurrentLayout(fmt="[{}]", padding=0, foreground=colors.widget_window_count),
+        WindowCount(fmt="[{}]", padding=0, foreground=colors.widget_current_layout),
+        Spacer(),
+        Clock(format="%a %d %b, %H:%M", padding=0, margin_y=0),
+        Spacer(),
+        TextBox(text='cpu', padding=5, foreground=colors.cpu_color),
+        CPU(format="{load_percent}%", padding=0),
+        Spacer(length=12),
+        TextBox(text='mem', padding=5, foreground=colors.mem_color),
+        Memory(format="{MemUsed:.0f}Mb", padding=0),
+        Spacer(length=8),
+        systrayWidgetBox,
+        Spacer(length=10),
+    ],
+    23
+)
+#: }}}
+
+#: Simple {{{
+simpleBar = bar.Bar(
+    [
+        chordWidget,
+        Spacer(length=1),
+        groupBoxWidget,
+        Spacer(length=5),
+        CurrentLayout(fmt="[{}]", padding=0, foreground=colors.widget_window_count),
+        WindowCount(fmt="[{}]", padding=0, foreground=colors.widget_current_layout),
+        #Spacer(length=3),
+        #WindowName(for_current_screen=True),
+        #Spacer(length=8),
+        Spacer(),
+        TextBox(text='cpu', padding=5, foreground=colors.cpu_color),
+        CPU(format="{load_percent}%", padding=0),
+        Spacer(length=12),
+        TextBox(text='mem', padding=5, foreground=colors.mem_color),
+        Memory(format="{MemUsed:.0f}Mb", padding=0),
+        Spacer(length=12),
+        TextBox(text='dt', padding=5, foreground=colors.date_color),
+        Clock(format="%a %d %b, %H:%M", padding=0, margin_y=0),
+        Spacer(length=8),
+        systrayWidgetBox,
+        Spacer(length=10),
+    ],
+    23,
+)
+#: }}}
+#: }}}
+
+#: Screens {{{
+screens = [
+    Screen(top=nebula)
+]
+#: }}}
+
 #: Layouts {{{
 layout_border = dict(
     border_width=2,
@@ -276,122 +507,6 @@ floating_layout = Floating(
         Match(title='Reminders'),  # Evolution reminders
         Match(wm_class='copyq')
     ])
-#: }}}
-
-#: Bar {{{
-widget_defaults = dict(
-    font="JetBrainsMonoExtraBold Nerd Font Mono",
-    fontsize=11, 
-    background=colors.background
-)
-extension_defaults = widget_defaults.copy()
-
-blockDecor = {
-    "decorations": [RectDecoration(radius=0, filled=True, padding_y=3, use_widget_background=True)],
-}
-
-groupBoxWidget = GroupBox(
-    highlight_method="line",
-    urgent_alert_method="text",
-    urgent_text=colors.groupbox_urgent,
-    block_highlight_text_color="#ffffff",
-    this_current_screen_border=colors.groupbox_current_screen_border,
-    this_screen_border=colors.groupbox_screen_border,
-    other_screen_border=colors.groupbox_other_screen_border,
-    other_current_screen_border=colors.groupbox_current_screen_border,
-    highlight_color=colors.highlight_color,
-    inactive=colors.groupbox_inactive,
-    borderwidth=2, margin_x=2, margin_y=4, padding_x=1, spacing=4,
-    disable_drag=True, hide_unused=False,
-    font="JetBrainsMono Bold"
-)
-
-chordWidget = Chord(
-    font="JetBrainsMonoExtraBold Nerd Font Mono",
-    fontsize=11,
-    width=7,
-    background=colors.background,
-    margin=5, padding=4, fmt="",
-    chords_colors={
-        '': (colors.background, 'ffffff'),
-        window_resize: (colors.window_resize_chord_color, 'ffffff'),
-        window_move: (colors.window_move_chord_color, 'ffffff'),
-        spawn: (colors.spawn_chord_color, 'ffffff'),
-    }
-)
-
-doNotDisturbIcon = GenPollText(
-    func=get_notification_status, 
-    update_interval=0.1, 
-    mouse_callbacks={"Button1": toggle_notification_status},
-    fontsize=21, padding=2, margin=0)
-
-systrayWidgetBox = WidgetBox(
-    widgets = [
-        Systray(padding=2, background=colors.background),
-        doNotDisturbIcon
-    ],
-    font = "JetBrainsMonoExtraBold Nerd Font Mono",
-    close_button_location = "right", text_open = "[-]", text_closed = "[+]")
-    
-blocksBar = bar.Bar(
-    [
-        chordWidget,
-        Spacer(length=1),
-        groupBoxWidget,
-        Spacer(length=5),
-        WindowCount(**blockDecor, fmt="{}", padding=5, foreground=colors.alternate_foreground, background = colors.widget_current_layout),
-        CurrentLayout(**blockDecor, fmt="{}", padding=10, foreground=colors.foreground, background=colors.alternate_background),
-        Spacer(length=8),
-        WindowName(for_current_screen=True, padding=0),
-        Spacer(length=8),
-        TextBox(**blockDecor, fmt="", foreground=colors.alternate_foreground, background=colors.cpu_color, margin=0),
-        CPU(**blockDecor, format="{load_percent}%", padding=10, foreground=colors.foreground, background=colors.alternate_background),
-        Spacer(length=7),
-        TextBox(**blockDecor, fmt="", foreground=colors.alternate_foreground, background=colors.mem_color, margin=0),
-        Memory(**blockDecor, format="{MemUsed:.0f}Mb", padding=10, foreground=colors.foreground, background=colors.alternate_background),
-        Spacer(length=7),
-        TextBox(**blockDecor, fmt="", foreground=colors.alternate_foreground, background=colors.date_color, margin=0),
-        Clock(**blockDecor, format="%a %d %b, %H:%M", padding=10, foreground=colors.foreground, background=colors.alternate_background),
-        Spacer(length=5),
-        Systray(padding=2, background=colors.background),
-        doNotDisturbIcon,
-        Spacer(length=10),
-    ],
-    23
-)
-
-simpleBar = bar.Bar(
-    [
-        chordWidget,
-        Spacer(length=1),
-        groupBoxWidget,
-        Spacer(length=5),
-        WindowCount(fmt="[{}]", padding=0, foreground=colors.widget_current_layout),
-        CurrentLayout(fmt="[{}]", padding=0, foreground=colors.widget_window_count),
-        Spacer(length=3),
-        WindowName(for_current_screen=True),
-        Spacer(length=8),
-        TextBox(text='cpu', padding=5, foreground=colors.cpu_color),
-        CPU(format="{load_percent}%", padding=0),
-        Spacer(length=12),
-        TextBox(text='mem', padding=5, foreground=colors.mem_color),
-        Memory(format="{MemUsed:.0f}Mb", padding=0),
-        Spacer(length=12),
-        TextBox(text='dt', padding=5, foreground=colors.date_color),
-        Clock(format="%a %d %b, %H:%M", padding=0, margin_y=0),
-        Spacer(length=8),
-        #Systray(padding=0, background=colors.background),
-        systrayWidgetBox,
-        #doNotDisturbIcon,
-        Spacer(length=10),
-    ],
-    23,
-)
-
-screens = [
-    Screen(top=simpleBar)
-]
 #: }}}
 
 #: Configurations {{{
