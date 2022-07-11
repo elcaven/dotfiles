@@ -7,7 +7,7 @@ import nerdfonts as nf
 
 from typing import List  # noqa: F401
 
-from libqtile import bar, hook, qtile
+from libqtile import bar, hook
 from libqtile.config import Click, Drag, Group, Key, KeyChord, Match, ScratchPad, DropDown, Screen
 from libqtile.lazy import lazy
 from libqtile.log_utils import logger
@@ -19,7 +19,7 @@ from libqtile.layout.xmonad import MonadTall, MonadWide
 
 # Widget imports
 from qtile_extras.widget import (
-    CPU, Memory, Spacer, TextBox, GroupBox, WindowCount, CurrentLayout, CurrentLayoutIcon, WindowName, Clock, Systray, Chord, GenPollText, WidgetBox, Sep, Net
+    CPU, Memory, Spacer, TextBox, GroupBox, WindowCount, CurrentLayout, CurrentLayoutIcon, WindowName, Clock, Systray, Chord, GenPollText, WidgetBox
 )
 from qtile_extras.widget.decorations import RectDecoration, BorderDecoration
 
@@ -97,8 +97,13 @@ def get_notification_status():
 def toggle_notification_status():
     subprocess.call(['dunstctl', 'set-paused', 'toggle'])
 
-def open_left_dashboard():
-    home = os.path.expanduser('/home/simon/.config/qtile/scripts/eww_left.sh')
+@lazy.function
+def open_dashboard(qtile):
+    home = os.path.expanduser('/home/simon/.config/qtile/scripts/eww_dashboard.sh')
+    subprocess.call([home])
+
+def calendar_popup():
+    home = os.path.expanduser('/home/simon/.config/qtile/scripts/eww_calendar_popup.sh')
     subprocess.call([home])
 #: }}}
 
@@ -133,7 +138,7 @@ keys = [
     Key([], "Print", lazy.spawn("flameshot gui")),
     Key([alt_key], "l", lazy.spawn(scr_locker)),
     Key([mod], "b", lazy.hide_show_bar("top")),
-    Key([mod], "n", lazy.spawn("/home/simon/.config/qtile/scripts/eww_left.sh")),
+    Key([mod], "y", open_dashboard()),
 
     # ScratchPads
     Key([mod], "z", lazy.group['scratchpad'].dropdown_toggle('term')),
@@ -163,7 +168,8 @@ keys = [
         Key([], "e", lazy.spawn("emacs")),
         Key([], "l", lazy.spawn("kitty -e lvim")),
         Key([], "r", lazy.spawn("kitty -e ranger")),
-        Key([], "q", lazy.spawn("kitty -e lvim /home/simon/projects/personal/dotfiles/qtile/config.py"))],
+        Key([], "q", lazy.spawn("kitty -e lvim /home/simon/projects/personal/dotfiles/qtile/config.py")),
+        Key([], "d", lazy.spawn("kitty -e lvim /home/simon/projects/personal/dotfiles"))],
         mode=spawn
     ),
 ]
@@ -327,13 +333,14 @@ roundedRightSide = TextBox(
 nebula = bar.Bar(
     [
         chordWidget,
+        Spacer(length=3),
         TextBox(
             text="",
             foreground=colors.widget_accent_foreground,
             font="Font Awesome 6 Free Solid",
             fontsize=20,
             # padding=10,
-            mouse_callbacks={"Button1": open_left_dashboard}
+            mouse_callbacks={"Button1": open_dashboard}
         ),
         Spacer(length=5),
         roundedLeftSide,
@@ -379,11 +386,13 @@ nebula = bar.Bar(
             font="Font Awesome 6 Free Solid",
             foreground=colors.date_color,  # fontsize=38
             background=colors.alternate_background,
+            mouse_callbacks={"Button1": calendar_popup}
         ),
         Clock(
             format="%a, %b %d",
             background=colors.alternate_background,
             foreground=colors.foreground,
+            mouse_callbacks={"Button1": calendar_popup}
         ),
         roundedRightSide,
         Spacer(length=5),
@@ -393,11 +402,13 @@ nebula = bar.Bar(
             font="Font Awesome 6 Free Solid",
             foreground=colors.date_color_alternate,
             background=colors.alternate_background,
+            mouse_callbacks={"Button1": calendar_popup}
         ),
         Clock(
             format="%I:%M %p",
             foreground=colors.foreground,
             background=colors.alternate_background,
+            mouse_callbacks={"Button1": calendar_popup}
         ),
         roundedRightSide,
         Spacer(length=5),

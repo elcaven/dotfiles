@@ -1,0 +1,114 @@
+// variables
+$rosewater: #F5E0DC;
+$flamingo: #F2CDCD;
+$mauve: #DDB6F2;
+$pink: #F5C2E7;
+$maroon: #E8A2AF;
+$red: #F28FAD;
+$peach: #F8BD96;
+$yellow: #FAE3B0;
+$green: #ABE9B3;
+$teal: #B5E8E0;
+$blue: #96CDFB;
+$sky: #89DCEB;
+$lavender: #C9CBFF;
+$black0: #161320;
+$black1: #1A1826;
+$black2: #1E1E2E;
+$black3: #302D41;
+$black4: #575268;
+$gray0: #6E6C7E;
+$gray1: #988BA2;
+$gray2: #C3BAC6;
+$white: #D9E0EE;
+
+// general
+*{
+  all: unset;
+}
+
+window {
+  background-color: $black0;
+  color: $white;
+  font-family: "JetBrainsMonoExtraBold Nerd Font Mono";
+}
+
+.main_box {
+  border-width: 2px;
+  border-style: solid;
+  border-color: $pink;
+  border-radius: 10px;
+}
+
+.calendar_popup {
+  background-color: $black0;
+  border-width: 2px;
+  border-style: solid;
+  border-color: $pink;
+  border-radius: 10px;
+}
+
+//system-info
+.sliders-side {
+  all: unset;
+  background-color: $black3;
+  border-radius: 12px; 
+  margin: 10px 20px 20px 20px;
+  padding: 20px;
+  font-family: "Font Awesome 6 Free Solid";
+  font-size: 24;
+}
+
+.circprog-ram-side {
+  color: $yellow;
+  background-color: $black4;
+}
+
+.circprog-cpu-side {
+  color: #b48ead;
+  background-color: $black4;
+}
+
+.circprog-hdd-side {
+  color: #a3be8c;
+  background-color: $black4;
+}
+
+//calendar
+.cal {
+  color: white;
+  background-color: $black3;
+  border-radius: 12px; 
+  margin: 20px 20px 10px 20px;
+}
+.cal_popup {
+  background-color: $black0;
+  border-radius: 12px; 
+  margin: 5px;
+}
+calender {
+  color: $white;
+}
+calendar:selected {
+  color: $peach;
+  background-color: $black4;
+  border-radius: 5px;
+}
+
+calendar.header {
+  color: $rosewater;
+  font-weight: bold;
+}
+
+calendar.button {
+  color: $pink;
+}
+
+calendar.highlight {
+  color: $rosewater;
+  font-weight: bold;
+}
+
+calendar:indeterminate {
+  color: $gray0;
+}
