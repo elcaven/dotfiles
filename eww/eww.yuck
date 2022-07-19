@@ -1,23 +1,71 @@
-(defwidget system_info [] 
-  (box :orientation "h" :space-evenly "true" :class "sliders-side" 
-      (circular-progress :class "circprog-cpu-side":width 100 :height 75 :thickness 10 :tooltip cpu_tooltip :value {EWW_CPU.avg} "")
-      (circular-progress :class "circprog-ram-side":width 100 :height 75 :thickness 10 :tooltip mem_tooltip :value {EWW_RAM.used_mem_perc} "")
-      (circular-progress :class "circprog-hdd-side":width 100 :height 75 :thickness 10 :tooltip disk_tooltip :value {EWW_DISK["/"].used_perc} "")))
-(defwidget profile [] 
-  (box :orientation "v" :space-evenly "true" :class "profile" 
-    (box :orientation "v" :space-evenly "true" 
-      (box :class "pfptxt" :valign "center" user)
-      (box :class "subpfptxt" :halign "center" "@${host}"))))
+;; vim:fileencoding=utf-8:ft=yuck:foldmethod=marker
+; Widgets {{{
+(defwidget system_load [] 
+  (box :orientation "h" :space-evenly "true" :class "system-load" 
+    (circular-progress :class "circprog-cpu-side":width 100 :height 75 :thickness 10 :tooltip cpu_tooltip :value {EWW_CPU.avg} "")
+    (circular-progress :class "circprog-ram-side":width 100 :height 75 :thickness 10 :tooltip mem_tooltip :value {EWW_RAM.used_mem_perc} "")
+    (circular-progress :class "circprog-hdd-side":width 100 :height 75 :thickness 10 :tooltip disk_tooltip :value {EWW_DISK["/"].used_perc} "")
+  )
+)
+(defwidget system_information []
+  (box :orientation "v" :space-evenly "false" :class "genwidget"
+    (box :orientation "h" :space-evenly "true"
+      (label :xalign 0 :class "system-info-label" :text "host")
+      (label :xalign 1 :class "system-info-value" :text {user + "@" + host})
+    )
+    (box :orientation "h" :space-evenly "true"
+      (label :xalign 0 :class "system-info-label" :text "uptime")
+      (label :xalign 1 :class "system-info-value" :text uptime)
+    )
+    (box :orientation "h" :space-evenly "true"
+      (label :xalign 0 :class "system-info-label" :text "kernel")
+      (label :xalign 1 :class "system-info-value" :text kernel)
+    )
+  )
+)
 (defwidget cal []
   (box :orientation "v" :space-evenly "true" :class "cal"
-    (calendar :day day-of-month :show-day-names "true")))
+    (calendar :day day-of-month :show-day-names "true")
+  )
+)
 (defwidget cal_popup []
   (box :orientation "v" :space-evenly "true" :class "cal_popup"
-    (calendar :day day-of-month :show-day-names "true")))
+    (calendar :day day-of-month :show-day-names "true")
+  )
+)
+(defwidget weather [] 
+	(box :class "weather" 
+		(box :orientation "v" :space-evenly "false" :vexpand "false" :hexpand "false"
+      (box :orientation "h" :space-evenly "false" :vexpand "false" :hexpand "false" :halign "center"
+        (label :class "iconweather" :limit-width 25 :text weather_icon)
+        (label :class "label_temp" :limit-width 25 :text weather_temp)
+      )
+			(box :orientation "v" :halign "center" :space-evenly "false" :vexpand "false" :hexpand "false" 
+				(label :class "label_stat" :text weather_stat)
+				(label :class "label_quote" :text weather_quote)
+				(label :class "label_quote" :text weather_quote_2 :style "margin-bottom: 10px;")
+      )
+    )
+  )
+)
+(defwidget music []
+  (box :class "music" :orientation "h" :space-evenly "false" :vexpand "false" :hexpand "true" 
+    (image :path cover :width 110 :height 110 :image-width 100 :halign "center" :valign "center" :class "cover")
+    (box :orientation "v" :space-evenly "true" :halign "left" :valign "center" :class "song-information"
+      (label :text song :xalign 0 :class "song-title" :limit-width 30 :wrap-text "true" :tooltip song)
+      (label :text artist :xalign 0 :limit-width 50 :tooltip artist)
+      (label :text music_status :xalign 0)
+    )
+  )
+)
+;}}}
 
-;; Profile vars
+; Variables {{{
+;; System vars
 (defpoll user :interval "1h" "echo $USER")
 (defpoll host :interval "1h" "uname -n")
+(defpoll kernel :interval "1h" "uname -r")
+(defpoll uptime :interval "1m" "uptime -p | sed 's/up //'")
 
 ;; Calendar vars
 (defpoll day-of-month :interval "1h" "date +%d")
@@ -27,13 +75,36 @@
 (defpoll disk_tooltip :interval "1s" "df -h | awk '$NF==\"/\"{printf \"Disk Usage: %d/%dGB (%s)\", $3,$2,$5}'")
 (defpoll cpu_tooltip :interval "1s" "top -bn1 | grep load | awk '{printf \"CPU Load: %.2f\", $(NF-2)}'")
 
+;; Weather vars
+(defpoll weather_icon :interval "15m" `scripts/weather_info --icon`)
+(defpoll weather_stat :interval "15m" `scripts/weather_info --stat`)
+(defpoll weather_temp :interval "15m" `scripts/weather_info --temp`)
+(defpoll weather_quote :interval "15m" `scripts/weather_info --quote`)
+(defpoll weather_quote_2 :interval "15m" `scripts/weather_info --quote2`)
+
+;; Music vars
+(defpoll song :interval "1s" 'scripts/music_info --song')
+(defpoll artist :interval "1s" 'scripts/music_info --artist')
+(defpoll cover :interval "30s" 'scripts/music_info --cover')
+(defpoll music_status :interval "1s" 'scripts/music_info --status')
+; }}}
+
+; Windows {{{
 (defwindow dashboard
-  :geometry (geometry :anchor "center left" :y "17px" :x "7px" :width "22%" :height "96%")
-  (box :class "main_box" :orientation "v" :space-evenly "false"
+  :geometry (geometry :anchor "top left" :y "40px" :x "7px" :width "25%")
+  (box :class "dashboard" :orientation "v" :space-evenly "false"
+    (weather)
+    (music)
     (cal)
-    (system_info)))
+    (system_load)
+    (system_information)
+  )
+)
 
 (defwindow calendar
   :geometry (geometry :anchor "top right" :y "52px" :x "-20px" :width "15%" :height "10%")
   (box :class "calendar_popup" :orientation "v" :space-evenly "false"
-    (cal_popup)))
+    (cal_popup)
+  )
+)
+; }}}

@@ -1,4 +1,4 @@
-// variables
+/* Variables */
 $rosewater: #F5E0DC;
 $flamingo: #F2CDCD;
 $mauve: #DDB6F2;
@@ -22,7 +22,7 @@ $gray1: #988BA2;
 $gray2: #C3BAC6;
 $white: #D9E0EE;
 
-// general
+/* General */
 *{
   all: unset;
 }
@@ -33,23 +33,78 @@ window {
   font-family: "JetBrainsMonoExtraBold Nerd Font Mono";
 }
 
-.main_box {
+/* Generic */
+.genwidget {
+  color: white;
+  background-color: $black3;
+  border-radius: 12px; 
+  margin: 0px 20px 10px 20px;
+  padding: 5px;
+}
+
+.dashboard {
   border-width: 2px;
   border-style: solid;
   border-color: $pink;
   border-radius: 10px;
 }
 
-.calendar_popup {
-  background-color: $black0;
-  border-width: 2px;
-  border-style: solid;
-  border-color: $pink;
-  border-radius: 10px;
+/* Weather */
+.weather {
+  color: white;
+  background-color: $black3;
+  border-radius: 12px; 
+  margin: 20px 20px 10px 20px;
 }
 
-//system-info
-.sliders-side {
+.iconweather {
+  color: $lavender;
+	font-size : 100px;
+	font-weight : normal;
+  margin: 0;
+}
+
+.label_temp {
+	color : $sky;
+	font-size : 50px;
+	font-weight : bold;
+  margin: 0;
+}
+
+.label_stat {
+	color : $red;
+	font-size : 24px;
+	font-weight : bold;
+}
+
+.label_quote {
+	color : $white;
+	font-size : 13px;
+	font-weight : normal;
+}
+
+/* System information */
+.system-info {
+  color: white;
+  background-color: $black3;
+  border-radius: 12px; 
+  margin: 10px 20px 0px 20px;
+  padding: 5px;
+}
+
+.system-info-label {
+  color: $mauve;
+  margin-left: 15px;
+}
+.system-info-value {
+  margin-right: 20px;
+}
+
+.processes {
+  margin: 10px 10px 10px 10px;
+}
+
+.system-load {
   all: unset;
   background-color: $black3;
   border-radius: 12px; 
@@ -74,18 +129,29 @@ window {
   background-color: $black4;
 }
 
-//calendar
+/* Calendar */
 .cal {
   color: white;
   background-color: $black3;
   border-radius: 12px; 
-  margin: 20px 20px 10px 20px;
+  margin: 10px 20px 10px 20px;
+  padding: 5px;
 }
+
 .cal_popup {
   background-color: $black0;
   border-radius: 12px; 
   margin: 5px;
 }
+
+.calendar_popup {
+  background-color: $black0;
+  border-width: 2px;
+  border-style: solid;
+  border-color: $pink;
+  border-radius: 10px;
+}
+
 calender {
   color: $white;
 }
@@ -111,4 +177,27 @@ calendar.highlight {
 
 calendar:indeterminate {
   color: $gray0;
+}
+
+/* Music */
+.music {
+  color: white;
+  background-color: $black3;
+  border-radius: 12px; 
+  margin: 10px 20px 10px 20px;
+  padding: 5px;
+}
+
+.cover {
+  background-color: $black3;
+  margin: 5px 0px 5px 5px;
+}
+
+.song-information {
+  margin-left: 15px;
+}
+
+.song-title {
+  font-size: 16px;
+  color: $peach ;
 }
