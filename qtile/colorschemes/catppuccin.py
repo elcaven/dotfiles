@@ -40,12 +40,13 @@ groupbox_other_screen_border = gray1
 groupbox_other_current_screen_border = pink
 groupbox_inactive = black4
 
-widget_accent_foreground = sky
+widget_accent_foreground = white
 widget_accent_background = gray1
 
 widget_current_layout = teal
 widget_window_count = red
 
+groups_color = peach
 block_highlight_text_color = gray0
 cpu_color = peach
 mem_color = green
@@ -53,6 +54,7 @@ date_color = mauve
 date_color_alternate = yellow
 notification_color = teal
 window_title_color = foreground
+window_icon_color = lavender
 dashboard_color = maroon
 
 window_resize_chord_color = yellow

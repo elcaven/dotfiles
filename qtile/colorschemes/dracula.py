@@ -42,6 +42,11 @@ block_highlight_text_color = color1
 cpu_color = color13
 mem_color = color14
 date_color = color7
+date_color_alternate = color8
+notification_color = color8
+window_title_color = foreground
+window_icon_color = color15
+dashboard_color = color0
 
 window_resize_chord_color = color13
 window_move_chord_color = color9

@@ -7,7 +7,7 @@ import nerdfonts as nf
 
 from typing import List  # noqa: F401
 
-from libqtile import bar, hook
+from libqtile import bar, hook, qtile
 from libqtile.config import Click, Drag, Group, Key, KeyChord, Match, ScratchPad, DropDown, Screen
 from libqtile.lazy import lazy
 from libqtile.log_utils import logger
@@ -49,25 +49,25 @@ def screen_change(event):
     home = os.path.expanduser('/home/simon/.config/qtile/scripts/screen_change.sh')
     subprocess.call([home])
 
-@hook.subscribe.client_new
-def swallow(window):
-    pid = window.window.get_net_wm_pid()
-    ppid = psutil.Process(pid).ppid()
-    cpids = {c.window.get_net_wm_pid(): wid for wid, c in window.qtile.windows_map.items()}
-    for i in range(5):
-        if not ppid:
-            return
-        if ppid in cpids:
-            parent = window.qtile.windows_map.get(cpids[ppid])
-            parent.minimized = True
-            window.parent = parent
-            return
-        ppid = psutil.Process(ppid).ppid()
-
-@hook.subscribe.client_killed
-def unswallow(window):
-    if hasattr(window, 'parent'):
-        window.parent.minimized = False
+#@hook.subscribe.client_new
+#def swallow(window):
+#    pid = window.window.get_net_wm_pid()
+#    ppid = psutil.Process(pid).ppid()
+#    cpids = {c.window.get_net_wm_pid(): wid for wid, c in window.qtile.windows_map.items()}
+#    for i in range(5):
+#        if not ppid:
+#            return
+#        if ppid in cpids:
+#            parent = window.qtile.windows_map.get(cpids[ppid])
+#            parent.minimized = True
+#            window.parent = parent
+#            return
+#        ppid = psutil.Process(ppid).ppid()
+#
+#@hook.subscribe.client_killed
+#def unswallow(window):
+#    if hasattr(window, 'parent'):
+#        window.parent.minimized = False
 #: }}}
 
 #: Functions {{{
@@ -103,8 +103,7 @@ def open_dashboard(qtile):
     subprocess.call([home])
 
 def calendar_popup():
-    home = os.path.expanduser('/home/simon/.config/qtile/scripts/eww_calendar_popup.sh')
-    subprocess.call([home])
+    qtile.groups_map["scratchpad"].dropdowns["calendar"].toggle()
 #: }}}
 
 #: Key bindings {{{
@@ -138,12 +137,15 @@ keys = [
     Key([], "Print", lazy.spawn("flameshot gui")),
     Key([alt_key], "l", lazy.spawn(scr_locker)),
     Key([mod], "b", lazy.hide_show_bar("top")),
+
+    # Eww widgets
     Key([mod], "y", open_dashboard()),
 
     # ScratchPads
     Key([mod], "z", lazy.group['scratchpad'].dropdown_toggle('term')),
     Key([mod], "p", lazy.group['scratchpad'].dropdown_toggle('insomnia')),
     Key([mod], "o", lazy.group['scratchpad'].dropdown_toggle('browser')),
+    Key([mod], "c", lazy.group['scratchpad'].dropdown_toggle('calendar')),
 
     # Dunst
     Key(["control"], "space", lazy.spawn("dunstctl close")),
@@ -191,10 +193,12 @@ groups = [
         Match(wm_class='teams-for-linux'),
         Match(wm_class='microsoft teams - preview'),
         Match(wm_class='microsoft teams - insiders'),
-        Match(wm_class='hexchat'),
         Match(wm_class='discord')]),
     Group(name='9', layout='max', matches=[
         Match(wm_class="evolution")]),
+    Group(name='0', layout='max', matches=[
+        Match(wm_class="notion-app"),
+        Match(wm_class="youtube music")]),
 ]
 
 for i in groups:
@@ -207,9 +211,10 @@ for i in groups:
 
 # Append scratchpad after setting up group keybinds
 groups.append(ScratchPad("scratchpad", [
-    DropDown("term", "kitty", opacity=1, height=0.4, x=0, width=0.998, on_focus_lost_hide=True),
+    DropDown("term", "kitty --class dropdown-terminal", opacity=1, height=0.4, x=0, width=0.998, on_focus_lost_hide=True),
     DropDown("insomnia", "insomnia", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
     DropDown("browser", "qutebrowser", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
+    DropDown("calendar", "gsimplecal", height=1, width=1, x=0.853, y=0.005, on_focus_lost_hide=True),
 ]))
 #: }}}
 
@@ -255,6 +260,7 @@ group_box_settings = {
     "background": colors.alternate_background,
     "urgent_border": colors.groupbox_urgent,
     "spacing": 4,
+    "visible_groups": ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
 }
 
 
@@ -328,6 +334,85 @@ roundedRightSide = TextBox(
 #: }}}
 
 #: Bars {{{
+#: Apollo {{{
+apollo = bar.Bar(
+    [
+        chordWidget,
+        Spacer(length=3),
+        TextBox(
+            text="",
+            foreground=colors.widget_accent_foreground,
+            font="Font Awesome 6 Free Solid",
+            fontsize=20,
+            mouse_callbacks={"Button1": open_dashboard}
+        ),
+        Spacer(length=5),
+        Spacer(length=10, background=colors.groups_color),
+        Spacer(length=5, background=colors.alternate_background),
+        GroupBox(**group_box_settings),
+        CurrentLayoutIcon(
+            custom_icon_paths=[os.path.expanduser("~/.config/qtile/icons")],
+            foreground=colors.widget_current_layout,
+            background=colors.alternate_background,
+            padding=0, scale=0.5,
+        ),
+        WindowCount(            
+            background=colors.alternate_background,
+            foreground = colors.foreground
+        ),
+        Spacer(length=5, background=colors.alternate_background),
+        Spacer(),
+        TextBox(
+            text=" ",
+            foreground=colors.window_icon_color,
+            background=colors.background,
+            font="Font Awesome 6 Free Solid",
+        ),
+        WindowName(
+            background=colors.background,
+            foreground=colors.window_title_color,
+            width=bar.CALCULATED,
+            empty_group_string="Desktop",
+            max_chars=130,
+        ),
+        Spacer(),
+        systrayWidgetBox,
+        Spacer(length=10),
+        Spacer(length=10, background=colors.date_color),
+        Spacer(length=5, background=colors.alternate_background),
+        Clock(
+            format="%a, %b %d",
+            background=colors.alternate_background,
+            foreground=colors.foreground,
+            mouse_callbacks={"Button1": calendar_popup}
+        ),
+        Spacer(length=10, background=colors.alternate_background, mouse_callbacks={"Button1": calendar_popup}),
+        TextBox(
+            text=" ",
+            font="Font Awesome 6 Free Solid",
+            foreground=colors.date_color_alternate,
+            background=colors.alternate_background,
+            mouse_callbacks={"Button1": calendar_popup}
+        ),
+        Clock(
+            format="%H:%M",
+            foreground=colors.foreground,
+            background=colors.alternate_background,
+            mouse_callbacks={"Button1": calendar_popup}
+        ),
+        Spacer(length=5, background=colors.alternate_background),
+        Spacer(length=10),
+        Spacer(length=10, background=colors.notification_color),
+        Spacer(length=5, background=colors.alternate_background),
+        doNotDisturbIcon,
+        Spacer(length=5, background=colors.alternate_background),
+        Spacer(length=10)
+    ],
+    33,
+    margin=[0, 0, 0, 0],
+)
+#: }}}
+
 #: Nebula {{{
 # inspired by https://gitlab.com/Barbaross/Nebula
 nebula = bar.Bar(
@@ -345,9 +430,9 @@ nebula = bar.Bar(
         Spacer(length=5),
         roundedLeftSide,
         GroupBox(**group_box_settings),
-        roundedRightSide,
-        Spacer(length=5),
-        roundedLeftSide,
+        #roundedRightSide,
+        #Spacer(length=5),
+        # roundedLeftSide,
         CurrentLayoutIcon(
             custom_icon_paths=[os.path.expanduser("~/.config/qtile/icons")],
             foreground=colors.widget_current_layout,
@@ -364,7 +449,7 @@ nebula = bar.Bar(
         Spacer(),
         TextBox(
             text=" ",
-            foreground=colors.lavender,
+            foreground=colors.window_icon_color,
             background=colors.background,
             # fontsize=38,
             font="Font Awesome 6 Free Solid",
@@ -394,9 +479,9 @@ nebula = bar.Bar(
             foreground=colors.foreground,
             mouse_callbacks={"Button1": calendar_popup}
         ),
-        roundedRightSide,
-        Spacer(length=5),
-        roundedLeftSide,
+        #roundedRightSide,
+        Spacer(length=10, background=colors.alternate_background, mouse_callbacks={"Button1": calendar_popup}),
+        # roundedLeftSide,
         TextBox(
             text=" ",
             font="Font Awesome 6 Free Solid",
@@ -405,7 +490,7 @@ nebula = bar.Bar(
             mouse_callbacks={"Button1": calendar_popup}
         ),
         Clock(
-            format="%I:%M %p",
+            format="%H:%M",
             foreground=colors.foreground,
             background=colors.alternate_background,
             mouse_callbacks={"Button1": calendar_popup}
@@ -432,31 +517,6 @@ nebula = bar.Bar(
 )
 #: }}}
 
-#: Centered {{{
-centeredBar = bar.Bar(
-    [
-        chordWidget,
-        Spacer(length=2),
-        groupBoxWidget,
-        Spacer(length=12),
-        CurrentLayout(fmt="[{}]", padding=0, foreground=colors.widget_window_count),
-        WindowCount(fmt="[{}]", padding=0, foreground=colors.widget_current_layout),
-        Spacer(),
-        Clock(format="%a %d %b, %H:%M", padding=0, margin_y=0),
-        Spacer(),
-        TextBox(text='cpu', padding=5, foreground=colors.cpu_color),
-        CPU(format="{load_percent}%", padding=0),
-        Spacer(length=12),
-        TextBox(text='mem', padding=5, foreground=colors.mem_color),
-        Memory(format="{MemUsed:.0f}Mb", padding=0),
-        Spacer(length=8),
-        systrayWidgetBox,
-        Spacer(length=10),
-    ],
-    23
-)
-#: }}}
-
 #: Simple {{{
 simpleBar = bar.Bar(
     [
@@ -466,9 +526,6 @@ simpleBar = bar.Bar(
         Spacer(length=5),
         CurrentLayout(fmt="[{}]", padding=0, foreground=colors.widget_window_count),
         WindowCount(fmt="[{}]", padding=0, foreground=colors.widget_current_layout),
-        #Spacer(length=3),
-        #WindowName(for_current_screen=True),
-        #Spacer(length=8),
         Spacer(),
         TextBox(text='cpu', padding=5, foreground=colors.cpu_color),
         CPU(format="{load_percent}%", padding=0),
@@ -489,7 +546,7 @@ simpleBar = bar.Bar(
 
 #: Screens {{{
 screens = [
-    Screen(top=nebula)
+    Screen(top=apollo)
 ]
 #: }}}
 
@@ -502,13 +559,13 @@ layout_border = dict(
 
 layout_theme = {
     **layout_border,
-    "margin": 7,
+    "margin": 0,
 }
 
 layouts = [
-    Max(margin=7, border_width=0),
-    MonadTall(**layout_theme, single_border_width=0, single_margin=7, ratio=0.6),
-    MonadWide(**layout_theme, single_border_width=0, single_margin=7, ratio=0.6),
+    Max(margin=0, border_width=0),
+    MonadTall(**layout_theme, single_border_width=0, single_margin=0, ratio=0.6),
+    MonadWide(**layout_theme, single_border_width=0, single_margin=0, ratio=0.6),
 ]
 
 floating_layout = Floating(
