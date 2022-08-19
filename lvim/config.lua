@@ -14,6 +14,7 @@ lvim.colorscheme = "catppuccin"
 lvim.transparent_window = true
 
 vim.opt.relativenumber = true
+vim.opt.clipboard = "unnamedplus"
 
 -- keymappings [view all the defaults by pressing <leader>Lk]
 lvim.leader = "space"
@@ -48,6 +49,7 @@ local catppuccin = require('catppuccin')
 catppuccin.setup({
   styles = {
    comments = "NONE",
+   conditionals = "NONE",
    functions = "bold",
    keywords = "bold",
    strings = "NONE",
@@ -60,7 +62,8 @@ lvim.plugins = {
   { 'Mofiqul/dracula.nvim' },
   { 'khaveesh/vim-fish-syntax' },
   { 'catppuccin/nvim', as = 'catppuccin' },
-  { 'elkowar/yuck.vim'}
+  { 'elkowar/yuck.vim'},
+  { 'luochen1990/rainbow' }
 }
 
 -- lua lsp setup
