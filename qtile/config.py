@@ -19,7 +19,7 @@ from libqtile.layout.xmonad import MonadTall, MonadWide
 
 # Widget imports
 from qtile_extras.widget import (
-    CPU, Memory, Spacer, TextBox, GroupBox, WindowCount, CurrentLayout, CurrentLayoutIcon, WindowName, Clock, Systray, Chord, GenPollText, WidgetBox
+    Spacer, TextBox, GroupBox, WindowCount, CurrentLayoutIcon, WindowName, Clock, Systray, Chord, GenPollText, WidgetBox
 )
 from qtile_extras.widget.decorations import RectDecoration, BorderDecoration
 
@@ -30,6 +30,7 @@ from colorschemes import catppuccin as colors
 mod = "mod4"
 alt_key = "mod1"
 terminal = "kitty"
+terminal_multiplex = "kitty -e open-zellij-session"
 scr_locker = "betterlockscreen -l"
 window_resize = "window resize"
 window_move = "window move"
@@ -116,8 +117,9 @@ keys = [
     Key([mod, "shift"], "f", float_to_front),
     Key([mod, "control"], "Return", lazy.layout.flip()),
 
-    Key([mod, "shift"], "Return", lazy.layout.toggle_split(), desc="Toggle between split and unsplit sides of stack"),
+    #Key([mod, "shift"], "Return", lazy.layout.toggle_split(), desc="Toggle between split and unsplit sides of stack"),
     Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
+    Key([mod, "shift"], "Return", lazy.spawn(terminal_multiplex), desc="Launch multiplex terminal"),
 
     Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
     Key([mod], "w", lazy.window.kill(), desc="Kill focused window"),
@@ -198,6 +200,7 @@ groups = [
         Match(wm_class="evolution")]),
     Group(name='0', layout='max', matches=[
         Match(wm_class="notion-app"),
+        Match(wm_class="openlens"),
         Match(wm_class="youtube music")]),
 ]
 
@@ -211,10 +214,10 @@ for i in groups:
 
 # Append scratchpad after setting up group keybinds
 groups.append(ScratchPad("scratchpad", [
-    DropDown("term", "kitty --class dropdown-terminal", opacity=1, height=0.4, x=0, width=0.998, on_focus_lost_hide=True),
+    DropDown("term", "kitty --class dropdown-terminal -e zellij -l compact", opacity=1, height=0.4, x=0, width=0.998, on_focus_lost_hide=True),
     DropDown("insomnia", "insomnia", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
     DropDown("browser", "qutebrowser", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
-    DropDown("calendar", "gsimplecal", height=1, width=1, x=0.853, y=0.005, on_focus_lost_hide=True),
+    DropDown("calendar", "gsimplecal", height=1, width=1, x=0.853, y=0.005, on_focus_lost_hide=False),
 ]))
 #: }}}
 
@@ -514,32 +517,6 @@ nebula = bar.Bar(
     margin=[0, 0, 0, 0],
     #border_width=[0, 0, 3, 0],
     #border_color="#0000000",
-)
-#: }}}
-
-#: Simple {{{
-simpleBar = bar.Bar(
-    [
-        chordWidget,
-        Spacer(length=1),
-        groupBoxWidget,
-        Spacer(length=5),
-        CurrentLayout(fmt="[{}]", padding=0, foreground=colors.widget_window_count),
-        WindowCount(fmt="[{}]", padding=0, foreground=colors.widget_current_layout),
-        Spacer(),
-        TextBox(text='cpu', padding=5, foreground=colors.cpu_color),
-        CPU(format="{load_percent}%", padding=0),
-        Spacer(length=12),
-        TextBox(text='mem', padding=5, foreground=colors.mem_color),
-        Memory(format="{MemUsed:.0f}Mb", padding=0),
-        Spacer(length=12),
-        TextBox(text='dt', padding=5, foreground=colors.date_color),
-        Clock(format="%a %d %b, %H:%M", padding=0, margin_y=0),
-        Spacer(length=8),
-        systrayWidgetBox,
-        Spacer(length=10),
-    ],
-    23,
 )
 #: }}}
 #: }}}

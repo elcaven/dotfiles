@@ -1,4 +1,4 @@
-rosewater = "#F5E0DC"
+osewater = "#F5E0DC"
 flamingo = "#F2CDCD"
 mauve = "#DDB6F2"
 pink = "#F5C2E7"
@@ -46,7 +46,7 @@ widget_accent_background = gray1
 widget_current_layout = teal
 widget_window_count = red
 
-groups_color = peach
+groups_color = green
 block_highlight_text_color = gray0
 cpu_color = peach
 mem_color = green
