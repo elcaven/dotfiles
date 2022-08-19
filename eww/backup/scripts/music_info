@@ -32,8 +32,8 @@ get_status() {
 
 get_cover() {
 	cover_url=$(playerctl metadata mpris:artUrl)
-	cover_url=${cover_url/w60/w100}	# resize width of the image
-	cover_url=${cover_url/h60/h100} # resize height of the image
+	cover_url=${cover_url/w60/w200}	# resize width of the image
+	cover_url=${cover_url/h60/h200} # resize height of the image
 	ffmpeg -i "$cover_url" "${COVER_LOCATION}" -y
 	STATUS=$?
 

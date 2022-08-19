@@ -9,7 +9,7 @@ cache_weather_hex=${cache_dir}/weather-hex
 cache_weather_icon=${cache_dir}/weather-icon
 
 ## Weather data
-KEY="c24c0826403fc1c7f3d6b8ff66ddf1b3"
+KEY="5258faa977839db6a057f2294675419b"
 ID="2783090"
 UNIT="metric"	# Available options : 'metric' or 'imperial'
 
