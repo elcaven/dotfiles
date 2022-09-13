@@ -46,7 +46,7 @@ def autostart():
 
 @hook.subscribe.screen_change
 def screen_change(event):
-    #logger.info("Screen change hook called %s", event)
+    logger.info("Screen change hook called %s", event)
     home = os.path.expanduser('/home/simon/.config/qtile/scripts/screen_change.sh')
     subprocess.call([home])
 
@@ -137,7 +137,7 @@ keys = [
     Key([], "XF86MonBrightnessUp", lazy.spawn("sudo ybacklight -inc 3")),
 
     Key([], "Print", lazy.spawn("flameshot gui")),
-    Key([alt_key], "l", lazy.spawn(scr_locker)),
+    Key([mod, "control"], "l", lazy.spawn(scr_locker)),
     Key([mod], "b", lazy.hide_show_bar("top")),
 
     # Eww widgets
@@ -197,10 +197,10 @@ groups = [
         Match(wm_class='microsoft teams - insiders'),
         Match(wm_class='discord')]),
     Group(name='9', layout='max', matches=[
-        Match(wm_class="evolution")]),
-    Group(name='0', layout='max', matches=[
         Match(wm_class="notion-app"),
         Match(wm_class="openlens"),
+        Match(wm_class="evolution")]),
+    Group(name='0', layout='max', matches=[
         Match(wm_class="youtube music")]),
 ]
 
@@ -214,7 +214,7 @@ for i in groups:
 
 # Append scratchpad after setting up group keybinds
 groups.append(ScratchPad("scratchpad", [
-    DropDown("term", "kitty --class dropdown-terminal -e zellij -l compact", opacity=1, height=0.4, x=0, width=0.998, on_focus_lost_hide=True),
+    DropDown("term", "kitty --class dropdown-terminal", opacity=1, height=0.4, x=0, width=0.998, on_focus_lost_hide=True),
     DropDown("insomnia", "insomnia", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
     DropDown("browser", "qutebrowser", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
     DropDown("calendar", "gsimplecal", height=1, width=1, x=0.853, y=0.005, on_focus_lost_hide=False),
@@ -229,7 +229,7 @@ groups.append(ScratchPad("scratchpad", [
 # )
 
 widget_defaults = dict(
-    font="JetBrainsMonoExtraBold Nerd Font Mono",
+    font="JetBrainsMono Nerd Font Mono Bold",
     fontsize=11,
     padding=3,
     background=colors.background,
@@ -319,7 +319,7 @@ systrayWidgetBox = WidgetBox(
         Systray(padding=2, background=colors.background),
         # doNotDisturbIcon
     ],
-    font = "JetBrainsMonoExtraBold Nerd Font Mono", fontsize=18,
+    font = "JetBrainsMono Nerd Font Mono ExtraBold", fontsize=18,
     close_button_location = "right", text_open = "", text_closed = "")
 
 roundedLeftSide = TextBox(
@@ -409,7 +409,7 @@ apollo = bar.Bar(
         Spacer(length=5, background=colors.alternate_background),
         doNotDisturbIcon,
         Spacer(length=5, background=colors.alternate_background),
-        Spacer(length=10)
+        Spacer(length=10),
     ],
     33,
     margin=[0, 0, 0, 0],
@@ -536,13 +536,13 @@ layout_border = dict(
 
 layout_theme = {
     **layout_border,
-    "margin": 0,
+    "margin": 7,
 }
 
 layouts = [
-    Max(margin=0, border_width=0),
-    MonadTall(**layout_theme, single_border_width=0, single_margin=0, ratio=0.6),
-    MonadWide(**layout_theme, single_border_width=0, single_margin=0, ratio=0.6),
+    Max(margin=7, border_width=0),
+    MonadTall(**layout_theme, single_border_width=0, single_margin=7, ratio=0.6),
+    MonadWide(**layout_theme, single_border_width=0, single_margin=7, ratio=0.6),
 ]
 
 floating_layout = Floating(

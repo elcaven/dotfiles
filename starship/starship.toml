@@ -1,12 +1,22 @@
-add_newline = true
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_state\
+$git_status\
+$cmd_duration\
+$line_break\
+$python\
+$character"""
 
-[character]
-success_symbol = "[](white)[](cyan)[](green)"
-error_symbol = "[](red)[](red)[](red)"
+[directory]
+style = "blue"
 
-[status]
-disabled = false
-format = "[$symbol $status]($style) "
+# [character]
+# success_symbol = "[❯](purple)"
+# error_symbol = "[❯](red)"
+# vicmd_symbol = "[❮](green)"
 
 [git_branch]
 format = "[$branch]($style)"
@@ -21,33 +31,70 @@ modified = "​"
 staged = "​"
 renamed = "​"
 deleted = "​"
-stashed = ""
+stashed = "≡"
 
 [git_state]
 format = '\([$state( $progress_current/$progress_total)]($style)\) '
 style = "purple"
 
-[directory]
-read_only = " ro"
-
-[docker_context]
-disabled = true
-symbol = "docker "
-
-[java]
-disabled = true
-symbol = "java "
-
-[kotlin]
-symbol = "kt "
-
-[nodejs]
-symbol = "nodejs "
-
-[package]
-disabled = true
-symbol = "pkg "
+[cmd_duration]
+format = "[$duration]($style) "
+style = "yellow"
 
 [python]
-disabled = true
-symbol = "py "
+format = "[$virtualenv]($style) "
+style = "purple"
+
+# add_newline = true
+
+[character]
+success_symbol = "[](white)[](cyan)[](green)"
+error_symbol = "[](red)[](red)[](red)"
+
+# [status]
+# disabled = false
+# format = "[$symbol $status]($style) "
+
+# [git_branch]
+# format = "[$branch]($style)"
+# style = "purple"
+
+# [git_status]
+# format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)"
+# style = "cyan"
+# conflicted = "​"
+# untracked = "​"
+# modified = "​"
+# staged = "​"
+# renamed = "​"
+# deleted = "​"
+# stashed = ""
+
+# [git_state]
+# format = '\([$state( $progress_current/$progress_total)]($style)\) '
+# style = "purple"
+
+# [directory]
+# read_only = " ro"
+
+# [docker_context]
+# disabled = true
+# symbol = "docker "
+
+# [java]
+# disabled = true
+# symbol = "java "
+
+# [kotlin]
+# symbol = "kt "
+
+# [nodejs]
+# symbol = "nodejs "
+
+# [package]
+# disabled = true
+# symbol = "pkg "
+
+# [python]
+# disabled = true
+# symbol = "py "
