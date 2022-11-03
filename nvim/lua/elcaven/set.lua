@@ -1,8 +1,10 @@
 vim.opt.nu = true
 vim.opt.guicursor = ""
 vim.opt.relativenumber = true
-
+vim.opt.signcolumn = "number"
 vim.opt.wrap = false
+
+vim.wo.cursorline = true
 
 -- Give more space for displaying messages.
 vim.opt.cmdheight = 1
@@ -19,3 +21,4 @@ vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 
 vim.g.mapleader = " "
+vim.g.netrw_winsize = 30

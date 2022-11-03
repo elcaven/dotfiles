@@ -6,6 +6,7 @@ return require('packer').startup(function(use)
     use("nvim-telescope/telescope.nvim")
 
     use 'neovim/nvim-lspconfig'
+    use 'folke/which-key.nvim'
 
 	use 'catppuccin/nvim'
 
