@@ -1,0 +1,65 @@
+#!/bin/bash
+COVER_LOCATION="/tmp/.music_cover.jpg"
+
+get_artist() {
+	artist=$(playerctl metadata artist)
+	if [[ -z "$artist" ]]; then
+		echo "-"
+	else
+		echo "$artist"
+	fi
+}
+
+get_song() {
+	song=$(playerctl metadata title)
+	if [[ -z "$song" ]]; then
+		echo "-"
+	else
+		echo "$song"
+	fi
+}
+
+get_album() {
+	album=$(playerctl metadata album)
+	if [[ -z "$album" ]]; then
+		echo "-"
+	else
+		echo "$album"
+	fi
+}
+
+get_status() {
+	status=$(playerctl status)
+	if [[ -z "$status" ]]; then
+		echo "-"
+  else
+		echo "$status"
+	fi
+}
+
+get_cover() {
+	cover_url=$(playerctl metadata mpris:artUrl)
+	cover_url=${cover_url/w60/w200}	# resize width of the image
+	cover_url=${cover_url/h60/h200} # resize height of the image
+	ffmpeg -i "$cover_url" "${COVER_LOCATION}" -y
+	STATUS=$?
+
+	# Check if the file has a embbeded album art
+	if [ "$STATUS" -eq 0 ];then
+		echo "$COVER_LOCATION"
+	else
+		echo "images/music.png"
+	fi
+}
+
+if [[ "$1" == --artist ]]; then
+	get_artist
+elif [[ "$1" == --song ]]; then
+	get_song
+elif [[ "$1" == --status ]]; then
+	get_status
+elif [[ "$1" == --cover ]]; then
+	get_cover
+elif [[ "$1" == --album ]]; then
+  get_album
+fi

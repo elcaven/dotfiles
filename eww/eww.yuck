@@ -4,29 +4,95 @@
 (defpoll host :interval "1h" "uname -n")
 (defpoll kernel :interval "1h" "uname -r")
 (defpoll uptime :interval "1m" "uptime -p | sed 's/up //'")
+(defpoll dnd :interval "5s" "dunstctl is-paused")
+(defpoll network :interval "1m" "iwgetid -r")
+
+;; System load variables
+(defpoll memory :interval "5s" "scripts/memory")
+(defpoll memory_used_mb :interval "15s" "scripts/memory-ad used")
+(defpoll memory_total_mb :interval "15s" "scripts/memory-ad total")
+(defpoll memory_free_mb :interval "2m" "scripts/memory-ad free")
+(defpoll cpu_usage :interval "5s" "mpstat | awk '$3 ~ /CPU/ { for(i=1;i<=NF;i++) { if ($i ~ /%idle/) field=i } } $3 ~ /all/ { print 100 - $field }'")
+
+;; Music variables
+(defpoll artist :interval "1s" "scripts/music-info --artist")
+(defpoll song :interval "1s" "scripts/music-info --song")
+(defpoll album :interval "1s" "scripts/music-info --album")
+(defpoll music_state :interval "1s" "scripts/music-info --status")
 
 ; Widgets
 (defwidget system_information []
     (box :orientation "v" :space-evenly "false" :class "genwidget"
+      (label :xalign "center" :class "gen-title" :text "System information")
       (box :orientation "h" :space-evenly "true"
-        (label :xalign 0 :class "system-info-label" :text "host")
-        (label :xalign 1 :class "system-info-value" :text {user + "@" + host})
+        (label :xalign 0 :class "gen-label" :text "host")
+        (label :xalign 1 :class "gen-value" :text {user + "@" + host})
       )
       (box :orientation "h" :space-evenly "true"
-        (label :xalign 0 :class "system-info-label" :text "uptime")
-        (label :xalign 1 :class "system-info-value" :text uptime)
+        (label :xalign 0 :class "gen-label" :text "uptime")
+        (label :xalign 1 :class "gen-value" :text uptime)
       )
       (box :orientation "h" :space-evenly "true"
-        (label :xalign 0 :class "system-info-label" :text "kernel")
-        (label :xalign 1 :class "system-info-value" :text kernel)
+        (label :xalign 0 :class "gen-label" :text "kernel")
+        (label :xalign 1 :class "gen-value" :text kernel)
+      )
+      (box :orientation "h" :space-evenly "true"
+        (label :xalign 0 :class "gen-label" :text "do not disturb")
+        (label :xalign 1 :class "gen-value" :text dnd)
+      )
+      (box :orientation "h" :space-evenly "true"
+        (label :xalign 0 :class "gen-label" :text "network")
+        (label :xalign 1 :class "gen-value" :text network)
       )
     )
   )
+
+(defwidget system_load []
+    (box :orientation "v" :space-evenly "false" :class "system-load"
+      (label :xalign "center" :class "gen-title" :text "System load")
+      (box :orientation "h" :space-evenly "true"
+        (label :xalign 0 :class "gen-label" :text "cpu")
+        (label :xalign 1 :class "gen-value" :text {cpu_usage + "%"})
+      )
+      (box :orientation "h" :space-evenly "true"
+        (label :xalign 0 :class "gen-label" :text "mem(%)")
+        (label :xalign 1 :class "gen-value" :text {memory + "%"})
+      )
+      (box :orientation "h" :space-evenly "true"
+        (label :xalign 0 :class "gen-label" :text "mem(mb)")
+        (label :xalign 1 :class "gen-value" :text {memory_used_mb + "mb/" + memory_total_mb + "mb"})
+      )
+    )
+  )
+
+(defwidget music_information []
+  (box :orientation "v" :space-evenly "false" :class "music-information"
+      (label :xalign "center" :class "gen-title" :text "Music")
+      (box :orientation "h" :space-evenly "true"
+        (label :xalign 0 :class "gen-label" :text "artist")
+        (label :xalign 1 :class "gen-value" :text artist)
+      )
+      (box :orientation "h" :space-evenly "true"
+        (label :xalign 0 :class "gen-label" :text "song")
+        (label :xalign 1 :class "gen-value" :text song)
+      )
+      ;(box :orientation "h" :space-evenly "true"
+      ;  (label :xalign 0 :class "gen-label" :text "album")
+      ;  (label :xalign 1 :class "gen-value" :text album)
+      ;)
+      (box :orientation "h" :space-evenly "true"
+        (label :xalign 0 :class "gen-label" :text "state")
+        (label :xalign 1 :class "gen-value" :text music_state)
+      )
+  )
+)
 
 ; Windows
 (defwindow dashboard
     :geometry (geometry :anchor "top right" :y "32px" :x "0px" :width "400px" :height "100%")
     (box :class "dashboard" :orientation "v" :space-evenly "false"
         (system_information)
+        (system_load)
+        (music_information)
     )
 )
