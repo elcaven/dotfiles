@@ -17,6 +17,6 @@ trackball
 run "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
 autorandr --change
 nitrogen --restore
-run "picom --experimental-backends -b"
+run "picom -b"
 /usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg
 xcalib /home/simon/.colorprofiles/90T02_LQ156R1.icm

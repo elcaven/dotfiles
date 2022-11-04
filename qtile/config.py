@@ -2,7 +2,6 @@
 #: Imports {{{
 import os
 import subprocess
-import psutil
 import nerdfonts as nf
 
 from typing import List  # noqa: F401
@@ -19,7 +18,7 @@ from libqtile.layout.xmonad import MonadTall, MonadWide
 
 # Widget imports
 from qtile_extras.widget import (
-    Spacer, TextBox, GroupBox, WindowCount, CurrentLayoutIcon, WindowName, Clock, Systray, Chord, GenPollText, WidgetBox
+    Spacer, TextBox, GroupBox, WindowCount, CurrentLayoutIcon, WindowName, Clock, Systray, Chord, GenPollText, WidgetBox, CurrentLayout
 )
 from qtile_extras.widget.decorations import RectDecoration, BorderDecoration
 
@@ -30,7 +29,8 @@ from colorschemes import catppuccin as colors
 mod = "mod4"
 alt_key = "mod1"
 terminal = "kitty"
-terminal_multiplex = "kitty -e open-zellij-session"
+terminal_dropdown = "kitty -e zellij -l compact attach --create dropdown"
+terminal_multiplex = "kitty --class dropdown-terminal -e zellij -l compact attach --create default"
 scr_locker = "betterlockscreen -l"
 window_resize = "window resize"
 window_move = "window move"
@@ -132,9 +132,14 @@ keys = [
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key([mod], "r", lazy.spawn("rofi -show combi")),
     Key([mod], "q", lazy.spawn("rofi -show power-menu -modi power-menu:rofi-power-menu -lines 6")),
-
-    Key([], "XF86MonBrightnessDown", lazy.spawn("sudo ybacklight -dec 3")),
-    Key([], "XF86MonBrightnessUp", lazy.spawn("sudo ybacklight -inc 3")),
+  
+    Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl s 5%-")),
+    Key([], "XF86MonBrightnessUp", lazy.spawn("brightnessctl s 5%+")),
+    Key([], "XF86AudioRaiseVolume", lazy.spawn("pactl -- set-sink-volume 0 +2%")),
+    Key([], "XF86AudioLowerVolume", lazy.spawn("pactl -- set-sink-volume 0 -2%")),
+    Key([], "XF86AudioPlay", lazy.spawn("playerctl play-pause")),
+    Key([], "XF86AudioNext", lazy.spawn("playerctl next")),
+    Key([], "XF86AudioPrev", lazy.spawn("playerctl previous")),
 
     Key([], "Print", lazy.spawn("flameshot gui")),
     Key([mod, "control"], "l", lazy.spawn(scr_locker)),
@@ -170,10 +175,10 @@ keys = [
     ),
     KeyChord([mod], "s", [
         Key([], "e", lazy.spawn("emacs")),
-        Key([], "l", lazy.spawn("kitty -e lvim")),
+        Key([], "l", lazy.spawn("kitty -e nvim")),
         Key([], "r", lazy.spawn("kitty -e ranger")),
-        Key([], "q", lazy.spawn("kitty -e lvim /home/simon/projects/personal/dotfiles/qtile/config.py")),
-        Key([], "d", lazy.spawn("kitty -e lvim /home/simon/projects/personal/dotfiles"))],
+        Key([], "q", lazy.spawn("kitty -e nvim /home/simon/projects/personal/dotfiles/qtile/config.py")),
+        Key([], "d", lazy.spawn("kitty -e nvim /home/simon/projects/personal/dotfiles"))],
         mode=spawn
     ),
 ]
@@ -197,10 +202,11 @@ groups = [
         Match(wm_class='microsoft teams - insiders'),
         Match(wm_class='discord')]),
     Group(name='9', layout='max', matches=[
-        Match(wm_class="notion-app"),
-        Match(wm_class="openlens"),
+        Match(wm_class="brave-browser"),
         Match(wm_class="evolution")]),
     Group(name='0', layout='max', matches=[
+        Match(wm_class="notion-app"),
+        Match(wm_class="openlens"),
         Match(wm_class="youtube music")]),
 ]
 
@@ -214,7 +220,7 @@ for i in groups:
 
 # Append scratchpad after setting up group keybinds
 groups.append(ScratchPad("scratchpad", [
-    DropDown("term", "kitty --class dropdown-terminal", opacity=1, height=0.4, x=0, width=0.998, on_focus_lost_hide=True),
+    DropDown("term", terminal_dropdown, opacity=1, height=0.4, x=0, width=0.998, on_focus_lost_hide=True),
     DropDown("insomnia", "insomnia", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
     DropDown("browser", "qutebrowser", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
     DropDown("calendar", "gsimplecal", height=1, width=1, x=0.853, y=0.005, on_focus_lost_hide=False),
@@ -229,7 +235,8 @@ groups.append(ScratchPad("scratchpad", [
 # )
 
 widget_defaults = dict(
-    font="JetBrainsMono Nerd Font Mono Bold",
+    font="JetBrainsMono Nerd Font Mono ExtraBold",
+    #font="JuliaMono ExtraBold",
     fontsize=11,
     padding=3,
     background=colors.background,
@@ -252,7 +259,6 @@ group_box_settings = {
     "highlight_color": colors.highlight_color,
     "block_highlight_text_color": colors.highlight_color,
     "highlight_method": "block",
-    "block_highlight_text_color": colors.alternate_foreground,
     "urgent_alert_method": "text",
     "urgent_text": colors.groupbox_urgent,
     "this_current_screen_border": colors.groupbox_current_screen_border,
@@ -263,28 +269,13 @@ group_box_settings = {
     "background": colors.alternate_background,
     "urgent_border": colors.groupbox_urgent,
     "spacing": 4,
-    "visible_groups": ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
+    "visible_groups": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+    "font": "JetBrainsMono Nerd Font Mono Bold"
+    #"font": "JuliaMono ExtraBold"
 }
-
 
 blockDecor = {
     "decorations": [RectDecoration(radius=0, filled=True, padding_y=3, use_widget_background=True)], }
-
-groupBoxWidget = GroupBox(
-    highlight_method="line",
-    urgent_alert_method="text",
-    urgent_text=colors.groupbox_urgent,
-    block_highlight_text_color="#ffffff",
-    this_current_screen_border=colors.groupbox_current_screen_border,
-    this_screen_border=colors.groupbox_screen_border,
-    other_screen_border=colors.groupbox_other_screen_border,
-    other_current_screen_border=colors.groupbox_current_screen_border,
-    highlight_color=colors.highlight_color,
-    inactive=colors.groupbox_inactive,
-    borderwidth=2, margin_x=2, margin_y=4, padding_x=1, spacing=4,
-    disable_drag=True, hide_unused=False,
-    font="JetBrainsMono Bold"
-)
 
 chordWidget = Chord(
     font="JetBrainsMonoExtraBold Nerd Font Mono",
@@ -342,26 +333,32 @@ apollo = bar.Bar(
     [
         chordWidget,
         Spacer(length=3),
-        TextBox(
-            text="",
-            foreground=colors.widget_accent_foreground,
-            font="Font Awesome 6 Free Solid",
-            fontsize=20,
-            mouse_callbacks={"Button1": open_dashboard}
-        ),
+        #TextBox(
+        #    text="",
+        #    foreground=colors.widget_accent_foreground,
+        #    font="Font Awesome 6 Free Solid",
+        #    fontsize=20,
+        #    mouse_callbacks={"Button1": open_dashboard}
+        #),
         Spacer(length=5),
         Spacer(length=10, background=colors.groups_color),
         Spacer(length=5, background=colors.alternate_background),
         GroupBox(**group_box_settings),
-        CurrentLayoutIcon(
-            custom_icon_paths=[os.path.expanduser("~/.config/qtile/icons")],
-            foreground=colors.widget_current_layout,
-            background=colors.alternate_background,
-            padding=0, scale=0.5,
-        ),
+        Spacer(length=3, background=colors.alternate_background),
+        Spacer(length=10),
+        Spacer(length=10, background=colors.widget_current_layout),
+        Spacer(length=5, background=colors.alternate_background),
+        CurrentLayout(foreground=colors.foreground, background=colors.alternate_background),
+        #;CurrentLayoutIcon(
+        #;    custom_icon_paths=[os.path.expanduser("~/.config/qtile/icons")],
+        #;    foreground=colors.widget_current_layout,
+        #;    background=colors.alternate_background,
+        #;    padding=0, scale=0.5,
+        #;),
         WindowCount(            
+            text_format="[{num}]",
             background=colors.alternate_background,
-            foreground = colors.foreground
+            foreground = colors.foreground,
         ),
         Spacer(length=5, background=colors.alternate_background),
         Spacer(),
@@ -381,7 +378,7 @@ apollo = bar.Bar(
         Spacer(),
         systrayWidgetBox,
         Spacer(length=10),
-        Spacer(length=10, background=colors.date_color),
+        #Spacer(length=10, background=colors.date_color),
         Spacer(length=5, background=colors.alternate_background),
         Clock(
             format="%a, %b %d",
@@ -404,121 +401,20 @@ apollo = bar.Bar(
             mouse_callbacks={"Button1": calendar_popup}
         ),
         Spacer(length=5, background=colors.alternate_background),
+        Spacer(length=10, background=colors.date_color),
         Spacer(length=10),
-        Spacer(length=10, background=colors.notification_color),
+        #Spacer(length=10, background=colors.notification_color),
         Spacer(length=5, background=colors.alternate_background),
         doNotDisturbIcon,
         Spacer(length=5, background=colors.alternate_background),
-        Spacer(length=10),
+        Spacer(length=10, background=colors.notification_color),
+        Spacer(length=11),
     ],
     33,
     margin=[0, 0, 0, 0],
 )
 #: }}}
 
-#: Nebula {{{
-# inspired by https://gitlab.com/Barbaross/Nebula
-nebula = bar.Bar(
-    [
-        chordWidget,
-        Spacer(length=3),
-        TextBox(
-            text="",
-            foreground=colors.widget_accent_foreground,
-            font="Font Awesome 6 Free Solid",
-            fontsize=20,
-            # padding=10,
-            mouse_callbacks={"Button1": open_dashboard}
-        ),
-        Spacer(length=5),
-        roundedLeftSide,
-        GroupBox(**group_box_settings),
-        #roundedRightSide,
-        #Spacer(length=5),
-        # roundedLeftSide,
-        CurrentLayoutIcon(
-            custom_icon_paths=[os.path.expanduser("~/.config/qtile/icons")],
-            foreground=colors.widget_current_layout,
-            background=colors.alternate_background,
-            padding=0, scale=0.5,
-        ),
-        WindowCount(            
-            background=colors.alternate_background,
-            foreground = colors.foreground
-        ),
-        roundedRightSide,
-        
-        Spacer(length=5),
-        Spacer(),
-        TextBox(
-            text=" ",
-            foreground=colors.window_icon_color,
-            background=colors.background,
-            # fontsize=38,
-            font="Font Awesome 6 Free Solid",
-        ),
-        WindowName(
-            background=colors.background,
-            foreground=colors.window_title_color,
-            width=bar.CALCULATED,
-            empty_group_string="Desktop",
-            max_chars=130,
-            # mouse_callbacks={"Button2": kill_window},
-        ),
-        Spacer(),
-        systrayWidgetBox,
-        Spacer(length=10),
-        roundedLeftSide,
-        TextBox(
-            text=" ",
-            font="Font Awesome 6 Free Solid",
-            foreground=colors.date_color,  # fontsize=38
-            background=colors.alternate_background,
-            mouse_callbacks={"Button1": calendar_popup}
-        ),
-        Clock(
-            format="%a, %b %d",
-            background=colors.alternate_background,
-            foreground=colors.foreground,
-            mouse_callbacks={"Button1": calendar_popup}
-        ),
-        #roundedRightSide,
-        Spacer(length=10, background=colors.alternate_background, mouse_callbacks={"Button1": calendar_popup}),
-        # roundedLeftSide,
-        TextBox(
-            text=" ",
-            font="Font Awesome 6 Free Solid",
-            foreground=colors.date_color_alternate,
-            background=colors.alternate_background,
-            mouse_callbacks={"Button1": calendar_popup}
-        ),
-        Clock(
-            format="%H:%M",
-            foreground=colors.foreground,
-            background=colors.alternate_background,
-            mouse_callbacks={"Button1": calendar_popup}
-        ),
-        roundedRightSide,
-        Spacer(length=5),
-        roundedLeftSide,
-        doNotDisturbIcon,
-        roundedRightSide,
-        Spacer(length=10)
-        #TextBox(
-        #    text="⏻",
-        #    foreground=colors.red,
-        #    font="Font Awesome 6 Free Solid",
-        #    fontsize=20,
-        #    padding=10,
-        #    # mouse_callbacks={"Button1": open_powermenu},
-        #),
-    ],
-    33,
-    margin=[0, 0, 0, 0],
-    #border_width=[0, 0, 3, 0],
-    #border_color="#0000000",
-)
-#: }}}
 #: }}}
 
 #: Screens {{{

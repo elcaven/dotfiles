@@ -1,4 +1,4 @@
-osewater = "#F5E0DC"
+rosewater = "#F5E0DC"
 flamingo = "#F2CDCD"
 mauve = "#DDB6F2"
 pink = "#F5C2E7"
@@ -43,8 +43,8 @@ groupbox_inactive = black4
 widget_accent_foreground = white
 widget_accent_background = gray1
 
-widget_current_layout = teal
-widget_window_count = red
+widget_current_layout = lavender
+widget_window_count = lavender
 
 groups_color = green
 block_highlight_text_color = gray0

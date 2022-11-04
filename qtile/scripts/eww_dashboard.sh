@@ -1,2 +1,2 @@
 #!/bin/bash
-/home/simon/.local/bin/eww open --toggle dashboard
+eww open --toggle dashboard
