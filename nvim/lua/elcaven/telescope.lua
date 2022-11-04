@@ -19,3 +19,25 @@ require("telescope").setup({
         }
     }
 })
+
+-- Telescope theming
+local colors = require("catppuccin.palettes").get_palette()
+local TelescopeColor = {
+	TelescopeMatching = { fg = colors.flamingo },
+	TelescopeSelection = { fg = colors.text, bg = colors.surface0, bold = true },
+
+	TelescopePromptPrefix = { bg = colors.mantle },
+	TelescopePromptNormal = { bg = colors.mantle },
+	TelescopeResultsNormal = { bg = colors.mantle },
+	TelescopePreviewNormal = { bg = colors.mantle },
+	TelescopePromptBorder = { bg = colors.mantle, fg = colors.lavender },
+	TelescopeResultsBorder = { bg = colors.mantle, fg = colors.lavender },
+	TelescopePreviewBorder = { bg = colors.mantle, fg = colors.green },
+	TelescopePromptTitle = { bg = colors.lavender, fg = colors.mantle },
+	TelescopeResultsTitle = { fg = colors.mantle },
+	TelescopePreviewTitle = { bg = colors.green, fg = colors.mantle },
+}
+
+for hl, col in pairs(TelescopeColor) do
+	vim.api.nvim_set_hl(0, hl, col)
+end
