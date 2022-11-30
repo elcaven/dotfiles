@@ -1,5 +1,6 @@
 require("telescope").setup({
     defaults = {
+        file_sorter = require('telescope.sorters').get_fzy_sorter,
         selection_strategy = "reset",
         sorting_strategy = "ascending",
         prompt_prefix = " > ",
@@ -19,6 +20,7 @@ require("telescope").setup({
         }
     }
 })
+
 
 -- Telescope theming
 local colors = require("catppuccin.palettes").get_palette()

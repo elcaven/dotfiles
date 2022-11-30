@@ -4,20 +4,6 @@
 local lualine = require('lualine')
 
 -- Color table for highlights
--- stylua: ignore
---local colors = {
---  bg       = '#202328',
---  fg       = '#bbc2cf',
---  yellow   = '#ECBE7B',
---  cyan     = '#008080',
---  darkblue = '#081633',
---  green    = '#98be65',
---  orange   = '#FF8800',
---  violet   = '#a9a1e1',
---  magenta  = '#c678dd',
---  blue     = '#51afef',
---  red      = '#ec5f67',
---}
 local colors = require("catppuccin.palettes").get_palette()
 
 local conditions = {
@@ -121,11 +107,11 @@ ins_left {
   padding = { right = 1 },
 }
 
-ins_left {
-  -- filesize component
-  'filesize',
-  cond = conditions.buffer_not_empty,
-}
+--ins_left {
+--  -- filesize component
+--  'filesize',
+--  cond = conditions.buffer_not_empty,
+--}
 
 ins_left {
   'filename',
@@ -156,7 +142,7 @@ ins_left {
   end,
 }
 
-ins_left {
+ins_right {
   -- Lsp server name .
   function()
     local msg = 'No Active Lsp'
@@ -193,12 +179,6 @@ ins_left {
 --}
 
 ins_right {
-  'branch',
-  icon = '',
-  color = { fg = colors.mauve, gui = 'bold' },
-}
-
-ins_right {
   'diff',
   -- Is it me or the symbol for modified us really weird
   symbols = { added = ' ', modified = '柳 ', removed = ' ' },
@@ -208,6 +188,12 @@ ins_right {
     removed = { fg = colors.red },
   },
   cond = conditions.hide_in_width,
+}
+
+ins_right {
+  'branch',
+  icon = '',
+  color = { fg = colors.mauve, gui = 'bold' },
 }
 
 ins_right {

@@ -1,13 +1,38 @@
+local Remap = require("elcaven.keymap")
+local nnoremap = Remap.nnoremap
+local vnoremap = Remap.vnoremap
+local inoremap = Remap.inoremap
+local xnoremap = Remap.xnoremap
+local nmap = Remap.nmap
+
 -- which-key
 require("which-key").setup{}
 
 -- Telescope
 local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<leader>ff', builtin.find_files, {desc='Telescope: find files'})
-vim.keymap.set('n', '<leader>fg', builtin.live_grep, {desc='Telescope: live grep'})
-vim.keymap.set('n', '<leader>fb', builtin.buffers, {desc='Telescope: find buffer'})
-vim.keymap.set('n', '<leader>fh', builtin.help_tags, {desc='Telescope: help tags'})
+nnoremap("<leader>ff", function ()
+   builtin.find_files()
+end, {desc='Telescope: find files'})
+
+nnoremap("<leader>fg", function ()
+   builtin.live_grep()
+end, {desc='Telescope: live grep'})
+
+nnoremap("<leader>fb", function ()
+   builtin.buffers()
+end, {desc='Telescope: find buffer'})
+
+nnoremap("<leader>fh", function ()
+   builtin.live_grep()
+end, {desc='Telescope: help tags'})
 
 -- Netrw
-vim.keymap.set('n', '<leader>dd', ":Lexplore %:p:h<CR>", {})
-vim.keymap.set('n', '<leader>da', ":Ex<CR>", {})
+nnoremap("<leader>dd", ":Ex<CR>", {desc='Open explore'})
+
+-- Other
+nnoremap("<C-d>", "<C-d>zz")
+nnoremap("<C-u>", "<C-u>zz")
+vnoremap("<C-c>", "*y")
+
+vnoremap("J", ":m '>+1<CR>gv=gv")
+vnoremap("K", ":m '<-2<CR>gv=gv")

@@ -1,8 +1,10 @@
 vim.opt.nu = true
 vim.opt.guicursor = ""
 vim.opt.relativenumber = true
-vim.opt.signcolumn = "number"
+--vim.opt.signcolumn = "number"
+vim.wo.signcolumn = "yes"
 vim.opt.wrap = false
+vim.opt.cursorline = true
 
 vim.wo.cursorline = true
 
