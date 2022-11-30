@@ -7,7 +7,7 @@ function run {
   fi
 }
 
-run "nm-applet"
+run "nm-applet --indicator"
 run "pasystray"
 run "blueman-applet"
 run "clipit -n"

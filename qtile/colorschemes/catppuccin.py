@@ -51,7 +51,7 @@ block_highlight_text_color = gray0
 cpu_color = peach
 mem_color = green
 date_color = mauve
-date_color_alternate = yellow
+date_color_alternate = peach
 notification_color = teal
 window_title_color = foreground
 window_icon_color = lavender
@@ -60,4 +60,4 @@ dashboard_color = maroon
 window_resize_chord_color = yellow
 window_move_chord_color = green
 spawn_chord_color = sky
-
+sep_color = mauve

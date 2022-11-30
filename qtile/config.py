@@ -18,7 +18,7 @@ from libqtile.layout.xmonad import MonadTall, MonadWide
 
 # Widget imports
 from qtile_extras.widget import (
-    Spacer, TextBox, GroupBox, WindowCount, CurrentLayoutIcon, WindowName, Clock, Systray, Chord, GenPollText, WidgetBox, CurrentLayout
+    Spacer, Sep, TextBox, GroupBox, WindowCount, WindowName, Clock, Systray, Chord, GenPollText, WidgetBox, CurrentLayout
 )
 from qtile_extras.widget.decorations import RectDecoration, BorderDecoration
 
@@ -29,8 +29,8 @@ from colorschemes import catppuccin as colors
 mod = "mod4"
 alt_key = "mod1"
 terminal = "kitty"
-terminal_dropdown = "kitty -e zellij -l compact attach --create dropdown"
-terminal_multiplex = "kitty --class dropdown-terminal -e zellij -l compact attach --create default"
+terminal_dropdown = "kitty -e tmux-sessionizer dropdown"
+terminal_multiplex = "kitty -e tmux-sessionizer default"
 scr_locker = "betterlockscreen -l"
 window_resize = "window resize"
 window_move = "window move"
@@ -40,35 +40,15 @@ spawn="spawn"
 #: Hooks {{{
 @hook.subscribe.startup_once
 def autostart():
-    logger.info("Startup hook called")
-    home = os.path.expanduser('/home/simon/.config/qtile/scripts/autostart.sh')
-    subprocess.Popen([home])
+    logger.info("Startup hook called");
+    home = os.path.expanduser('/home/simon/.config/qtile/scripts/autostart.sh');
+    subprocess.Popen([home]);
 
 @hook.subscribe.screen_change
 def screen_change(event):
-    logger.info("Screen change hook called %s", event)
-    home = os.path.expanduser('/home/simon/.config/qtile/scripts/screen_change.sh')
-    subprocess.call([home])
-
-#@hook.subscribe.client_new
-#def swallow(window):
-#    pid = window.window.get_net_wm_pid()
-#    ppid = psutil.Process(pid).ppid()
-#    cpids = {c.window.get_net_wm_pid(): wid for wid, c in window.qtile.windows_map.items()}
-#    for i in range(5):
-#        if not ppid:
-#            return
-#        if ppid in cpids:
-#            parent = window.qtile.windows_map.get(cpids[ppid])
-#            parent.minimized = True
-#            window.parent = parent
-#            return
-#        ppid = psutil.Process(ppid).ppid()
-#
-#@hook.subscribe.client_killed
-#def unswallow(window):
-#    if hasattr(window, 'parent'):
-#        window.parent.minimized = False
+    logger.info("Screen change hook called %s", event);
+    home = os.path.expanduser('/home/simon/.config/qtile/scripts/screen_change.sh');
+    subprocess.call([home]);
 #: }}}
 
 #: Functions {{{
@@ -105,6 +85,9 @@ def open_dashboard(qtile):
 
 def calendar_popup():
     qtile.groups_map["scratchpad"].dropdowns["calendar"].toggle()
+
+def xrandr_set_rgb():
+   logger.info("Xrandr - Setting broadcast RGB to full"); 
 #: }}}
 
 #: Key bindings {{{
@@ -125,6 +108,7 @@ keys = [
     Key([mod], "w", lazy.window.kill(), desc="Kill focused window"),
     Key([mod], "space", lazy.window.toggle_floating()),
     Key([mod], "f", lazy.window.toggle_fullscreen()),
+    Key([mod, "shift"], "m", lazy.window.toggle_maximize()),
     Key([mod, "control"], 'j', lazy.next_screen(), desc='Next monitor'),
 
     Key([mod, "control"], "r", lazy.reload_config(), desc="Reload Qtile config"),
@@ -132,11 +116,12 @@ keys = [
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key([mod], "r", lazy.spawn("rofi -show combi")),
     Key([mod], "q", lazy.spawn("rofi -show power-menu -modi power-menu:rofi-power-menu -lines 6")),
+    Key([mod], "t", lazy.spawn("trackball")),
   
     Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl s 5%-")),
     Key([], "XF86MonBrightnessUp", lazy.spawn("brightnessctl s 5%+")),
-    Key([], "XF86AudioRaiseVolume", lazy.spawn("pactl -- set-sink-volume 0 +2%")),
-    Key([], "XF86AudioLowerVolume", lazy.spawn("pactl -- set-sink-volume 0 -2%")),
+    Key([], "XF86AudioRaiseVolume", lazy.spawn("pactl -- set-sink-volume 0 +1%")),
+    Key([], "XF86AudioLowerVolume", lazy.spawn("pactl -- set-sink-volume 0 -1%")),
     Key([], "XF86AudioPlay", lazy.spawn("playerctl play-pause")),
     Key([], "XF86AudioNext", lazy.spawn("playerctl next")),
     Key([], "XF86AudioPrev", lazy.spawn("playerctl previous")),
@@ -229,7 +214,7 @@ groups.append(ScratchPad("scratchpad", [
 
 #: Widgets {{{
 # widget_defaults = dict(
-#     font="JetBrainsMonoExtraBold Nerd Font Mono",
+#     font="JetBrainsMono Nerd Font Mono ExtraBold",
 #     fontsize=11, 
 #     background=colors.background
 # )
@@ -249,6 +234,31 @@ widget_defaults = dict(
 )
 extension_defaults = widget_defaults.copy()
 
+group_box_settings_simple = {
+    "padding": 2,
+    "borderwidth": 2,
+    "active": colors.foreground,
+    "inactive": colors.groupbox_inactive,
+    "hide_unused": True,
+    "disable_drag": True,
+    "rounded": True,
+    "highlight_color": colors.highlight_color,
+    "block_highlight_text_color": colors.highlight_color,
+    "highlight_method": "block",
+    "urgent_alert_method": "text",
+    "urgent_text": colors.groupbox_urgent,
+    "this_current_screen_border": colors.groupbox_current_screen_border,
+    "this_screen_border": colors.groupbox_screen_border,
+    "other_current_screen_border": colors.groupbox_other_current_screen_border,
+    "other_screen_border": colors.groupbox_other_screen_border,
+    "foreground": colors.foreground,
+    "background": colors.background,
+    "urgent_border": colors.groupbox_urgent,
+    "spacing": 4,
+    "visible_groups": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+    "font": "JetBrainsMono Nerd Font Mono Bold"
+    #"font": "JuliaMono ExtraBold"
+}
 group_box_settings = {
     "padding": 2,
     "borderwidth": 2,
@@ -297,6 +307,13 @@ chordWidget = Chord(
     ],
 )
 
+doNotDisturbIconSimple = GenPollText(
+    func=get_notification_status, 
+    update_interval=0.1, 
+    foreground=colors.foreground,
+    background=colors.background,
+    mouse_callbacks={"Button1": toggle_notification_status},
+    fontsize=21, padding=2, margin=0)
 doNotDisturbIcon = GenPollText(
     func=get_notification_status, 
     update_interval=0.1, 
@@ -328,18 +345,52 @@ roundedRightSide = TextBox(
 #: }}}
 
 #: Bars {{{
-#: Apollo {{{
+simple = bar.Bar(
+    [
+        chordWidget,
+        GroupBox(**group_box_settings_simple),
+        Sep(padding=15, foreground=colors.sep_color),
+        CurrentLayout(),
+        WindowCount(            
+            text_format="[{num}]",
+            background=colors.background,
+            foreground = colors.foreground,
+        ),
+        Sep(padding=15, foreground=colors.sep_color),
+        WindowName(
+            background=colors.background,
+            foreground=colors.window_title_color,
+            width=bar.CALCULATED,
+            empty_group_string="Desktop",
+            max_chars=150,
+        ),
+        Spacer(),
+        Systray(padding=2, background=colors.background),
+        Sep(padding=15, foreground=colors.sep_color),
+        Clock(
+            format="%a, %b %d - %H:%M",
+            background=colors.background,
+            foreground=colors.foreground,
+            mouse_callbacks={"Button1": calendar_popup}
+        ),
+        Sep(padding=15, foreground=colors.sep_color),
+        doNotDisturbIconSimple,
+        Spacer(length=11)
+    ],
+    size=27
+)
+
 apollo = bar.Bar(
     [
         chordWidget,
         Spacer(length=3),
-        #TextBox(
-        #    text="",
-        #    foreground=colors.widget_accent_foreground,
-        #    font="Font Awesome 6 Free Solid",
-        #    fontsize=20,
-        #    mouse_callbacks={"Button1": open_dashboard}
-        #),
+        TextBox(
+            text="",
+            foreground=colors.widget_accent_foreground,
+            font="Font Awesome 6 Free Solid",
+            fontsize=20,
+            mouse_callbacks={"Button1": open_dashboard}
+        ),
         Spacer(length=5),
         Spacer(length=10, background=colors.groups_color),
         Spacer(length=5, background=colors.alternate_background),
@@ -415,15 +466,15 @@ apollo = bar.Bar(
 )
 #: }}}
 
-#: }}}
-
 #: Screens {{{
 screens = [
-    Screen(top=apollo)
+    Screen(top=simple)
 ]
 #: }}}
 
 #: Layouts {{{
+margin = 5
+
 layout_border = dict(
     border_width=2,
     border_focus=colors.border_focus,
@@ -432,13 +483,13 @@ layout_border = dict(
 
 layout_theme = {
     **layout_border,
-    "margin": 7,
+    "margin": margin,
 }
 
 layouts = [
-    Max(margin=7, border_width=0),
-    MonadTall(**layout_theme, single_border_width=0, single_margin=7, ratio=0.6),
-    MonadWide(**layout_theme, single_border_width=0, single_margin=7, ratio=0.6),
+    Max(margin=margin, border_width=0),
+    MonadTall(**layout_theme, single_border_width=0, single_margin=margin, ratio=0.6),
+    MonadWide(**layout_theme, single_border_width=0, single_margin=margin, ratio=0.6),
 ]
 
 floating_layout = Floating(
