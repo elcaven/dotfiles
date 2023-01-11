@@ -200,10 +200,11 @@ ins_right {
   function()
     return '▊'
   end,
-  color = { fg = colors.blue },
+  color = { fg = colors.blue }, -- Sets highlighting of component
   padding = { left = 1 },
 }
 
 -- Now don't forget to initialize lualine
 lualine.setup(config)
+
 
