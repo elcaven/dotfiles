@@ -35,6 +35,9 @@ scr_locker = "betterlockscreen -l"
 window_resize = "window resize"
 window_move = "window move"
 spawn="spawn"
+
+open_qtile_config="kitty /bin/fish -c 'cd /home/simon/projects/personal/dotfiles/qtile && vim config.py'"
+open_dotfiles="kitty /bin/fish -c 'cd /home/simon/projects/personal/dotfiles && vim .'"
 #: }}}
 
 #: Hooks {{{
@@ -162,8 +165,8 @@ keys = [
         Key([], "e", lazy.spawn("emacs")),
         Key([], "l", lazy.spawn("kitty -e nvim")),
         Key([], "r", lazy.spawn("kitty -e ranger")),
-        Key([], "q", lazy.spawn("kitty -e nvim /home/simon/projects/personal/dotfiles/qtile/config.py")),
-        Key([], "d", lazy.spawn("kitty -e nvim /home/simon/projects/personal/dotfiles"))],
+        Key([], "q", lazy.spawn(open_qtile_config)),
+        Key([], "d", lazy.spawn(open_dotfiles))],
         mode=spawn
     ),
 ]
@@ -351,11 +354,11 @@ simple = bar.Bar(
         chordWidget,
         GroupBox(**group_box_settings_simple),
         Sep(padding=15, foreground=colors.sep_color),
-        CurrentLayout(),
+        CurrentLayout(foreground = colors.widget_current_layout),
         WindowCount(            
             text_format="[{num}]",
             background=colors.background,
-            foreground = colors.foreground,
+            foreground = colors.widget_window_count,
         ),
         Sep(padding=15, foreground=colors.sep_color),
         WindowName(
