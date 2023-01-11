@@ -17,6 +17,7 @@
     ~/.config/picom.conf: picom/picom.conf
     ~/.config/eww: eww
     ~/.tmux.conf: tmux/tmux.conf
+    ~/.config/colorprofiles: colorprofiles
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
