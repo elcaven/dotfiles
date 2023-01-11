@@ -16,7 +16,7 @@ configuration {
     color-active: "@xbg, @xfg, @xbg, @xfg, @xbg";
     color-window: "@xbg, @x1, @xfg";
 
-    location: 0;
+    location: 2;
     yoffset:  0;
 }
 
@@ -100,7 +100,7 @@ window {
     padding:          5;
     border:           2;
     border-color:     @x9;
-    width: 60%;
+    width: 100%;
 }
 mainbox {
     padding: 0;
