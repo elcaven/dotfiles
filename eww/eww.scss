@@ -46,8 +46,14 @@ window {
 
 .gen-title {
   font-size: 16;
-  color: $peach;
+  color: $white;
   margin-bottom: 15px;
+}
+
+.system-information {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid $peach;
 }
 
 .system-load {
@@ -60,4 +66,22 @@ window {
   margin-top: 20px;
   padding-top: 20px;
   border-top: 2px solid $peach;
+}
+
+calender {
+  color: $white;
+}
+calendar:selected {
+  color: $peach;
+  background-color: $black3;
+  border-radius: 5px;
+}
+
+calendar.header {
+  color: $rosewater;
+  font-weight: bold;
+}
+
+calendar.indeterminate {
+    color: $pink;
 }

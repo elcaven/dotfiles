@@ -1,4 +1,8 @@
 ; Variables
+;; Date vars
+(defpoll day_of_month :interval "1h" "date +%d")
+(defpoll month :interval "1h" "date +%m")
+
 ;; System vars
 (defpoll user :interval "1h" "echo $USER")
 (defpoll host :interval "1h" "uname -n")
@@ -21,8 +25,16 @@
 (defpoll music_state :interval "1s" "scripts/music-info --status")
 
 ; Widgets
-(defwidget system_information []
+(defwidget general_information []
     (box :orientation "v" :space-evenly "false" :class "genwidget"
+      (box :orientation "h" :space-evenly "true"
+        (calendar :day day_of_month :month month)
+      )
+    )
+)
+
+(defwidget system_information []
+    (box :orientation "v" :space-evenly "false" :class "system-information"
       (label :xalign "center" :class "gen-title" :text "System information")
       (box :orientation "h" :space-evenly "true"
         (label :xalign 0 :class "gen-label" :text "host")
@@ -74,25 +86,26 @@
       )
       (box :orientation "h" :space-evenly "true"
         (label :xalign 0 :class "gen-label" :text "song")
-        (label :xalign 1 :class "gen-value" :text song)
+        (label :xalign 1 :class "gen-value" :text song :limit-width 25 :width 100)
       )
       ;(box :orientation "h" :space-evenly "true"
       ;  (label :xalign 0 :class "gen-label" :text "album")
       ;  (label :xalign 1 :class "gen-value" :text album)
       ;)
-      (box :orientation "h" :space-evenly "true"
-        (label :xalign 0 :class "gen-label" :text "state")
-        (label :xalign 1 :class "gen-value" :text music_state)
-      )
+      ;(box :orientation "h" :space-evenly "true"
+      ;  (label :xalign 0 :class "gen-label" :text "state")
+      ;  (label :xalign 1 :class "gen-value" :text music_state)
+      ;)
   )
 )
 
 ; Windows
 (defwindow dashboard
-    :geometry (geometry :anchor "top right" :y "32px" :x "0px" :width "400px" :height "100%")
+    :geometry (geometry :anchor "top right" :y "0px" :x "0px" :width "400px" :max-width "200px" :height "100%")
     (box :class "dashboard" :orientation "v" :space-evenly "false"
+        (general_information)
         (system_information)
         (system_load)
-        (music_information)
+        ;(music_information)
     )
 )
