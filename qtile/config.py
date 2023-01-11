@@ -128,7 +128,7 @@ keys = [
 
     Key([], "Print", lazy.spawn("flameshot gui")),
     Key([mod, "control"], "l", lazy.spawn(scr_locker)),
-    Key([mod], "b", lazy.hide_show_bar("top")),
+    Key([mod], "b", lazy.hide_show_bar("bottom")),
 
     # Eww widgets
     Key([mod], "y", open_dashboard()),
@@ -239,7 +239,7 @@ group_box_settings_simple = {
     "borderwidth": 2,
     "active": colors.foreground,
     "inactive": colors.groupbox_inactive,
-    "hide_unused": True,
+    "hide_unused": False,
     "disable_drag": True,
     "rounded": True,
     "highlight_color": colors.highlight_color,
@@ -264,6 +264,7 @@ group_box_settings = {
     "borderwidth": 2,
     "active": colors.foreground,
     "inactive": colors.groupbox_inactive,
+    "hide_unused": False,
     "disable_drag": True,
     "rounded": True,
     "highlight_color": colors.highlight_color,
@@ -328,7 +329,7 @@ systrayWidgetBox = WidgetBox(
         # doNotDisturbIcon
     ],
     font = "JetBrainsMono Nerd Font Mono ExtraBold", fontsize=18,
-    close_button_location = "right", text_open = "", text_closed = "")
+    close_button_location = "right", text_open = " ", text_closed = " ")
 
 roundedLeftSide = TextBox(
     text="",
@@ -365,7 +366,7 @@ simple = bar.Bar(
             max_chars=150,
         ),
         Spacer(),
-        Systray(padding=2, background=colors.background),
+        systrayWidgetBox,
         Sep(padding=15, foreground=colors.sep_color),
         Clock(
             format="%a, %b %d - %H:%M",
@@ -380,38 +381,32 @@ simple = bar.Bar(
     size=27
 )
 
-apollo = bar.Bar(
+blocks = bar.Bar(
     [
         chordWidget,
-        Spacer(length=3),
-        TextBox(
-            text="",
-            foreground=colors.widget_accent_foreground,
-            font="Font Awesome 6 Free Solid",
-            fontsize=20,
-            mouse_callbacks={"Button1": open_dashboard}
-        ),
+        #Spacer(length=3),
+        #TextBox(
+        #    text="",
+        #    foreground=colors.widget_accent_foreground,
+        #    font="Font Awesome 6 Free Solid",
+        #    fontsize=20,
+        #    mouse_callbacks={"Button1": open_dashboard}
+        #),
         Spacer(length=5),
-        Spacer(length=10, background=colors.groups_color),
         Spacer(length=5, background=colors.alternate_background),
         GroupBox(**group_box_settings),
         Spacer(length=3, background=colors.alternate_background),
+        Spacer(length=10, background=colors.groups_color),
         Spacer(length=10),
-        Spacer(length=10, background=colors.widget_current_layout),
         Spacer(length=5, background=colors.alternate_background),
         CurrentLayout(foreground=colors.foreground, background=colors.alternate_background),
-        #;CurrentLayoutIcon(
-        #;    custom_icon_paths=[os.path.expanduser("~/.config/qtile/icons")],
-        #;    foreground=colors.widget_current_layout,
-        #;    background=colors.alternate_background,
-        #;    padding=0, scale=0.5,
-        #;),
         WindowCount(            
             text_format="[{num}]",
             background=colors.alternate_background,
             foreground = colors.foreground,
         ),
         Spacer(length=5, background=colors.alternate_background),
+        Spacer(length=10, background=colors.widget_current_layout),
         Spacer(),
         TextBox(
             text=" ",
@@ -429,7 +424,7 @@ apollo = bar.Bar(
         Spacer(),
         systrayWidgetBox,
         Spacer(length=10),
-        #Spacer(length=10, background=colors.date_color),
+        Spacer(length=10, background=colors.date_color),
         Spacer(length=5, background=colors.alternate_background),
         Clock(
             format="%a, %b %d",
@@ -452,14 +447,12 @@ apollo = bar.Bar(
             mouse_callbacks={"Button1": calendar_popup}
         ),
         Spacer(length=5, background=colors.alternate_background),
-        Spacer(length=10, background=colors.date_color),
         Spacer(length=10),
-        #Spacer(length=10, background=colors.notification_color),
+        Spacer(length=10, background=colors.notification_color),
         Spacer(length=5, background=colors.alternate_background),
         doNotDisturbIcon,
         Spacer(length=5, background=colors.alternate_background),
-        Spacer(length=10, background=colors.notification_color),
-        Spacer(length=11),
+        Spacer(length=12),
     ],
     33,
     margin=[0, 0, 0, 0],
@@ -468,12 +461,12 @@ apollo = bar.Bar(
 
 #: Screens {{{
 screens = [
-    Screen(top=simple)
+    Screen(bottom=simple)
 ]
 #: }}}
 
 #: Layouts {{{
-margin = 5
+margin = 0
 
 layout_border = dict(
     border_width=2,

@@ -19,4 +19,4 @@ autorandr --change
 nitrogen --restore
 run "picom -b"
 /usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg
-xcalib /home/simon/.colorprofiles/90T02_LQ156R1.icm
+xcalib /home/simon/.config/colorprofiles/Dell_AW2518HF_user.icm
