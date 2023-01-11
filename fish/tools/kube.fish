@@ -71,7 +71,7 @@ end
 function ktail --description "Tail logs of deployment"
   set arg_pair (kubectl get deployment --all-namespaces | _inline_fzf | awk '{print $1, $2}' | string split -n " ")
   [ -z "$arg_pair" ] && printf "ktails: no deployments found. no tailing.\n" && return 255
-  kubetail -n $arg_pair[1] -l app=$arg_pair[2]
+  kubetail $arg_pair[2] -n $arg_pair[1]
 end
 
 function klogs --description "Tail logs of container"
