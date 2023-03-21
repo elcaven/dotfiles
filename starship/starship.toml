@@ -1,13 +1,10 @@
 format = """
-$username\
-$hostname\
 $directory\
 $git_branch\
 $git_state\
 $git_status\
 $cmd_duration\
 $line_break\
-$python\
 $character"""
 
 [directory]
@@ -48,7 +45,7 @@ style = "purple"
 # add_newline = true
 
 [character]
-success_symbol = "[](white)[](cyan)[](green)"
+success_symbol = "[](cyan)[](cyan)[](green)"
 error_symbol = "[](red)[](red)[](red)"
 
 # [status]

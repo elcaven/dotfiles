@@ -10,6 +10,7 @@
 (defpoll uptime :interval "1m" "uptime -p | sed 's/up //'")
 (defpoll dnd :interval "5s" "dunstctl is-paused")
 (defpoll network :interval "1m" "iwgetid -r")
+(defpoll brightness :interval "5s" "brightnessctl -m | awk -F, '{print substr($4, 0, length($4)-1)}' | sed 's/$/%/'")
 
 ;; System load variables
 (defpoll memory :interval "5s" "scripts/memory")
@@ -43,6 +44,10 @@
       (box :orientation "h" :space-evenly "true"
         (label :xalign 0 :class "gen-label" :text "uptime")
         (label :xalign 1 :class "gen-value" :text uptime)
+      )
+      (box :orientation "h" :space-evenly "true"
+       (label :xalign 0 :class "gen-label" :text "brightness")
+       (label :xalign 1 :class "gen-value" :text brightness)
       )
       (box :orientation "h" :space-evenly "true"
         (label :xalign 0 :class "gen-label" :text "kernel")

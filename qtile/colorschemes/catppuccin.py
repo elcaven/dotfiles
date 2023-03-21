@@ -60,4 +60,4 @@ dashboard_color = maroon
 window_resize_chord_color = yellow
 window_move_chord_color = green
 spawn_chord_color = sky
-sep_color = mauve
+sep_color = white
