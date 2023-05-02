@@ -11,8 +11,9 @@ run "nm-applet --indicator"
 run "pasystray"
 run "blueman-applet"
 run "clipit -n"
-run "copyq"
+#run "copyq"
 run "cbatticon"
+run "greenclip daemon"
 trackball
 run "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
 autorandr --change

@@ -30,7 +30,7 @@ alternate_foreground = black0
 background = black0
 alternate_background = black3
 
-#highlight_color = ['44475a', '44475a']
+# highlight_color = ['44475a', '44475a']
 highlight_color = ['0f111a', '44475a']
 
 groupbox_urgent = red

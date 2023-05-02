@@ -1,5 +1,7 @@
-# vim:fileencoding=utf-8:ft=python:foldmethod=marker
-#: Imports {{{
+# vim:fileencoding=utf-8:ft=python
+#: ---------------------------------------------------------------------------------------------------------------
+#: Imports
+#: ---------------------------------------------------------------------------------------------------------------
 import os
 import subprocess
 import nerdfonts as nf
@@ -20,30 +22,34 @@ from libqtile.layout.xmonad import MonadTall, MonadWide
 
 # Widget imports
 from qtile_extras.widget import (
-    Spacer, Sep, TextBox, GroupBox, WindowCount, WindowName, Clock, Systray,
-    Chord, GenPollText, WidgetBox, CurrentLayout
+    Spacer, GroupBox, WindowCount, WindowName, Clock, Systray,
+    Chord, GenPollText, WidgetBox, CurrentLayout, TextBox, LaunchBar
 )
-from qtile_extras.widget.decorations import RectDecoration, BorderDecoration
+from qtile_extras.widget.decorations import BorderDecoration
 
 from colorschemes import catppuccin as colors
-#: }}}
 
-#: Variables {{{
+#: ---------------------------------------------------------------------------------------------------------------
+#: Variables
+#: ---------------------------------------------------------------------------------------------------------------
 mod = "mod4"
 alt_key = "mod1"
-terminal = "kitty"
-terminal_dropdown = "kitty -o background_opacity=0.8 -e tmux-sessionizer dropdown"
-terminal_multiplex = "kitty -e tmux-sessionizer default"
+terminal = "wezterm"
+terminal_dropdown = "wezterm --config window_background_opacity=0.8 -e /home/simon/.local/bin/tmux-sessionizer dropdown"
+terminal_multiplex = "wezterm -e /home/simon/.local/bin/tmux-sessionizer default"
 scr_locker = "betterlockscreen -l"
+clipboard = "rofi -modi 'clipboard:greenclip print' -show"
+
 window_resize = "window resize"
 window_move = "window move"
 spawn = "spawn"
 
-open_qtile_config = "kitty /bin/fish -c 'cd /home/simon/projects/personal/dotfiles/qtile && vim config.py'"
-open_dotfiles = "kitty /bin/fish -c 'cd /home/simon/projects/personal/dotfiles && vim .'"
-#: }}}
+open_dotfiles = "wezterm start --cwd /home/simon/projects/personal/dotfiles"
+open_qtile_config = "wezterm start --cwd /home/simon/.config/qtile -- nvim config.py"
 
-#: Hooks {{{
+#: ---------------------------------------------------------------------------------------------------------------
+#: Hooks
+#: ---------------------------------------------------------------------------------------------------------------
 
 
 @hook.subscribe.startup_once
@@ -56,9 +62,10 @@ def autostart():
 def move_copqy_client(client):
     if 'copyq' in client.window.get_wm_class():
         client.togroup()
-#: }}}
 
-#: Functions {{{
+#: ---------------------------------------------------------------------------------------------------------------
+#: Functions
+#: ---------------------------------------------------------------------------------------------------------------
 
 
 @lazy.function
@@ -97,9 +104,10 @@ def open_dashboard(qtile):
     dashboard = os.path.expanduser(
         '/home/simon/.config/qtile/scripts/eww_dashboard.sh')
     subprocess.call([dashboard])
-#: }}}
 
-#: Key bindings {{{
+#: ---------------------------------------------------------------------------------------------------------------
+#: Key bindings
+#: ---------------------------------------------------------------------------------------------------------------
 keys = [
 
     Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
@@ -125,6 +133,7 @@ keys = [
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key([mod], "r", lazy.spawn("rofi -show combi")),
     Key([mod], "q", lazy.spawn("rofi -show power-menu -modi power-menu:rofi-power-menu -lines 6")),
+    Key([mod], "h", lazy.spawn(clipboard)),
 
     Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl s 5%-")),
     Key([], "XF86MonBrightnessUp", lazy.spawn("brightnessctl s 5%+")),
@@ -136,7 +145,7 @@ keys = [
 
     Key([], "Print", lazy.spawn("flameshot gui")),
     Key([mod, "control"], "l", lazy.spawn(scr_locker)),
-    Key([mod], "b", lazy.hide_show_bar("bottom")),
+    Key([mod], "b", lazy.hide_show_bar("top")),
 
     # Eww widgets
     Key([mod], "y", open_dashboard()),
@@ -169,16 +178,17 @@ keys = [
     ),
     KeyChord([mod], "s", [
         Key([], "e", lazy.spawn("emacs")),
-        Key([], "l", lazy.spawn("kitty -e nvim")),
-        Key([], "r", lazy.spawn("kitty -e ranger")),
+        Key([], "l", lazy.spawn("wezterm -e nvim")),
+        Key([], "r", lazy.spawn("wezterm -e joshuto")),
         Key([], "q", lazy.spawn(open_qtile_config)),
         Key([], "d", lazy.spawn(open_dotfiles))],
         name=spawn
     ),
 ]
-#: }}}
 
-#: Groups {{{
+#: ---------------------------------------------------------------------------------------------------------------
+#: Groups
+#: ---------------------------------------------------------------------------------------------------------------
 groups = [
     Group(name='1', layout='monadtall'),
     Group(name='2', layout='max', matches=[
@@ -220,9 +230,10 @@ groups.append(ScratchPad("scratchpad", [
     DropDown("insomnia", "insomnia", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
     DropDown("browser", "qutebrowser", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
 ]))
-#: }}}
 
-#: Widgets {{{
+#: ---------------------------------------------------------------------------------------------------------------
+#: Widgets
+#: ---------------------------------------------------------------------------------------------------------------
 widget_defaults = dict(
     font="JetBrainsMono Nerd Font Mono ExtraBold",
     fontsize=11,
@@ -237,7 +248,7 @@ widget_defaults = dict(
 )
 extension_defaults = widget_defaults.copy()
 
-group_box_settings_simple = {
+group_box_settings = {
     "padding": 1,
     "margin_y": 2,
     "borderwidth": 3,
@@ -262,41 +273,6 @@ group_box_settings_simple = {
     "spacing": 4,
     "visible_groups": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
     "font": "JetBrainsMono Nerd Font Mono Bold"
-    # "font": "JuliaMono ExtraBold"
-}
-group_box_settings = {
-    "padding": 2,
-    "borderwidth": 2,
-    "active": colors.foreground,
-    "inactive": colors.groupbox_inactive,
-    "hide_unused": False,
-    "disable_drag": True,
-    "rounded": True,
-    "highlight_color": colors.highlight_color,
-    "block_highlight_text_color": colors.highlight_color,
-    "highlight_method": "block",
-    "urgent_alert_method": "text",
-    "urgent_text": colors.groupbox_urgent,
-    "this_current_screen_border": colors.groupbox_current_screen_border,
-    "this_screen_border": colors.groupbox_screen_border,
-    "other_current_screen_border": colors.groupbox_other_current_screen_border,
-    "other_screen_border": colors.groupbox_other_screen_border,
-    "foreground": colors.foreground,
-    "background": colors.alternate_background,
-    "urgent_border": colors.groupbox_urgent,
-    "spacing": 4,
-    "visible_groups": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
-    "font": "JetBrainsMono Nerd Font Mono Bold"
-    # "font": "JuliaMono ExtraBold"
-}
-
-blockDecor = {
-    "decorations": [RectDecoration(
-        radius=0,
-        filled=True,
-        padding_y=3,
-        use_widget_background=True)
-    ],
 }
 
 chordWidget = Chord(
@@ -319,57 +295,58 @@ chordWidget = Chord(
     ],
 )
 
-doNotDisturbIconSimple = GenPollText(
+doNotDisturbIcon = GenPollText(
     func=get_notification_status,
     update_interval=0.1,
     foreground=colors.foreground,
     background=colors.background,
     mouse_callbacks={"Button1": toggle_notification_status},
     fontsize=21, padding=2, margin=0)
-doNotDisturbIcon = GenPollText(
-    func=get_notification_status,
-    update_interval=0.1,
-    foreground=colors.notification_color,
-    background=colors.alternate_background,
-    mouse_callbacks={"Button1": toggle_notification_status},
-    fontsize=21, padding=2, margin=0)
 
 systrayWidgetBox = WidgetBox(
     widgets=[
         Systray(padding=2, background=colors.background),
-        # doNotDisturbIcon
     ],
-    font="JetBrainsMono Nerd Font Mono ExtraBold", fontsize=18,
+    font="JetBrainsMono Nerd Font Mono ExtraBold", fontsize=16,
     close_button_location="right", text_open=" ", text_closed=" ")
 
-roundedLeftSide = TextBox(
-    text="",
-    foreground=colors.alternate_background,
-    fontsize=19,
-    padding=0,
-)
-roundedRightSide = TextBox(
-    text="",
-    foreground=colors.alternate_background,
-    fontsize=19,
-    padding=0,
-)
-#: }}}
+launchbar = LaunchBar(
+    padding=2, padding_y=2,
+    text_only=True,
+    font="Font Awesome 6 Free", fontsize=15,
+    foreground=colors.foreground, progs=[
+        ("", "rofi -modi 'clipboard:greenclip print' -show", "Clipboard History"),
+        ("", "flameshot gui", "Screenshot"),
+    ])
 
-#: Bars {{{
-simple = bar.Bar(
+# widget.LaunchBar(padding=0, text_only=True, font="Font Awesome 6 Free", fontsize=16, foreground="2e3440", progs=[
+#     ("", "rofi-bluetooth", "Bluetooth"),
+#     ("", "rofi -modi 'clipboard:greenclip print' -show", "Clipboard History"),
+#     ("", "rofi-pass", "Passwords"),
+#     ("", "rofi-todo -f /home/ralsina/todo.txt", "Todo"),
+#     ("", "flameshot gui", "Screenshot"),
+# ]),
+
+spacer = TextBox(fmt="::", foreground=colors.peach)
+
+#: ---------------------------------------------------------------------------------------------------------------
+#: Bars
+#: ---------------------------------------------------------------------------------------------------------------
+default_bar = bar.Bar(
     [
         chordWidget,
         Spacer(length=2),
-        GroupBox(**group_box_settings_simple),
-        Sep(padding=15, foreground=colors.sep_color),
+        GroupBox(**group_box_settings),
+        # Sep(padding=15, foreground=colors.sep_color),
+        spacer,
         CurrentLayout(foreground=colors.widget_current_layout),
         WindowCount(
             text_format="[{num}]",
             background=colors.background,
             foreground=colors.widget_window_count,
         ),
-        Sep(padding=15, foreground=colors.sep_color),
+        # Sep(padding=15, foreground=colors.sep_color),
+        spacer,
         WindowName(
             background=colors.background,
             foreground=colors.window_title_color,
@@ -379,106 +356,87 @@ simple = bar.Bar(
         ),
         Spacer(),
         systrayWidgetBox,
-        Sep(padding=15, foreground=colors.sep_color),
+        Spacer(length=5),
+        # Systray(padding=2, background=colors.background),
+        # Sep(padding=15, foreground=colors.sep_color),
+        spacer,
         Clock(
             format="%a, %b %d - %H:%M",
             background=colors.background,
             foreground=colors.foreground,
         ),
-        Sep(padding=15, foreground=colors.sep_color),
-        doNotDisturbIconSimple,
-        Spacer(length=11)
+        # Sep(padding=15, foreground=colors.sep_color),
+        spacer,
+        launchbar,
+        doNotDisturbIcon,
+        Spacer(length=5),
+        chordWidget,
     ],
     size=27
 )
-
-blocks = bar.Bar(
+default_bar_no_systray = bar.Bar(
     [
         chordWidget,
-        # Spacer(length=3),
-        # TextBox(
-        #    text="",
-        #    foreground=colors.widget_accent_foreground,
-        #    font="Font Awesome 6 Free Solid",
-        #    fontsize=20,
-        #    mouse_callbacks={"Button1": open_dashboard}
-        # ),
-        Spacer(length=5),
-        Spacer(length=5, background=colors.alternate_background),
+        Spacer(length=2),
         GroupBox(**group_box_settings),
-        Spacer(length=3, background=colors.alternate_background),
-        Spacer(length=10, background=colors.groups_color),
-        Spacer(length=10),
-        Spacer(length=5, background=colors.alternate_background),
-        CurrentLayout(foreground=colors.foreground,
-                      background=colors.alternate_background),
+        # Sep(padding=15, foreground=colors.sep_color),
+        spacer,
+        CurrentLayout(foreground=colors.widget_current_layout),
         WindowCount(
             text_format="[{num}]",
-            background=colors.alternate_background,
-            foreground=colors.foreground,
-        ),
-        Spacer(length=5, background=colors.alternate_background),
-        Spacer(length=10, background=colors.widget_current_layout),
-        Spacer(),
-        TextBox(
-            text=" ",
-            foreground=colors.window_icon_color,
             background=colors.background,
-            font="Font Awesome 6 Free Solid",
+            foreground=colors.widget_window_count,
         ),
+        # Sep(padding=15, foreground=colors.sep_color),
+        spacer,
         WindowName(
             background=colors.background,
             foreground=colors.window_title_color,
             width=bar.CALCULATED,
-            empty_group_string="Desktop",
-            max_chars=130,
+            empty_group_string="",
+            max_chars=150,
         ),
         Spacer(),
-        systrayWidgetBox,
-        Spacer(length=10),
-        Spacer(length=10, background=colors.date_color),
-        Spacer(length=5, background=colors.alternate_background),
         Clock(
-            format="%a, %b %d",
-            background=colors.alternate_background,
+            format="%a, %b %d - %H:%M",
+            background=colors.background,
             foreground=colors.foreground,
         ),
-        Spacer(length=10, background=colors.alternate_background),
-        TextBox(
-            text=" ",
-            font="Font Awesome 6 Free Solid",
-            foreground=colors.date_color_alternate,
-            background=colors.alternate_background,
-        ),
-        Clock(
-            format="%H:%M",
-            foreground=colors.foreground,
-            background=colors.alternate_background,
-        ),
-        Spacer(length=5, background=colors.alternate_background),
-        Spacer(length=10),
-        Spacer(length=10, background=colors.notification_color),
-        Spacer(length=5, background=colors.alternate_background),
-        doNotDisturbIcon,
-        Spacer(length=5, background=colors.alternate_background),
-        Spacer(length=12),
+        # Sep(padding=15, foreground=colors.sep_color),
+        Spacer(length=5),
+        chordWidget,
     ],
-    33,
-    margin=[0, 0, 0, 0],
+    size=27
 )
-#: }}}
 
-#: Screens {{{
+#: ---------------------------------------------------------------------------------------------------------------
+#: Screens
+#: ---------------------------------------------------------------------------------------------------------------
+# screen_count = len(subprocess.check_output(shlex.split("xrandr --listmonitors")).splitlines()) - 1
+# screens = []
+# for i in range(screen_count):
+#     if i == screen_count - 1:
+#         screens.append(Screen(
+#             top=default_bar_no_systray
+#         ))
+#     else:
+#         screens.append(Screen(
+#             top=default_bar
+#         ))
+
 screens = [
-    Screen(bottom=simple)
+    Screen(top=default_bar)
 ]
-#: }}}
 
-#: Layouts {{{
+#: ---------------------------------------------------------------------------------------------------------------
+#: Layouts
+#: ---------------------------------------------------------------------------------------------------------------
 margin = 5
+border_width = 2
+single_border_width = 2
 
 layout_border = dict(
-    border_width=2,
+    border_width=border_width,
     border_focus=colors.border_focus,
     border_normal=colors.border_normal,
 )
@@ -489,10 +447,11 @@ layout_theme = {
 }
 
 layouts = [
-    Max(margin=margin, border_width=0),
-    MonadTall(**layout_theme, single_border_width=0,
+    Max(border_width=single_border_width, margin=margin,
+        border_focus=colors.border_focus, border_normal=colors.border_normal),
+    MonadTall(**layout_theme, single_border_width=single_border_width,
               single_margin=margin, ratio=0.6),
-    MonadWide(**layout_theme, single_border_width=0,
+    MonadWide(**layout_theme, single_border_width=single_border_width,
               single_margin=margin, ratio=0.6),
 ]
 
@@ -501,11 +460,12 @@ floating_layout = Floating(
     float_rules=[
         *Floating.default_float_rules,
         Match(title='Reminders'),  # Evolution reminders
-        Match(wm_class='copyq')
+        Match(wm_class='copyq'),
     ])
-#: }}}
 
-#: Configurations {{{
+#: ---------------------------------------------------------------------------------------------------------------
+#: Configurations
+#: ---------------------------------------------------------------------------------------------------------------
 # Drag floating layouts.
 mouse = [
     Drag([mod], "Button1", lazy.window.set_position_floating(), start=lazy.window.get_position()),
@@ -523,4 +483,3 @@ reconfigure_screens = True
 follow_mouse_focus = True
 auto_minimize = True
 wmname = f"Qtile {VERSION}"
-#: }}}
