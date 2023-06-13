@@ -160,7 +160,7 @@ ins_right {
     return msg
   end,
   icon = ' LSP:',
-  color = { fg = '#ffffff', gui = 'bold' },
+  color = { fg = colors.fg, gui = 'bold' },
 }
 
 -- Add components to right sections
@@ -180,8 +180,7 @@ ins_right {
 
 ins_right {
   'diff',
-  -- Is it me or the symbol for modified us really weird
-  symbols = { added = ' ', modified = '柳 ', removed = ' ' },
+  symbols = { added = ' ', modified = '󰏬 ', removed = ' ' },
   diff_color = {
     added = { fg = colors.green },
     modified = { fg = colors.peach },

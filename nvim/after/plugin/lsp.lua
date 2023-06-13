@@ -3,35 +3,80 @@ local lsp = require("lsp-zero")
 lsp.preset("recommended")
 
 lsp.ensure_installed({
-    'sumneko_lua',
     'rust_analyzer',
 })
 
--- Fix Undefined global 'vim'
+lsp.configure('lua_ls', {
+    settings = {
+        Lua = {
+            workspace = {
+                library = {
+                    ['/usr/share/nvim/runtime/lua'] = true,
+                    ['/usr/share/nvim/runtime/lua/lsp'] = true,
+                    ['/usr/share/awesome/lib'] = true
+                }
+            },
+            diagnostics = {
+                enable = true,
+                globals = {
+                    "vim",
+                    "use", -- Packer use keyword
+                    "awesome", "client", "screen",
+                    "client",
+                    "root"
+                },
+            },
+        }
+    }
+})
 lsp.configure('sumneko_lua', {
     settings = {
         Lua = {
+            workspace = {
+                library = {
+                    ['/usr/share/nvim/runtime/lua'] = true,
+                    ['/usr/share/nvim/runtime/lua/lsp'] = true,
+                    ['/usr/share/awesome/lib'] = true
+                }
+            },
             diagnostics = {
-                globals = { 'vim' }
-            }
+                enable = true,
+                globals = {
+                    "vim",
+                    "use", -- Packer use keyword
+                    "awesome", "client", "screen",
+                    "client",
+                    "root"
+                },
+            },
         }
     }
 })
 
-lsp.configure('rust_analyzer', {
-    settings = {
-        ["rust-analyzer"] = {
-            cargo = {
-                features = "all"
-            },
-            diagnostics = {
-                enable = true,
-                disabled = {"unresolved-proc-macro"},
-                enableExperimental = true,
-            }
-        },
-    }
+lsp.configure('slint_lsp', {
+    force_setup = true,
+    on_attach = function()
+        print('hello slint-lsp')
+    end,
 })
+
+-- lsp.configure('rust_analyzer', {
+--     settings = {
+--         ["rust-analyzer"] = {
+--             cargo = {
+--                 features = "all"
+--             },
+--             diagnostics = {
+--                 enable = true,
+--                 disabled = { "unresolved-proc-macro" },
+--                 enableExperimental = true,
+--                 experimental = {
+--                     enable = true
+--                 }
+--             }
+--         },
+--     }
+-- })
 
 lsp.configure('pylsp', {
     settings = {
@@ -39,12 +84,11 @@ lsp.configure('pylsp', {
             plugins = {
                 pycodestyle = {
                     maxLineLength = 200,
-                    ignore = {'E501', 'E305'}
+                    ignore = { 'E501', 'E305' }
                 }
             }
         }
     }
-
     -- pylsp.plugins.flake8.ignore
 })
 
@@ -52,11 +96,11 @@ lsp.configure('pylsp', {
 local cmp = require('cmp')
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
 local cmp_mappings = lsp.defaults.cmp_mappings({
-        ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
-        ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-        ['<C-y>'] = cmp.mapping.confirm({ select = true }),
-        ["<C-Space>"] = cmp.mapping.complete(),
-    })
+    ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
+    ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
+    ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+    ["<C-Space>"] = cmp.mapping.complete(),
+})
 
 -- disable completion with tab
 -- this helps with copilot setup

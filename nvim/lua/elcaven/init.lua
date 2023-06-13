@@ -1,5 +1,6 @@
 require("elcaven.remap")
 require("elcaven.set")
+require("elcaven.packer")
 
 vim.cmd[[
     augroup highlight_yank
