@@ -10,6 +10,7 @@ configuration {
     display-drun: " ";
     display-combi: ":";
     display-dmenu: ":";
+    display-clipboard: "";
 
     color-normal: "@xbg, @xfg, @xbg, @xfg, @xbg";
     color-urgent: "@xbg, @x1, @xbg, @x1, @xfg";
