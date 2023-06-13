@@ -34,6 +34,7 @@ alias cat="bat -p --theme=Catppuccin-mocha"
 alias vim="nvim"
 alias code="vscodium"
 alias glances="glances --enable-separator"
+alias tmx="TERM=xterm-256color tmux"
 alias tms="tmux-sessionizer"
 
 alias update="yay -Syu --devel"
@@ -89,6 +90,7 @@ set PATH $PATH /home/simon/.config/yarn/global/node_modules/.bin
 set PATH $PATH /home/simon/.cargo/bin
 set PATH $PATH /home/simon/.config/lsp/lua-language-server/bin
 set PATH $PATH /usr/local/go/bin
+set PATH $PATH /home/simon/.config/emacs/bin
 
 set FZF_DEFAULT_OPTS --color=bg:-1,bg+:#302d41,hl+:#ddb6f2,hl:#ddb6f2,pointer:#ddb6f2
 
@@ -99,6 +101,7 @@ set QT_QPA_PLATFORMTHEME qt5ct
 set EDITOR nvim
 set SUDO_EDITOR nvim
 set KUBE_EDITOR nvim
+set BAT_THEME Catppuccin-mocha
 export SUDO_EDITOR=nvim
 #: }}}
 
@@ -110,3 +113,5 @@ end
 starship init fish | source
 enable_transience
 #: }}}
+
+set -q GHCUP_INSTALL_BASE_PREFIX[1]; or set GHCUP_INSTALL_BASE_PREFIX $HOME ; set -gx PATH $HOME/.cabal/bin $PATH /home/simon/.ghcup/bin # ghcup-env
