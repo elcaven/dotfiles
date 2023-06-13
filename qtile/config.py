@@ -9,8 +9,9 @@ import nerdfonts as nf
 # from typing import List  # noqa: F401
 
 from libqtile import bar, hook
-from libqtile.config import (Click, Drag, Group, Key, KeyChord, Match,
-                             ScratchPad, DropDown, Screen)
+from libqtile.config import (
+    Click, Drag, Group, Key, KeyChord, Match,
+    ScratchPad, DropDown, Screen)
 from libqtile.lazy import lazy
 from libqtile.log_utils import logger
 from libqtile.scripts.main import VERSION
@@ -35,16 +36,17 @@ from colorschemes import catppuccin as colors
 mod = "mod4"
 alt_key = "mod1"
 terminal = "wezterm"
-terminal_dropdown = "wezterm --config window_background_opacity=0.8 -e /home/simon/.local/bin/tmux-sessionizer dropdown"
+terminal_dropdown = "wezterm --config window_background_opacity=0.7 -e /home/simon/.local/bin/tmux-sessionizer dropdown"
 terminal_multiplex = "wezterm -e /home/simon/.local/bin/tmux-sessionizer default"
 scr_locker = "betterlockscreen -l"
 clipboard = "rofi -modi 'clipboard:greenclip print' -show"
+screenshot = "flameshot gui"
 
 window_resize = "window resize"
 window_move = "window move"
 spawn = "spawn"
 
-open_dotfiles = "wezterm start --cwd /home/simon/projects/personal/dotfiles"
+open_dotfiles = "wezterm start --cwd /home/simon/projects/personal/dotfiles -- /usr/bin/nvim ."
 open_qtile_config = "wezterm start --cwd /home/simon/.config/qtile -- nvim config.py"
 
 #: ---------------------------------------------------------------------------------------------------------------
@@ -56,12 +58,6 @@ open_qtile_config = "wezterm start --cwd /home/simon/.config/qtile -- nvim confi
 def autostart():
     autostart_script = os.path.expanduser('/home/simon/.config/qtile/scripts/autostart.sh')
     subprocess.Popen([autostart_script])
-
-
-@hook.subscribe.client_new
-def move_copqy_client(client):
-    if 'copyq' in client.window.get_wm_class():
-        client.togroup()
 
 #: ---------------------------------------------------------------------------------------------------------------
 #: Functions
@@ -78,10 +74,12 @@ def float_to_front(qtile):
 
 @lazy.function
 def focus_next_screen(qtile):
-    lazy.next_screen()
-    group = qtile.current_group
-    if group.current_window is not None:
-        win = group.current_window
+    if qtile.current_screen.index == len(qtile.screens) - 1:
+        qtile.focus_screen(0)
+    else:
+        qtile.focus_screen(qtile.current_screen.index + 1)
+    win = qtile.current_group.current_window
+    if win is not None:
         win.window.warp_pointer(win.width // 2, win.height // 2)
 
 
@@ -97,13 +95,6 @@ def get_notification_status():
 def toggle_notification_status():
     logger.info("Toggling notification status")
     subprocess.call(['dunstctl', 'set-paused', 'toggle'])
-
-
-@lazy.function
-def open_dashboard(qtile):
-    dashboard = os.path.expanduser(
-        '/home/simon/.config/qtile/scripts/eww_dashboard.sh')
-    subprocess.call([dashboard])
 
 #: ---------------------------------------------------------------------------------------------------------------
 #: Key bindings
@@ -126,14 +117,14 @@ keys = [
     Key([mod], "space", lazy.window.toggle_floating()),
     Key([mod], "f", lazy.window.toggle_fullscreen()),
     Key([mod, "shift"], "m", lazy.window.toggle_maximize()),
-    Key([mod, "control"], 'j', lazy.next_screen(), desc='Next monitor'),
+    Key([mod, "control"], "j", focus_next_screen(), desc='Next monitor'),
 
     Key([mod, "control"], "r", lazy.reload_config(), desc="Reload Qtile config"),
     Key([mod, "control", "shift"], "r", lazy.restart(), desc="Restart Qtile"),
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key([mod], "r", lazy.spawn("rofi -show combi")),
     Key([mod], "q", lazy.spawn("rofi -show power-menu -modi power-menu:rofi-power-menu -lines 6")),
-    Key([mod], "h", lazy.spawn(clipboard)),
+    Key([mod, "shift"], "h", lazy.spawn(clipboard)),
 
     Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl s 5%-")),
     Key([], "XF86MonBrightnessUp", lazy.spawn("brightnessctl s 5%+")),
@@ -143,12 +134,13 @@ keys = [
     Key([], "XF86AudioNext", lazy.spawn("playerctl next")),
     Key([], "XF86AudioPrev", lazy.spawn("playerctl previous")),
 
-    Key([], "Print", lazy.spawn("flameshot gui")),
+    Key([], "Print", lazy.spawn(screenshot)),
     Key([mod, "control"], "l", lazy.spawn(scr_locker)),
     Key([mod], "b", lazy.hide_show_bar("top")),
 
     # Eww widgets
-    Key([mod], "y", open_dashboard()),
+    Key([mod], "y", lazy.spawn("eww open --toggle dashboard")),
+    Key([mod], "c", lazy.spawn("eww open --toggle calendar_popup")),
 
     # ScratchPads
     Key([mod], "z", lazy.group['scratchpad'].dropdown_toggle('term')),
@@ -179,7 +171,7 @@ keys = [
     KeyChord([mod], "s", [
         Key([], "e", lazy.spawn("emacs")),
         Key([], "l", lazy.spawn("wezterm -e nvim")),
-        Key([], "r", lazy.spawn("wezterm -e joshuto")),
+        Key([], "r", lazy.spawn("wezterm -e /home/simon/.local/bin/jo")),
         Key([], "q", lazy.spawn(open_qtile_config)),
         Key([], "d", lazy.spawn(open_dotfiles))],
         name=spawn
@@ -190,7 +182,8 @@ keys = [
 #: Groups
 #: ---------------------------------------------------------------------------------------------------------------
 groups = [
-    Group(name='1', layout='monadtall'),
+    Group(name='1', layout='monadtall', matches=[
+        Match(wm_class='vivaldi-stable')]),
     Group(name='2', layout='max', matches=[
         Match(wm_class='jetbrains-idea'),
         Match(wm_class='jetbrains-toolbox')]),
@@ -307,7 +300,7 @@ systrayWidgetBox = WidgetBox(
     widgets=[
         Systray(padding=2, background=colors.background),
     ],
-    font="JetBrainsMono Nerd Font Mono ExtraBold", fontsize=16,
+    font="JetBrainsMono Nerd Font Mono ExtraBold", fontsize=15,
     close_button_location="right", text_open=" ", text_closed=" ")
 
 launchbar = LaunchBar(
@@ -315,19 +308,11 @@ launchbar = LaunchBar(
     text_only=True,
     font="Font Awesome 6 Free", fontsize=15,
     foreground=colors.foreground, progs=[
-        ("", "rofi -modi 'clipboard:greenclip print' -show", "Clipboard History"),
-        ("", "flameshot gui", "Screenshot"),
+        ("", clipboard, "Clipboard History"),
+        ("", screenshot, "Screenshot"),
     ])
 
-# widget.LaunchBar(padding=0, text_only=True, font="Font Awesome 6 Free", fontsize=16, foreground="2e3440", progs=[
-#     ("", "rofi-bluetooth", "Bluetooth"),
-#     ("", "rofi -modi 'clipboard:greenclip print' -show", "Clipboard History"),
-#     ("", "rofi-pass", "Passwords"),
-#     ("", "rofi-todo -f /home/ralsina/todo.txt", "Todo"),
-#     ("", "flameshot gui", "Screenshot"),
-# ]),
-
-spacer = TextBox(fmt="::", foreground=colors.peach)
+separator = TextBox(fmt="::", foreground=colors.sep_color)
 
 #: ---------------------------------------------------------------------------------------------------------------
 #: Bars
@@ -338,7 +323,7 @@ default_bar = bar.Bar(
         Spacer(length=2),
         GroupBox(**group_box_settings),
         # Sep(padding=15, foreground=colors.sep_color),
-        spacer,
+        separator,
         CurrentLayout(foreground=colors.widget_current_layout),
         WindowCount(
             text_format="[{num}]",
@@ -346,7 +331,7 @@ default_bar = bar.Bar(
             foreground=colors.widget_window_count,
         ),
         # Sep(padding=15, foreground=colors.sep_color),
-        spacer,
+        separator,
         WindowName(
             background=colors.background,
             foreground=colors.window_title_color,
@@ -359,20 +344,21 @@ default_bar = bar.Bar(
         Spacer(length=5),
         # Systray(padding=2, background=colors.background),
         # Sep(padding=15, foreground=colors.sep_color),
-        spacer,
+        separator,
         Clock(
             format="%a, %b %d - %H:%M",
             background=colors.background,
             foreground=colors.foreground,
+            mouse_callbacks={"Button1": lazy.spawn("eww open --toggle calendar_popup")},
         ),
         # Sep(padding=15, foreground=colors.sep_color),
-        spacer,
+        separator,
         launchbar,
         doNotDisturbIcon,
         Spacer(length=5),
         chordWidget,
     ],
-    size=27
+    size=27,
 )
 default_bar_no_systray = bar.Bar(
     [
@@ -380,7 +366,7 @@ default_bar_no_systray = bar.Bar(
         Spacer(length=2),
         GroupBox(**group_box_settings),
         # Sep(padding=15, foreground=colors.sep_color),
-        spacer,
+        separator,
         CurrentLayout(foreground=colors.widget_current_layout),
         WindowCount(
             text_format="[{num}]",
@@ -388,7 +374,7 @@ default_bar_no_systray = bar.Bar(
             foreground=colors.widget_window_count,
         ),
         # Sep(padding=15, foreground=colors.sep_color),
-        spacer,
+        separator,
         WindowName(
             background=colors.background,
             foreground=colors.window_title_color,
@@ -433,7 +419,7 @@ screens = [
 #: ---------------------------------------------------------------------------------------------------------------
 margin = 5
 border_width = 2
-single_border_width = 2
+single_border_width = 0
 
 layout_border = dict(
     border_width=border_width,
