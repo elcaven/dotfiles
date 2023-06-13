@@ -1,23 +1,25 @@
 - defaults:
     link:
-      relink: true
       force: true
+      relink: true
 
 - clean: ['~']
 
 - link:
-    ~/.config/qtile: qtile
+    ~/.config/colorprofiles: colorprofiles
     ~/.config/dunst: dunst
-    ~/.config/rofi: rofi
-    ~/.config/kitty: kitty
-    ~/.config/starship.toml: starship/starship.toml
+    ~/.config/eww: eww
     ~/.config/fish: fish
-    ~/.themes: gtk-themes
+    ~/.config/joshuto: joshuto
+    ~/.config/kitty: kitty
     ~/.config/nvim: nvim
     ~/.config/picom.conf: picom/picom.conf
-    ~/.config/eww: eww
-    ~/.tmux.conf: tmux/tmux.conf
-    ~/.config/colorprofiles: colorprofiles
+    ~/.config/qtile: qtile
+    ~/.config/rofi: rofi
+    ~/.config/starship.toml: starship/starship.toml
+    ~/.config/tmux/tmux.conf: tmux/tmux.conf
+    ~/.config/wezterm: wezterm
+    ~/.themes: gtk-themes
 
 - shell:
   - [git submodule update --init --recursive, Installing submodules]
