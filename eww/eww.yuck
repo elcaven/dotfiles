@@ -107,10 +107,17 @@
 ; Windows
 (defwindow dashboard
     :geometry (geometry :anchor "top right" :y "0px" :x "0px" :width "400px" :max-width "200px" :height "100%")
-    (box :class "dashboard" :orientation "v" :space-evenly "false"
+    (box :class "dashboard-window" :orientation "v" :space-evenly "false"
         (general_information)
         (system_information)
         (system_load)
         ;(music_information)
     )
+)
+
+(defwindow calendar_popup
+    :geometry (geometry :anchor "top right" :y "38px" :x "-12px" :width "300px")
+      (box :class "calendar-popup" :orientation "h" :space-evenly "true"
+        (calendar :day day_of_month :month month)
+      )
 )
