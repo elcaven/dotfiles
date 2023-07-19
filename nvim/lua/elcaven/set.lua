@@ -30,3 +30,7 @@ vim.opt.updatetime = 50
 
 vim.opt.cursorline = true
 vim.wo.cursorline = true
+
+vim.notify = require("notify").setup({
+    background_colour = "#000000",
+})

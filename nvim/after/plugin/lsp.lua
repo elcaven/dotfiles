@@ -29,29 +29,6 @@ lsp.configure('lua_ls', {
         }
     }
 })
-lsp.configure('sumneko_lua', {
-    settings = {
-        Lua = {
-            workspace = {
-                library = {
-                    ['/usr/share/nvim/runtime/lua'] = true,
-                    ['/usr/share/nvim/runtime/lua/lsp'] = true,
-                    ['/usr/share/awesome/lib'] = true
-                }
-            },
-            diagnostics = {
-                enable = true,
-                globals = {
-                    "vim",
-                    "use", -- Packer use keyword
-                    "awesome", "client", "screen",
-                    "client",
-                    "root"
-                },
-            },
-        }
-    }
-})
 
 lsp.configure('slint_lsp', {
     force_setup = true,
@@ -59,6 +36,9 @@ lsp.configure('slint_lsp', {
         print('hello slint-lsp')
     end,
 })
+
+require('rust-tools').setup({})
+
 
 -- lsp.configure('rust_analyzer', {
 --     settings = {
@@ -104,8 +84,8 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
 
 -- disable completion with tab
 -- this helps with copilot setup
-cmp_mappings['<Tab>'] = nil
-cmp_mappings['<S-Tab>'] = nil
+-- cmp_mappings['<Tab>'] = nil
+-- cmp_mappings['<S-Tab>'] = nil
 
 lsp.setup_nvim_cmp({
     mapping = cmp_mappings
