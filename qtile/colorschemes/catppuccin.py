@@ -22,7 +22,7 @@ gray2 = "#C3BAC6"
 white = "#D9E0EE"
 
 
-border_focus = peach
+border_focus = pink
 border_normal = black3
 
 foreground = '#ffffff'
@@ -31,7 +31,7 @@ background = black0
 alternate_background = black3
 
 # highlight_color = ['44475a', '44475a']
-highlight_color = ['0f111a', '44475a']
+highlight_color = ['0f111a', '6E6C7E']
 
 groupbox_urgent = red
 groupbox_current_screen_border = peach
@@ -54,10 +54,11 @@ date_color = mauve
 date_color_alternate = peach
 notification_color = teal
 window_title_color = foreground
+window_title_background_color = black0
 window_icon_color = lavender
 dashboard_color = maroon
 
 window_resize_chord_color = yellow
 window_move_chord_color = green
-spawn_chord_color = rosewater
+spawn_chord_color = pink
 sep_color = peach

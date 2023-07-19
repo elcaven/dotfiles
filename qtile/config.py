@@ -5,6 +5,7 @@
 import os
 import subprocess
 import nerdfonts as nf
+import shlex
 
 # from typing import List  # noqa: F401
 
@@ -23,12 +24,13 @@ from libqtile.layout.xmonad import MonadTall, MonadWide
 
 # Widget imports
 from qtile_extras.widget import (
-    Spacer, GroupBox, WindowCount, WindowName, Clock, Systray,
+    Spacer, GroupBox, WindowCount, WindowName, Systray,
     Chord, GenPollText, WidgetBox, CurrentLayout, TextBox, LaunchBar
 )
 from qtile_extras.widget.decorations import BorderDecoration
 
 from colorschemes import catppuccin as colors
+from widgets.mouse_over_clock import MouseOverClock
 
 #: ---------------------------------------------------------------------------------------------------------------
 #: Variables
@@ -36,11 +38,12 @@ from colorschemes import catppuccin as colors
 mod = "mod4"
 alt_key = "mod1"
 terminal = "wezterm"
-terminal_dropdown = "wezterm --config window_background_opacity=0.7 -e /home/simon/.local/bin/tmux-sessionizer dropdown"
-terminal_multiplex = "wezterm -e /home/simon/.local/bin/tmux-sessionizer default"
+terminal_dropdown = "wezterm --config window_background_opacity=0.8 -e /home/simon/.local/bin/tmux-sessionizer dropdown"
+terminal_nu_shell = "wezterm -e nu"
 scr_locker = "betterlockscreen -l"
 clipboard = "rofi -modi 'clipboard:greenclip print' -show"
 screenshot = "flameshot gui"
+powermenu = "rofi -show power-menu -modi power-menu:rofi-power-menu"
 
 window_resize = "window resize"
 window_move = "window move"
@@ -58,6 +61,13 @@ open_qtile_config = "wezterm start --cwd /home/simon/.config/qtile -- nvim confi
 def autostart():
     autostart_script = os.path.expanduser('/home/simon/.config/qtile/scripts/autostart.sh')
     subprocess.Popen([autostart_script])
+
+
+# @hook.subscribe.setgroup
+# def setgroup():
+#     for i in range(0, 9):
+#         qtile.groups[i].label = nf.icons["fa_circle_o"]
+#     qtile.current_group.label = nf.icons["fa_dot_circle_o"]
 
 #: ---------------------------------------------------------------------------------------------------------------
 #: Functions
@@ -110,7 +120,7 @@ keys = [
     Key([mod, "control"], "Return", lazy.layout.flip()),
 
     Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
-    Key([mod, "shift"], "Return", lazy.spawn(terminal_multiplex), desc="Launch multiplex terminal"),
+    Key([mod, "shift"], "Return", lazy.spawn(terminal_nu_shell), desc="Launch multiplex terminal"),
 
     Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
     Key([mod], "w", lazy.window.kill(), desc="Kill focused window"),
@@ -123,7 +133,7 @@ keys = [
     Key([mod, "control", "shift"], "r", lazy.restart(), desc="Restart Qtile"),
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key([mod], "r", lazy.spawn("rofi -show combi")),
-    Key([mod], "q", lazy.spawn("rofi -show power-menu -modi power-menu:rofi-power-menu -lines 6")),
+    Key([mod], "q", lazy.spawn(powermenu)),
     Key([mod, "shift"], "h", lazy.spawn(clipboard)),
 
     Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl s 5%-")),
@@ -161,6 +171,7 @@ keys = [
         name=window_resize
     ),
     KeyChord([mod], "m", [
+        Key([], "f", lazy.layout.flip(), desc="Flip layout"),
         Key([], "h", lazy.layout.shuffle_left(), desc="Move window to the left"),
         Key([], "l", lazy.layout.shuffle_right(), desc="Move window to the right"),
         Key([], "j", lazy.layout.shuffle_down(), desc="Move window down"),
@@ -171,6 +182,7 @@ keys = [
     KeyChord([mod], "s", [
         Key([], "e", lazy.spawn("emacs")),
         Key([], "l", lazy.spawn("wezterm -e nvim")),
+        Key([], "m", lazy.spawn("wezterm -e btop")),
         Key([], "r", lazy.spawn("wezterm -e /home/simon/.local/bin/jo")),
         Key([], "q", lazy.spawn(open_qtile_config)),
         Key([], "d", lazy.spawn(open_dotfiles))],
@@ -235,7 +247,7 @@ widget_defaults = dict(
     decorations=[
         BorderDecoration(
             colour=colors.background,
-            border_width=[5, 0, 4, 0],
+            border_width=[4, 0, 4, 0],
         )
     ],
 )
@@ -244,7 +256,8 @@ extension_defaults = widget_defaults.copy()
 group_box_settings = {
     "padding": 1,
     "margin_y": 2,
-    "borderwidth": 3,
+    # "fontsize": 14,
+    "borderwidth": 2,
     "center_aligned": False,
     "active": colors.foreground,
     "inactive": colors.groupbox_inactive,
@@ -263,7 +276,7 @@ group_box_settings = {
     "foreground": colors.foreground,
     "background": colors.background,
     "urgent_border": colors.groupbox_urgent,
-    "spacing": 4,
+    "spacing": 2,
     "visible_groups": ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
     "font": "JetBrainsMono Nerd Font Mono Bold"
 }
@@ -299,12 +312,15 @@ doNotDisturbIcon = GenPollText(
 systrayWidgetBox = WidgetBox(
     widgets=[
         Systray(padding=2, background=colors.background),
+        Spacer(length=6)
     ],
-    font="JetBrainsMono Nerd Font Mono ExtraBold", fontsize=15,
-    close_button_location="right", text_open=" ", text_closed=" ")
+    font="JetBrainsMono Nerd Font Mono ExtraBold", fontsize=18,
+    close_button_location="right",
+    text_open=nf.icons["fa_angle_right"],
+    text_closed=nf.icons["fa_angle_left"])
 
 launchbar = LaunchBar(
-    padding=2, padding_y=2,
+    padding=2, padding_y=1,
     text_only=True,
     font="Font Awesome 6 Free", fontsize=15,
     foreground=colors.foreground, progs=[
@@ -320,9 +336,8 @@ separator = TextBox(fmt="::", foreground=colors.sep_color)
 default_bar = bar.Bar(
     [
         chordWidget,
-        Spacer(length=2),
         GroupBox(**group_box_settings),
-        # Sep(padding=15, foreground=colors.sep_color),
+        Spacer(length=2),
         separator,
         CurrentLayout(foreground=colors.widget_current_layout),
         WindowCount(
@@ -330,10 +345,9 @@ default_bar = bar.Bar(
             background=colors.background,
             foreground=colors.widget_window_count,
         ),
-        # Sep(padding=15, foreground=colors.sep_color),
         separator,
         WindowName(
-            background=colors.background,
+            background=colors.window_title_background_color,
             foreground=colors.window_title_color,
             width=bar.CALCULATED,
             empty_group_string="",
@@ -342,30 +356,26 @@ default_bar = bar.Bar(
         Spacer(),
         systrayWidgetBox,
         Spacer(length=5),
-        # Systray(padding=2, background=colors.background),
-        # Sep(padding=15, foreground=colors.sep_color),
         separator,
-        Clock(
-            format="%a, %b %d - %H:%M",
+        MouseOverClock(
+            long_format="%a, %b %d - %H:%M",
             background=colors.background,
             foreground=colors.foreground,
             mouse_callbacks={"Button1": lazy.spawn("eww open --toggle calendar_popup")},
         ),
-        # Sep(padding=15, foreground=colors.sep_color),
         separator,
         launchbar,
         doNotDisturbIcon,
         Spacer(length=5),
         chordWidget,
     ],
-    size=27,
+    size=24,
 )
-default_bar_no_systray = bar.Bar(
+default_bar_second_monitor = bar.Bar(
     [
         chordWidget,
         Spacer(length=2),
         GroupBox(**group_box_settings),
-        # Sep(padding=15, foreground=colors.sep_color),
         separator,
         CurrentLayout(foreground=colors.widget_current_layout),
         WindowCount(
@@ -373,26 +383,25 @@ default_bar_no_systray = bar.Bar(
             background=colors.background,
             foreground=colors.widget_window_count,
         ),
-        # Sep(padding=15, foreground=colors.sep_color),
         separator,
         WindowName(
-            background=colors.background,
+            background=colors.window_title_background_color,
             foreground=colors.window_title_color,
             width=bar.CALCULATED,
             empty_group_string="",
             max_chars=150,
         ),
         Spacer(),
-        Clock(
-            format="%a, %b %d - %H:%M",
+        MouseOverClock(
+            long_format="%a, %b %d - %H:%M",
             background=colors.background,
             foreground=colors.foreground,
+            mouse_callbacks={"Button1": lazy.spawn("eww open --toggle calendar_popup")},
         ),
-        # Sep(padding=15, foreground=colors.sep_color),
         Spacer(length=5),
         chordWidget,
     ],
-    size=27
+    size=22
 )
 
 #: ---------------------------------------------------------------------------------------------------------------
@@ -400,15 +409,20 @@ default_bar_no_systray = bar.Bar(
 #: ---------------------------------------------------------------------------------------------------------------
 # screen_count = len(subprocess.check_output(shlex.split("xrandr --listmonitors")).splitlines()) - 1
 # screens = []
-# for i in range(screen_count):
-#     if i == screen_count - 1:
-#         screens.append(Screen(
-#             top=default_bar_no_systray
-#         ))
-#     else:
-#         screens.append(Screen(
-#             top=default_bar
-#         ))
+# if screen_count == 1:
+#     screens.append(Screen(
+#         bottom=default_bar
+#     ))
+# else:
+#     for i in range(screen_count):
+#         if i == screen_count - 1:
+#             screens.append(Screen(
+#                 bottom=default_bar_second_monitor
+#             ))
+#         else:
+#             screens.append(Screen(
+#                 bottom=default_bar
+#             ))
 
 screens = [
     Screen(top=default_bar)
@@ -417,7 +431,7 @@ screens = [
 #: ---------------------------------------------------------------------------------------------------------------
 #: Layouts
 #: ---------------------------------------------------------------------------------------------------------------
-margin = 5
+margin = 0
 border_width = 2
 single_border_width = 0
 
