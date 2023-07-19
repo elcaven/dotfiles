@@ -1,0 +1,14 @@
+configuration {
+    font: "JetBrainsMono Nerd Font Medium 9";
+
+}
+* {
+    background-color:      Black;
+    border-color:          White;
+    text-color:           White;
+}
+window {
+    layout: horizontal;
+}
+
+@import "colors-catppuccin.rasi"

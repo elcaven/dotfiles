@@ -37,6 +37,7 @@ config.window_background_opacity = 0.9
 config.font_size = 9
 config.font = wezterm.font("JetBrainsMono NFM", { weight = "Medium", stretch = "Normal", style = "Normal" })
 
-config.window_close_confirmation = 'NeverPrompt'
+config.window_close_confirmation = "NeverPrompt"
+config.default_cursor_style = "SteadyBlock"
 
 return config
