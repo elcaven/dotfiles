@@ -6,7 +6,9 @@
 - clean: ['~']
 
 - link:
+    ~/.config/awesome: awesome
     ~/.config/colorprofiles: colorprofiles
+    ~/.config/doom: doom-emacs
     ~/.config/dunst: dunst
     ~/.config/eww: eww
     ~/.config/fish: fish

@@ -21,7 +21,7 @@
 ;; font string. You generally only need these two:
 ;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
-(setq doom-font (font-spec :family "JetBrains Mono Nerd Font" :weight 'normal :size 12))
+(setq doom-font (font-spec :family "JetBrains Mono Nerd Font" :weight 'medium :size 12))
 ;;(setq doom-font (font-spec :family "JuliaMono" :weight 'semi-bold :size 12))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
