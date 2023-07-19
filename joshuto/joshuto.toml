@@ -34,7 +34,8 @@ reverse = false
 home_page = "home"
 
 [preview]
-preview_images = true
+max_preview_size = 20971520
+review_images = true
 preview_shown_hook_script = "~/.config/joshuto/on_preview_shown"
 preview_removed_hook_script = "~/.config/joshuto/on_preview_removed"
 preview_script = "~/.config/joshuto/preview"

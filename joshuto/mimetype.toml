@@ -7,7 +7,7 @@ audio_default = [
 ]
 
 image_default = [
-    { command = "gimp", args = [
+    { command = "gthumb", args = [
         "--",
     ], fork = true, silent = true },
     { command = "qimgv", args = [
