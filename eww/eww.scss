@@ -43,6 +43,11 @@ window {
 .calendar-popup {
   border: 2px solid $peach;
 }
+.calendar-popup-date {
+    padding: 5px 0px;
+    font-weight: bold;
+    border-bottom: 2px dotted $gray0;
+}
 
 .gen-label {
   color: $mauve;

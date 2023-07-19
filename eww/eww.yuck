@@ -2,6 +2,7 @@
 ;; Date vars
 (defpoll day_of_month :interval "1h" "date +%d")
 (defpoll month :interval "1h" "date +%m")
+(defpoll full_date :interval "1h" "date +'%A, %B %d'")
 
 ;; System vars
 (defpoll user :interval "1h" "echo $USER")
@@ -116,8 +117,9 @@
 )
 
 (defwindow calendar_popup
-    :geometry (geometry :anchor "top right" :y "38px" :x "-12px" :width "300px")
-      (box :class "calendar-popup" :orientation "h" :space-evenly "true"
+    :geometry (geometry :anchor "top right" :y "36px" :x "-12px" :width "300px")
+      (box :class "calendar-popup" :orientation "v" :space-evenly "false"
+        (label :class "calendar-popup-date" :text full_date)
         (calendar :day day_of_month :month month)
       )
 )
