@@ -12,6 +12,7 @@
 (defpoll dnd :interval "5s" "dunstctl is-paused")
 (defpoll network :interval "1m" "iwgetid -r")
 (defpoll brightness :interval "5s" "brightnessctl -m | awk -F, '{print substr($4, 0, length($4)-1)}' | sed 's/$/%/'")
+(defpoll disk_usage :interval "1m" "df -kh . | tail -n1 | awk '{print $5}'")
 
 ;; System load variables
 (defpoll memory :interval "5s" "scripts/memory")
@@ -61,6 +62,10 @@
       (box :orientation "h" :space-evenly "true"
         (label :xalign 0 :class "gen-label" :text "network")
         (label :xalign 1 :class "gen-value" :text network)
+      )
+      (box :orientation "h" :space-evenly "true"
+        (label :xalign 0 :class "gen-label" :text "disk usage")
+        (label :xalign 1 :class "gen-value" :text disk_usage)
       )
     )
   )
@@ -117,7 +122,7 @@
 )
 
 (defwindow calendar_popup
-    :geometry (geometry :anchor "top right" :y "36px" :x "-12px" :width "300px")
+    :geometry (geometry :anchor "top right" :y "12px" :x "-12px" :width "300px")
       (box :class "calendar-popup" :orientation "v" :space-evenly "false"
         (label :class "calendar-popup-date" :text full_date)
         (calendar :day day_of_month :month month)

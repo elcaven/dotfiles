@@ -32,12 +32,19 @@ config.window_frame = {
 ------------------------------------------------------------------------------------
 -- General settings
 ------------------------------------------------------------------------------------
-config.window_background_opacity = 0.9
+config.window_background_opacity = 1
 
 config.font_size = 9
 config.font = wezterm.font("JetBrainsMono NFM", { weight = "Medium", stretch = "Normal", style = "Normal" })
 
 config.window_close_confirmation = "NeverPrompt"
 config.default_cursor_style = "SteadyBlock"
+
+config.window_padding = {
+  left = 5,
+  right = 5,
+  top = 10,
+  bottom = 10,
+}
 
 return config

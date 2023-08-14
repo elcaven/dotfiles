@@ -23,6 +23,7 @@ white = "#D9E0EE"
 
 
 border_focus = pink
+border_focus_floating = yellow
 border_normal = black3
 
 foreground = '#ffffff'
@@ -31,7 +32,7 @@ background = black0
 alternate_background = black3
 
 # highlight_color = ['44475a', '44475a']
-highlight_color = ['0f111a', '6E6C7E']
+highlight_color = ['0f111a', '575268']
 
 groupbox_urgent = red
 groupbox_current_screen_border = peach
@@ -47,7 +48,7 @@ widget_current_layout = mauve
 widget_window_count = mauve
 
 groups_color = green
-block_highlight_text_color = gray0
+block_highlight_text_color = black2
 cpu_color = peach
 mem_color = green
 date_color = mauve

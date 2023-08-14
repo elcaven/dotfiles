@@ -5,7 +5,6 @@
 import os
 import subprocess
 import nerdfonts as nf
-import shlex
 
 # from typing import List  # noqa: F401
 
@@ -24,7 +23,7 @@ from libqtile.layout.xmonad import MonadTall, MonadWide
 
 # Widget imports
 from qtile_extras.widget import (
-    Spacer, GroupBox, WindowCount, WindowName, Systray,
+    Spacer, GroupBox, WindowCount, WindowName, Systray, Sep,
     Chord, GenPollText, WidgetBox, CurrentLayout, TextBox, LaunchBar
 )
 from qtile_extras.widget.decorations import BorderDecoration
@@ -45,9 +44,9 @@ clipboard = "rofi -modi 'clipboard:greenclip print' -show"
 screenshot = "flameshot gui"
 powermenu = "rofi -show power-menu -modi power-menu:rofi-power-menu"
 
-window_resize = "window resize"
-window_move = "window move"
-spawn = "spawn"
+window_resize = "RESIZE"
+window_move = "MOVE"
+spawn = "SPAWN"
 
 open_dotfiles = "wezterm start --cwd /home/simon/projects/personal/dotfiles -- /usr/bin/nvim ."
 open_qtile_config = "wezterm start --cwd /home/simon/.config/qtile -- nvim config.py"
@@ -61,6 +60,11 @@ open_qtile_config = "wezterm start --cwd /home/simon/.config/qtile -- nvim confi
 def autostart():
     autostart_script = os.path.expanduser('/home/simon/.config/qtile/scripts/autostart.sh')
     subprocess.Popen([autostart_script])
+
+
+@hook.subscribe.enter_chord
+def enter_chord(name):
+    logger.info("Entering chord")
 
 
 # @hook.subscribe.setgroup
@@ -146,7 +150,7 @@ keys = [
 
     Key([], "Print", lazy.spawn(screenshot)),
     Key([mod, "control"], "l", lazy.spawn(scr_locker)),
-    Key([mod], "b", lazy.hide_show_bar("top")),
+    Key([mod], "b", lazy.hide_show_bar("bottom")),
 
     # Eww widgets
     Key([mod], "y", lazy.spawn("eww open --toggle dashboard")),
@@ -184,6 +188,7 @@ keys = [
         Key([], "l", lazy.spawn("wezterm -e nvim")),
         Key([], "m", lazy.spawn("wezterm -e btop")),
         Key([], "r", lazy.spawn("wezterm -e /home/simon/.local/bin/jo")),
+        Key([], "c", lazy.spawn("discord")),
         Key([], "q", lazy.spawn(open_qtile_config)),
         Key([], "d", lazy.spawn(open_dotfiles))],
         name=spawn
@@ -195,7 +200,7 @@ keys = [
 #: ---------------------------------------------------------------------------------------------------------------
 groups = [
     Group(name='1', layout='monadtall', matches=[
-        Match(wm_class='vivaldi-stable')]),
+        Match(wm_class='Vivaldi-stable')]),
     Group(name='2', layout='max', matches=[
         Match(wm_class='jetbrains-idea'),
         Match(wm_class='jetbrains-toolbox')]),
@@ -211,13 +216,12 @@ groups = [
         Match(wm_class='microsoft teams - insiders'),
         Match(wm_class='discord')]),
     Group(name='9', layout='max', matches=[
-        Match(wm_class="brave-browser"),
+        Match(wm_class="firefox"),
         Match(wm_class="evolution")]),
     Group(name='0', layout='max', matches=[
         Match(wm_class="notion-app"),
         Match(wm_class="notion-app-enhanced"),
-        Match(wm_class="openlens"),
-        Match(wm_class="youtube music")]),
+        Match(wm_class="openlens")]),
 ]
 
 for i in groups:
@@ -244,29 +248,23 @@ widget_defaults = dict(
     fontsize=11,
     padding=3,
     background=colors.background,
-    decorations=[
-        BorderDecoration(
-            colour=colors.background,
-            border_width=[4, 0, 4, 0],
-        )
-    ],
 )
 extension_defaults = widget_defaults.copy()
 
 group_box_settings = {
     "padding": 1,
-    "margin_y": 2,
+    "margin_y": 4,
     # "fontsize": 14,
     "borderwidth": 2,
-    "center_aligned": False,
+    "center_aligned": True,
     "active": colors.foreground,
     "inactive": colors.groupbox_inactive,
     "hide_unused": False,
     "disable_drag": True,
-    "rounded": True,
+    "rounded": False,
     "highlight_color": colors.highlight_color,
-    "block_highlight_text_color": colors.foreground,
-    "highlight_method": "line",
+    "block_highlight_text_color": colors.block_highlight_text_color,
+    "highlight_method": "block",
     "urgent_alert_method": "text",
     "urgent_text": colors.groupbox_urgent,
     "this_current_screen_border": colors.groupbox_current_screen_border,
@@ -282,23 +280,16 @@ group_box_settings = {
 }
 
 chordWidget = Chord(
-    font="JetBrainsMonoExtraBold Nerd Font Mono",
+    font="JetBrainsMonoExtraBold Nerd Font Mono Bold",
     fontsize=11,
-    width=5,
-    background=colors.background,
-    margin=0, padding=0, fmt="",
+    background=colors.pink,
+    margin=0, padding=0, fmt=" {} ",
     chords_colors={
-        '': (colors.background, 'ffffff'),
-        window_resize: (colors.window_resize_chord_color, 'ffffff'),
-        window_move: (colors.window_move_chord_color, 'ffffff'),
-        spawn: (colors.spawn_chord_color, 'ffffff'),
+        '': (colors.background, colors.background),
+        window_resize: (colors.window_resize_chord_color, colors.background),
+        window_move: (colors.window_move_chord_color, colors.background),
+        spawn: (colors.spawn_chord_color, colors.background),
     },
-    decorations=[
-        BorderDecoration(
-            colour=colors.background,
-            border_width=[0, 0, 0, 0],
-        )
-    ],
 )
 
 doNotDisturbIcon = GenPollText(
@@ -311,13 +302,24 @@ doNotDisturbIcon = GenPollText(
 
 systrayWidgetBox = WidgetBox(
     widgets=[
-        Systray(padding=2, background=colors.background),
-        Spacer(length=6)
+        Systray(
+            background=colors.alternate_background,
+            icon_size=16,
+            padding=5,
+            fontsize=2,
+        ),
+        Spacer(
+            length=6,
+            background=colors.alternate_background
+        )
     ],
-    font="JetBrainsMono Nerd Font Mono ExtraBold", fontsize=18,
+    # font="JetBrainsMono Nerd Font Mono ExtraBold", fontsize=11,
     close_button_location="right",
-    text_open=nf.icons["fa_angle_right"],
-    text_closed=nf.icons["fa_angle_left"])
+    background=colors.black3,
+    # text_open=nf.icons["fa_angle_right"],
+    # text_closed=nf.icons["fa_angle_left"],
+    text_open="[-]",
+    text_closed="[+]")
 
 launchbar = LaunchBar(
     padding=2, padding_y=1,
@@ -328,7 +330,12 @@ launchbar = LaunchBar(
         ("", screenshot, "Screenshot"),
     ])
 
-separator = TextBox(fmt="::", foreground=colors.sep_color)
+# separator = TextBox(fmt="::", foreground=colors.sep_color)
+separator = Sep(
+    foreground=colors.foreground,
+    padding=7,
+    size_percent=100,
+)
 
 #: ---------------------------------------------------------------------------------------------------------------
 #: Bars
@@ -337,37 +344,41 @@ default_bar = bar.Bar(
     [
         chordWidget,
         GroupBox(**group_box_settings),
-        Spacer(length=2),
-        separator,
+        Spacer(length=5),
+        # separator,
         CurrentLayout(foreground=colors.widget_current_layout),
         WindowCount(
             text_format="[{num}]",
             background=colors.background,
             foreground=colors.widget_window_count,
         ),
-        separator,
+        # separator,
+        Spacer(length=3),
+        Spacer(length=3, background=colors.alternate_background),
         WindowName(
-            background=colors.window_title_background_color,
+            background=colors.alternate_background,
             foreground=colors.window_title_color,
             width=bar.CALCULATED,
             empty_group_string="",
             max_chars=150,
         ),
-        Spacer(),
+        Spacer(background=colors.alternate_background),
         systrayWidgetBox,
+        Spacer(length=3, background=colors.alternate_background),
         Spacer(length=5),
-        separator,
+        # separator,
         MouseOverClock(
             long_format="%a, %b %d - %H:%M",
             background=colors.background,
             foreground=colors.foreground,
             mouse_callbacks={"Button1": lazy.spawn("eww open --toggle calendar_popup")},
         ),
-        separator,
-        launchbar,
+        # separator,
+        # launchbar,
+        Spacer(length=5),
         doNotDisturbIcon,
         Spacer(length=5),
-        chordWidget,
+        # chordWidget,
     ],
     size=24,
 )
@@ -425,7 +436,7 @@ default_bar_second_monitor = bar.Bar(
 #             ))
 
 screens = [
-    Screen(top=default_bar)
+    Screen(bottom=default_bar)
 ]
 
 #: ---------------------------------------------------------------------------------------------------------------
@@ -438,6 +449,12 @@ single_border_width = 0
 layout_border = dict(
     border_width=border_width,
     border_focus=colors.border_focus,
+    border_normal=colors.border_normal,
+)
+
+floating_layout_border = dict(
+    border_width=border_width,
+    border_focus=colors.border_focus_floating,
     border_normal=colors.border_normal,
 )
 
@@ -456,7 +473,7 @@ layouts = [
 ]
 
 floating_layout = Floating(
-    **layout_border,
+    **floating_layout_border,
     float_rules=[
         *Floating.default_float_rules,
         Match(title='Reminders'),  # Evolution reminders

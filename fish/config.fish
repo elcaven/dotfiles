@@ -91,6 +91,7 @@ set PATH $PATH /home/simon/.cargo/bin
 set PATH $PATH /home/simon/.config/lsp/lua-language-server/bin
 set PATH $PATH /usr/local/go/bin
 set PATH $PATH /home/simon/.config/emacs/bin
+set PATH $PATH /home/simon/.rover/bin
 
 set FZF_DEFAULT_OPTS --color=bg:-1,bg+:#302d41,hl+:#ddb6f2,hl:#ddb6f2,pointer:#ddb6f2
 
