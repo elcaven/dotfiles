@@ -24,9 +24,8 @@ from libqtile.layout.xmonad import MonadTall, MonadWide
 # Widget imports
 from qtile_extras.widget import (
     Spacer, GroupBox, WindowCount, WindowName, Systray, Sep,
-    Chord, GenPollText, WidgetBox, CurrentLayout, TextBox, LaunchBar
+    Chord, GenPollText, WidgetBox, CurrentLayout, LaunchBar
 )
-from qtile_extras.widget.decorations import BorderDecoration
 
 from colorschemes import catppuccin as colors
 from widgets.mouse_over_clock import MouseOverClock
@@ -283,7 +282,7 @@ chordWidget = Chord(
     font="JetBrainsMonoExtraBold Nerd Font Mono Bold",
     fontsize=11,
     background=colors.pink,
-    margin=0, padding=0, fmt=" {} ",
+    margin=0, padding=0, fmt="  {}  ",
     chords_colors={
         '': (colors.background, colors.background),
         window_resize: (colors.window_resize_chord_color, colors.background),
@@ -315,7 +314,7 @@ systrayWidgetBox = WidgetBox(
     ],
     # font="JetBrainsMono Nerd Font Mono ExtraBold", fontsize=11,
     close_button_location="right",
-    background=colors.black3,
+    background=colors.alternate_background,
     # text_open=nf.icons["fa_angle_right"],
     # text_closed=nf.icons["fa_angle_left"],
     text_open="[-]",
@@ -324,7 +323,7 @@ systrayWidgetBox = WidgetBox(
 launchbar = LaunchBar(
     padding=2, padding_y=1,
     text_only=True,
-    font="Font Awesome 6 Free", fontsize=15,
+    font="Font Awesome 6 Free", fontsize=14,
     foreground=colors.foreground, progs=[
         ("", clipboard, "Clipboard History"),
         ("", screenshot, "Screenshot"),
@@ -365,7 +364,7 @@ default_bar = bar.Bar(
         Spacer(background=colors.alternate_background),
         systrayWidgetBox,
         Spacer(length=3, background=colors.alternate_background),
-        Spacer(length=5),
+        Spacer(length=8),
         # separator,
         MouseOverClock(
             long_format="%a, %b %d - %H:%M",
@@ -374,8 +373,9 @@ default_bar = bar.Bar(
             mouse_callbacks={"Button1": lazy.spawn("eww open --toggle calendar_popup")},
         ),
         # separator,
-        # launchbar,
         Spacer(length=5),
+        launchbar,
+        # Spacer(length=5),
         doNotDisturbIcon,
         Spacer(length=5),
         # chordWidget,
