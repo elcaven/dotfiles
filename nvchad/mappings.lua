@@ -36,4 +36,10 @@ M.crates = {
   }
 }
 
+M.telescope = {
+  n = {
+    ["<leader>fd"] = { "<cmd> Telescope diagnostics <CR>", "List diagnostics" },
+  }
+}
+
 return M

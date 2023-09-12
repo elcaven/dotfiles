@@ -122,7 +122,7 @@
 )
 
 (defwindow calendar_popup
-    :geometry (geometry :anchor "top right" :y "12px" :x "-12px" :width "300px")
+    :geometry (geometry :anchor "top right" :y "32px" :x "-8px" :width "300px")
       (box :class "calendar-popup" :orientation "v" :space-evenly "false"
         (label :class "calendar-popup-date" :text full_date)
         (calendar :day day_of_month :month month)

@@ -3,7 +3,7 @@ local capabilities = require("plugins.configs.lspconfig").capabilities
 local lspconfig = require "lspconfig"
 
 -- if you just want default config for the servers then put them in a table
-local servers = { "html", "cssls", "tsserver", "clangd" }
+local servers = { "html", "cssls", "tsserver", "clangd", "dockerls", "docker_compose_language_service", "taplo" }
 
 for _, lsp in ipairs(servers) do
   lspconfig[lsp].setup {
@@ -22,6 +22,18 @@ lspconfig["pylsp"].setup {
         pycodestyle = {
           maxLineLenght = 200,
           ignore = { "E501", "E305" },
+        },
+      },
+    },
+  },
+}
+
+lspconfig["lua_ls"].setup {
+  settings = {
+    Lua = {
+      workspace = {
+        library = {
+          ["/usr/share/awesome/lib"] = true
         },
       },
     },

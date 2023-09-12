@@ -3,6 +3,10 @@
 [global]
     ### Display ###
 
+    # Gaps
+    gaps = true
+    gap_size = 8
+
     # Which monitor should the notifications be displayed on.
     monitor = 0
 
@@ -33,8 +37,8 @@
     origin = top-right
 
     # Offset from the origin
-    #offset = 12x36 # top bar
-    offset = 8x8  # bottom bar
+    offset = 8x32 # top bar
+    # offset = 8x8  # bottom bar
 
     # Scale factor. It is auto-detected if value is 0.
     scale = 0

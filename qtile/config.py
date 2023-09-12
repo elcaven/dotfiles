@@ -5,6 +5,7 @@
 import os
 import subprocess
 import nerdfonts as nf
+import shlex
 
 # from typing import List  # noqa: F401
 
@@ -42,12 +43,13 @@ scr_locker = "betterlockscreen -l"
 clipboard = "rofi -modi 'clipboard:greenclip print' -show"
 screenshot = "flameshot gui"
 powermenu = "rofi -show power-menu -modi power-menu:rofi-power-menu"
+tmuxmenu = "fd --type d . $HOME | rofi -keep-right -dmenu -i -p TMUX -multi-select | xargs -I {} wezterm start --cwd {} -- /home/simon/.local/bin/tmux-sessionizer {}"
 
 window_resize = "RESIZE"
 window_move = "MOVE"
 spawn = "SPAWN"
 
-open_dotfiles = "wezterm start --cwd /home/simon/projects/personal/dotfiles -- /usr/bin/nvim ."
+open_dotfiles = "wezterm start --cwd /home/simon/projects/personal/dotfiles -- /usr/bin/nvim"
 open_qtile_config = "wezterm start --cwd /home/simon/.config/qtile -- nvim config.py"
 
 #: ---------------------------------------------------------------------------------------------------------------
@@ -61,17 +63,17 @@ def autostart():
     subprocess.Popen([autostart_script])
 
 
-@hook.subscribe.enter_chord
-def enter_chord(name):
-    logger.info("Entering chord")
+@hook.subscribe.client_focus
+def bring_focused_floating_client_to_front(client):
+    if client.floating:
+        client.bring_to_front()
 
 
-# @hook.subscribe.setgroup
-# def setgroup():
-#     for i in range(0, 9):
-#         qtile.groups[i].label = nf.icons["fa_circle_o"]
-#     qtile.current_group.label = nf.icons["fa_dot_circle_o"]
-
+@hook.subscribe.client_new
+def test(client):
+    if client.name == "JetBrains Toolbox":
+        client.toggle_floating()
+        client.set_position_floating(100, 100)
 #: ---------------------------------------------------------------------------------------------------------------
 #: Functions
 #: ---------------------------------------------------------------------------------------------------------------
@@ -94,6 +96,12 @@ def focus_next_screen(qtile):
     win = qtile.current_group.current_window
     if win is not None:
         win.window.warp_pointer(win.width // 2, win.height // 2)
+
+
+@lazy.function
+def tmux_session_finder(qtile):
+    tmux_script = os.path.expanduser("/home/simon/.local/bin/tmux-session-finder.sh")
+    subprocess.Popen([tmux_script])
 
 
 def get_notification_status():
@@ -137,6 +145,7 @@ keys = [
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key([mod], "r", lazy.spawn("rofi -show combi")),
     Key([mod], "q", lazy.spawn(powermenu)),
+    Key([mod], "t", tmux_session_finder()),
     Key([mod, "shift"], "h", lazy.spawn(clipboard)),
 
     Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl s 5%-")),
@@ -149,7 +158,7 @@ keys = [
 
     Key([], "Print", lazy.spawn(screenshot)),
     Key([mod, "control"], "l", lazy.spawn(scr_locker)),
-    Key([mod], "b", lazy.hide_show_bar("bottom")),
+    Key([mod], "b", lazy.hide_show_bar("top")),
 
     # Eww widgets
     Key([mod], "y", lazy.spawn("eww open --toggle dashboard")),
@@ -186,7 +195,7 @@ keys = [
         Key([], "e", lazy.spawn("emacs")),
         Key([], "l", lazy.spawn("wezterm -e nvim")),
         Key([], "m", lazy.spawn("wezterm -e btop")),
-        Key([], "r", lazy.spawn("wezterm -e /home/simon/.local/bin/jo")),
+        Key([], "j", lazy.spawn("wezterm -e /home/simon/.local/bin/jo")),
         Key([], "c", lazy.spawn("discord")),
         Key([], "q", lazy.spawn(open_qtile_config)),
         Key([], "d", lazy.spawn(open_dotfiles))],
@@ -213,6 +222,7 @@ groups = [
         Match(wm_class='teams-for-linux'),
         Match(wm_class='microsoft teams - preview'),
         Match(wm_class='microsoft teams - insiders'),
+        Match(title='Microsoft Teams'),
         Match(wm_class='discord')]),
     Group(name='9', layout='max', matches=[
         Match(wm_class="firefox"),
@@ -342,6 +352,7 @@ separator = Sep(
 default_bar = bar.Bar(
     [
         chordWidget,
+        Spacer(length=3),
         GroupBox(**group_box_settings),
         Spacer(length=5),
         # separator,
@@ -385,24 +396,29 @@ default_bar = bar.Bar(
 default_bar_second_monitor = bar.Bar(
     [
         chordWidget,
-        Spacer(length=2),
+        Spacer(length=3),
         GroupBox(**group_box_settings),
-        separator,
+        Spacer(length=5),
+        # separator,
         CurrentLayout(foreground=colors.widget_current_layout),
         WindowCount(
             text_format="[{num}]",
             background=colors.background,
             foreground=colors.widget_window_count,
         ),
-        separator,
+        # separator,
+        Spacer(length=3),
+        Spacer(length=3, background=colors.alternate_background),
         WindowName(
-            background=colors.window_title_background_color,
+            background=colors.alternate_background,
             foreground=colors.window_title_color,
             width=bar.CALCULATED,
             empty_group_string="",
             max_chars=150,
         ),
-        Spacer(),
+        Spacer(background=colors.alternate_background),
+        Spacer(length=8),
+        # separator,
         MouseOverClock(
             long_format="%a, %b %d - %H:%M",
             background=colors.background,
@@ -410,40 +426,39 @@ default_bar_second_monitor = bar.Bar(
             mouse_callbacks={"Button1": lazy.spawn("eww open --toggle calendar_popup")},
         ),
         Spacer(length=5),
-        chordWidget,
     ],
-    size=22
+    size=24
 )
 
 #: ---------------------------------------------------------------------------------------------------------------
 #: Screens
 #: ---------------------------------------------------------------------------------------------------------------
-# screen_count = len(subprocess.check_output(shlex.split("xrandr --listmonitors")).splitlines()) - 1
-# screens = []
-# if screen_count == 1:
-#     screens.append(Screen(
-#         bottom=default_bar
-#     ))
-# else:
-#     for i in range(screen_count):
-#         if i == screen_count - 1:
-#             screens.append(Screen(
-#                 bottom=default_bar_second_monitor
-#             ))
-#         else:
-#             screens.append(Screen(
-#                 bottom=default_bar
-#             ))
+screen_count = len(subprocess.check_output(shlex.split("xrandr --listmonitors")).splitlines()) - 1
+screens = []
+if screen_count == 1:
+    screens.append(Screen(
+        top=default_bar
+    ))
+else:
+    for i in range(screen_count):
+        if i == screen_count - 1:
+            screens.append(Screen(
+                top=default_bar_second_monitor
+            ))
+        else:
+            screens.append(Screen(
+                top=default_bar
+            ))
 
-screens = [
-    Screen(bottom=default_bar)
-]
+# screens = [
+#     Screen(top=default_bar)
+# ]
 
 #: ---------------------------------------------------------------------------------------------------------------
 #: Layouts
 #: ---------------------------------------------------------------------------------------------------------------
 margin = 0
-border_width = 2
+border_width = 1
 single_border_width = 0
 
 layout_border = dict(
@@ -476,8 +491,7 @@ floating_layout = Floating(
     **floating_layout_border,
     float_rules=[
         *Floating.default_float_rules,
-        Match(title='Reminders'),  # Evolution reminders
-        Match(wm_class='copyq'),
+        Match(func=lambda c: c.is_transient_for()),
     ])
 
 #: ---------------------------------------------------------------------------------------------------------------

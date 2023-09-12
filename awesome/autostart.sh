@@ -18,6 +18,6 @@ trackball
 run "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
 autorandr --change
 nitrogen --restore
-run "picom -b"
+run "picom -b --transparent-clipping"
 xcalib .config/colorprofiles/Dell_AW2518HF_user.icm
 /usr/bin/gnome-keyring-daemon --start --components=pkcs11,secrets,ssh,gpg

@@ -83,7 +83,13 @@ local plugins = {
   {
     "elkowar/yuck.vim",
     ft = "yuck",
+  },
+
+  {
+    "Bekaboo/dropbar.nvim",
+    ft = "rust"
   }
+
 
   -- To make a plugin not be loaded
   -- {
