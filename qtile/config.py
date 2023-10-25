@@ -21,6 +21,7 @@ from libqtile.scripts.main import VERSION
 from libqtile.layout.max import Max
 from libqtile.layout.floating import Floating
 from libqtile.layout.xmonad import MonadTall, MonadWide
+from libqtile.layout.tree import TreeTab
 
 # Widget imports
 from qtile_extras.widget import (
@@ -195,7 +196,7 @@ keys = [
         Key([], "e", lazy.spawn("emacs")),
         Key([], "l", lazy.spawn("wezterm -e nvim")),
         Key([], "m", lazy.spawn("wezterm -e btop")),
-        Key([], "j", lazy.spawn("wezterm -e /home/simon/.local/bin/jo")),
+        Key([], "j", lazy.spawn("wezterm -e yazi")),
         Key([], "c", lazy.spawn("discord")),
         Key([], "q", lazy.spawn(open_qtile_config)),
         Key([], "d", lazy.spawn(open_dotfiles))],
@@ -211,6 +212,7 @@ groups = [
         Match(wm_class='Vivaldi-stable')]),
     Group(name='2', layout='max', matches=[
         Match(wm_class='jetbrains-idea'),
+        Match(wm_class='jetbrains-rustrover'),
         Match(wm_class='jetbrains-toolbox')]),
     Group(name='3', layout='monadtall'),
     Group(name='4', layout='monadtall'),
@@ -244,7 +246,7 @@ for i in groups:
 
 # Append scratchpad after setting up group keybinds
 groups.append(ScratchPad("scratchpad", [
-    DropDown("term", terminal_dropdown, opacity=1, height=0.4, x=0, width=0.998, on_focus_lost_hide=True),
+    DropDown("term", terminal_dropdown, opacity=1, height=0.4, x=0, width=0.999, on_focus_lost_hide=True),
     DropDown("insomnia", "insomnia", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
     DropDown("browser", "qutebrowser", opacity=1, height=0.997, x=0, width=0.998, on_focus_lost_hide=True),
 ]))
@@ -485,6 +487,7 @@ layouts = [
               single_margin=margin, ratio=0.6),
     MonadWide(**layout_theme, single_border_width=single_border_width,
               single_margin=margin, ratio=0.6),
+    TreeTab(),
 ]
 
 floating_layout = Floating(

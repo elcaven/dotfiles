@@ -50,8 +50,8 @@ config.window_frame = {
 ------------------------------------------------------------------------------------
 -- General settings
 ------------------------------------------------------------------------------------
--- config.window_background_opacity = 1
-config.window_background_opacity = 0.9
+config.window_background_opacity = 1
+-- config.window_background_opacity = 0.9
 
 config.window_close_confirmation = "NeverPrompt"
 config.default_cursor_style = "SteadyBlock"

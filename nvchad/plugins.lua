@@ -85,12 +85,6 @@ local plugins = {
     ft = "yuck",
   },
 
-  {
-    "Bekaboo/dropbar.nvim",
-    ft = "rust"
-  }
-
-
   -- To make a plugin not be loaded
   -- {
   --   "NvChad/nvim-colorizer.lua",

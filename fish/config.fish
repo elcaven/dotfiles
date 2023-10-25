@@ -26,9 +26,9 @@ alias klogs="kubectl logs -f -n digital"
 alias kdashboard="k9s -n digital"
 alias kdash="k9s -n digital"
 
-alias ll="exa --long --all --icons"
-alias ls="exa --long --icons"
-alias tree="exa --tree --icons"
+alias ll="eza --long --all --icons"
+alias ls="eza --long --icons"
+alias tree="eza --tree --icons"
 alias bat="bat --theme=Catppuccin-mocha"
 alias cat="bat -p --theme=Catppuccin-mocha"
 alias vim="nvim"
@@ -116,3 +116,4 @@ enable_transience
 #: }}}
 
 set -q GHCUP_INSTALL_BASE_PREFIX[1]; or set GHCUP_INSTALL_BASE_PREFIX $HOME ; set -gx PATH $HOME/.cabal/bin $PATH /home/simon/.ghcup/bin # ghcup-env
+
